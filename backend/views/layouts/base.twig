@@ -1,0 +1,73 @@
+{{ this.beginPage() }}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>淘世界 运营后台</title>
+        <!-- 基础样式 -->
+        <link rel="stylesheet" href="/ace/css/bootstrap.min.css"  />
+        <link rel="stylesheet" href="/ace/css/font-awesome.min.css" />
+
+        <!--[if IE 7]>
+          <link rel="stylesheet" href="/ace/css/font-awesome-ie7.min.css" />
+        <![endif]-->
+
+        <!-- 页面特殊样式插件 -->
+        <!-- 字体 -->
+        <link rel="stylesheet" href="/ace/css/google-font.css" />
+        <!-- ace 样式 -->
+        <link rel="stylesheet" href="/ace/css/ace.min.css" />
+        <link rel="stylesheet" href="/ace/css/ace-rtl.min.css" />
+        <link rel="stylesheet" href="/ace/css/ace-skins.min.css" />
+        <link rel="stylesheet" href="/ace/css/aimei-operation.css" />
+        <!--[if lte IE 8]>
+          <link rel="stylesheet" href="/ace/css/ace-ie.min.css" />
+        <![endif]-->
+        
+        <!-- 基本js -->
+
+        <!--[if !IE]> -->
+        <script src="/ace/js/jquery-2.0.3.min.js"></script>
+        <!-- <![endif]-->
+
+        <!--[if IE]>
+        <script src="/ace/js/jquery-1.10.2.min.js"></script>
+        <![endif]-->
+
+        <script type="text/javascript">
+            if("ontouchend" in document) document.write("<script src='/ace/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+        </script>
+        <script src="/ace/js/bootstrap.min.js"></script>
+
+        <!-- ace js -->
+        <script src="/ace/js/ace-extra.min.js"></script>
+       
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+        <!--[if lt IE 9]>
+        <script src="/ace/js/html5shiv.js"></script>
+        <script src="/ace/js/respond.min.js"></script>
+        <![endif]-->
+        
+        {% block other_css_js %}
+        {% endblock %}
+        {{ this.head() }}
+        {{ html.csrfMetaTags()|raw }}
+    </head>
+
+    <body class="{% block body_class %}navbar-fixed breadcrumbs-fixed{% endblock %}">
+        {{ this.beginBody() }}
+        {% block body %}
+        {% endblock %}
+        {{ this.endBody() }}
+        {% block page_scripts %}
+        {% endblock %}
+
+        <!-- ace 脚本 -->
+        <script src="/ace/js/ace-elements.min.js"></script>
+        <script src="/ace/js/ace.min.js"></script>
+        <script src="/ace/js/operate-common.js"></script>
+    </body>
+</html>
+{{ this.endPage() }}

@@ -1,0 +1,54 @@
+{% set menu_name = "managers" %}
+{% set sidebar_name = "用户列表" %}
+{% extends '@view/layouts/main.twig' %}
+{% block content %}
+<div class="page-content">
+<div class="page-header">
+  <h1>
+    Manager List
+    <small>
+    </small>
+  </h1>
+</div><!-- /.page-header -->
+{{ widget('\\kartik\\grid\\GridView', 
+    {
+      'layout':'\n{items}\n{pager}',
+      'id':'app-grid',
+      'tableOptions':{'class':'table table-striped table-bordered table-hover'},
+      'dataProvider':dataProvider,
+      'filterModel':model,
+      'pager':{
+        'class':'\\common\\extensions\\Page\\CPageLink',
+      },
+      'columns':{
+        0:{
+          'attribute':'id',
+        },
+        1:{
+          'attribute':"username",
+        },
+        2:{
+          'attribute':'email',
+        },
+        3:{
+              'attribute':'status',
+              'value':model.getManagerStatus(),
+              'filterType':constant('\\kartik\\grid\\GridView::FILTER_SELECT2'),
+              'filter':model.getCanUseStatus(),
+              'filterWidgetOptions':{'pluginOptions':{'allowClear':true},},
+              'filterInputOptions':{'placeholder':'选择状态'},
+              'format':'raw'
+        },
+        5:{
+            'attribute':'created',
+            'format':['date', 'php:Y-m-d H:i'],
+        },
+        7:{
+            'class':'\\common\\extensions\\Grid\\GridActionColumn',
+            'template':'{update} {delete} {assignment} {updatepw}',
+        },
+      }
+    })
+  }} 
+</div>   
+{% endblock %}

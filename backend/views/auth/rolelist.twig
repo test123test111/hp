@@ -1,0 +1,61 @@
+{% set menu_name = "managers" %}
+{% set sidebar_name = "角色列表" %}
+{% extends "@app/views/layouts/main.twig" %}
+  {% block content %}
+    <div class="page-content">
+      <div class="page-header">
+        <h1>
+          Create Role
+        </h1>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <!-- PAGE CONTENT BEGINS -->
+
+          {% set form = activeform.begin({'id':'create-form','layout':'horizontal','fieldConfig':{'horizontalCssClasses':{'wrapper':'col-lg-6'} } }) %}    
+          {{ form.field(model,'name',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}} 
+            {% if isNew == true %}
+                {{ form.field(model,'type').dropDownList({'1':'Role'}).label(null,{"class":'col-lg-2 control-label'})|raw }}
+            {% else %}
+                {{ form.field(model,'type').dropDownList({'1':'Role'},{'disabled':'disabled'}).label(null,{"class":'control-label col-lg-2'})|raw }}
+                <input type="hidden" name="AuthItem[description]" value="{{ model.description }}" />
+            {% endif %}
+            <div class="clearfix form-actions">
+              <div class="col-md-offset-3 col-md-9">
+                <button class="btn btn-sm btn-info" type="submit">
+                  <i class="icon-ok bigger-110"></i>
+                  Submit
+                </button>
+
+                &nbsp; &nbsp; &nbsp;
+                <button class="btn btn-sm" type="reset">
+                  <i class="icon-undo bigger-110"></i>
+                  Reset
+                </button>
+              </div>
+            </div>
+          {{ void(form.end()) }}
+        </div><!-- /.col -->
+        {{ widget('\\yii\\grid\\GridView', {            
+            'id':'app-grid', 
+            'layout':'\n{items}\n{pager}', 
+            'class':'grid-view',
+            'dataProvider':model.getAllItems(), 
+            'columns':{
+                0:'name',
+                1:{
+                    'attribute':'type',
+                    'format':'html',
+                    'value':'if($model->type == 1){return "Role";}else{return "Operation";}'|value_callback,
+                },
+                3:{
+                    'class':'\\common\\extensions\\Grid\\GridActionColumn',
+                    'template':'{update} {delete} {assign}',
+                    'header':'操作'
+                },
+}})
+
+}}
+      </div><!-- /.row -->
+</div>
+{% endblock %}
