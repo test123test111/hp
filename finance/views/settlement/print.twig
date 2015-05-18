@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="/ace/css/aimei-operation.css" />
+<div class="print-wrap">
+	<header>
+		<h1>2015.5.2 12:00 - 2015.5.2 12:00 货款数据</h1>
+	</header>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>买手真名</th>
+				<th>买手ID</th>
+				<th>订单金额</th>
+				<th>调整金额</th>
+				<th>汇款金额</th>
+				<th class="address">支付信息</th>
+				<th>备注</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for result in results %}
+			<tr>
+				<td>{{ result.buyer_realname }}</td>
+				<td>{{ result.buyer_id }}</td>
+				<td>{{ result.sumprice|sprintf }}</td>
+				<td>{{ result.adjust|sprintf }}</td>
+				<td>{{ (result.sumprice + result.adjust)|sprintf }}</td>
+				<td>{{ result.method}}: {{ result.banknumber }} {{ result.receive_name }}</td>
+				<td></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	window.print();
+</script>

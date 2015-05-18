@@ -1,0 +1,187 @@
+{% set menu_name = "commodity" %}
+{% set sidebar_name = "品牌管理" %}
+{% extends '@view/layouts/main.twig' %}
+{% block content %}
+    
+<!--S 面包屑-->
+<div class="breadcrumbs breadcrumbs-fixed" id="breadcrumbs">
+    <script type="text/javascript">
+      try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+    </script>
+    <ul class="breadcrumb">
+        <li>
+            <i class="icon-home home-icon"></i>
+            <a href="#">商品管理</a>
+        </li>
+        <li class="active">品牌管理</li>
+    </ul>
+</div>
+<!--E 面包屑-->
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-xs-12">
+            <!--S 搜索区域-->
+            <div class="search-area col-sm-12">
+                <!--S 搜索条件-->
+                <div class="search-box">
+                    <div class="space-10"></div>
+                    <form id="searchBarForm" action="" method="get">
+                        <div class="classified-search">
+                            <div class="input-group">
+                                <input type="text" class="search-bar form-control search-query input-sm" name="content" value="{% if params.content is defined %}{{ params.content }}{% endif %}" placeholder="请输入要搜索的内容" />
+                                <div class="classify-info btn-group">
+                                    <button type="button" id="classifiedBtn" data-toggle="dropdown" class="classified-btn btn btn-xs btn-primary dropdown-toggle">
+                                        <em>{{ filterTypeName }}</em>
+                                        <span class="icon-caret-down icon-on-right"></span>
+                                    </button>
+                                    <input id="filterType" name="filterType" value="{% if params.filterType is defined %}{{ params.filterType }}{% else %}{{ defaultFilterType }}{% endif %}" type="hidden">
+                                    <ul id="searchMenu" class="dropdown-menu dropdown-default">
+                                        {% for key, value in fiterTypeArray %}
+                                            <li data-filter-type="{{ key }}"><a href="javascript:;">{{ value }}</a></li>
+                                        {% endfor%}
+                                    </ul>
+                                </div>
+                                <span class="search-btn input-group-btn">
+                                    <button type="submit" class="btn btn-primary btn-xs">搜索<i class="icon-search icon-on-right bigger-110"></i></button>
+                                </span>
+                            </div>
+                          <span class="info">可搜索品牌ID/名称</span>
+                        </div>
+                    </form>
+                </div>  
+                <!--E 搜索条件-->
+                <!--S 搜索结果-->
+                <div class="search-results">
+                    <div class="space-10"></div>
+                    <div class="results-tab tabbable">
+                        <ul class="nav nav-tabs" id="tabLevelOne">
+                          <li class="active"><a data-toggle="tab">全部</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane in active">
+                                <!--S 数据列表和操作-->
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="center">ID</th>
+                                                <th class="center">品牌原名</th>
+                                                <th class="center">品牌译名</th>
+                                                <th class="center">商品数</th>
+                                                <th class="center">创建人</th>
+                                                <th class="center">创建时间</th>
+                                                <th class="center">更新时间</th>
+                                                <th class="center">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for row in data %}
+                                            <tr class="placeholder">
+                                                <td colspan="6"></td>
+                                            </tr>
+                                            <tr class="info-detail">
+                                                <td>
+                                                    <div class="space-2"></div>
+                                                    <span class="center">{{ row.id}}</span>
+                                                </td>
+                                                <td>
+                                                    <div class="space-2"></div>
+                                                    <span class="center">{{ row.ename}}</span>
+                                                </td>
+                                                <td>
+                                                    <div class="space-2"></div>               
+                                                    <span class="center">{{ row.cname}}</span>
+                                                </td>
+                                                <td>
+                                                    <div class="space-2"></div>
+                                                    <span class="center">{{ row.getStockNum() }}</span>
+                                                </td>
+                                                <td>
+                                                    <div class="space-2"></div>
+                                                    <span class="center">
+                                                        {% if row.create_username != '' %}
+                                                            {{ row.create_username }}
+                                                        {% else %}
+                                                            未知
+                                                        {% endif%}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <time>
+                                                        {% if row.create_time != 0 %}
+                                                            <div class="space-2"></div>
+                                                            <span class="center">{{ row.create_time|date('Y-m-d H:i:s') }}<span>
+                                                        {% else %}
+                                                            <div class="space-2"></div>
+                                                            <span class="center">-<span>
+                                                        {% endif%}
+                                                    </time>
+                                                </td>
+                                                <td>
+                                                    <time>
+                                                        {% if row.create_time != 0 %}
+                                                            <div class="space-2"></div>
+                                                            <span class="center">{{ row.update_time|date('Y-m-d H:i:s') }}<span>
+                                                        {% else %}
+                                                            <div class="space-2"></div>
+                                                            <span class="center">-<span>
+                                                        {% endif%}
+                                                    </time>
+                                                </td>
+                                                <td class="operate">
+                                                    <div class="center">
+                                                        <div class="edit center">
+                                                            <div class="space-2"></div>
+                                                            <p class="center"><a href="/brand/update/{{ row.id }}">编辑</a></p>
+                                                        </div>
+                                                        <div class="note center">
+                                                            <div class="space-2"></div>
+                                                            <p class="center"><a class="dataDeleteAction" href="javascript:;" data-delete-url="/brand/delete/{{ row.id }}">删除</a></p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% else %}  
+                                                <tr class="info-detail">
+                                                    <td colspan="8"><p class="center">没有查询到相关数据</p></td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <a class="btn btn-primary btn-sm" href="/brand/create/">创建新品牌</a>
+                                </div>
+                                <!--E 数据列表和操作-->
+                                <!--S 分页&记录数-->
+                                <div class="pages">
+                                    <p class="search-sum">共{{ count }}个结果</p>
+                                    <ul class="pagination">{{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}</ul>
+                                </div>
+                                <!--E 分页&记录数-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--E 搜索结果-->
+            </div>
+            <!--E 搜索区域-->
+        </div>
+    </div>
+</div>
+{% block page_scripts %}
+<script>
+    $(document).on('click', '#searchMenu li', function() {
+        var filterType = $(this).attr('data-filter-type');
+        $('#filterType').val(filterType);
+    });
+    $('.dataDeleteAction').unbind();
+    $('.dataDeleteAction').bind('click', function(){
+        var url = $(this).attr('data-delete-url');
+        if (window.confirm('您确定要删除该条记录么？')) {
+            window.location = url;
+        }
+        return false;
+    });
+</script>
+{% endblock %}
+{% endblock %}

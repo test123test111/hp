@@ -1,0 +1,31 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+      	<div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">备注</h4>
+	        <span>订单号：{{ order_id }}</span>
+      	</div>
+      	<div id="noteModalBody" class="modal-body">
+                  {% for result in results %}
+      		<div class="note-content">
+      			<h6>{{ result.getTypeName() }}备注</h6>
+      			<ul>
+      				<li>
+      					<span>{{ result.created_username }}</span>
+      					<time>{{ result.created_time|date('Y-m-d H:i:s') }}</time>
+      					<p>{{ result.content|raw }}</p>
+      				</li>
+      			</ul>
+      		</div>
+                  {% endfor %}
+      	</div>
+      	<div class="modal-footer">
+          <div class="input-group">
+            <input id="noteContent" type="text" class="form-control search-query input-sm" placeholder="" />
+            <span class="input-group-btn">
+            <button id="release" type="button" class="btn btn-primary btn-sm">发布</button>
+        </span>
+      </div>
+        </div>
+    </div>
+  </div>

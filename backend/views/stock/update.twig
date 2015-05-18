@@ -1,0 +1,124 @@
+{% set menu_name = "stock" %}
+{% set sidebar_name = "在库" %}
+{% extends "@app/views/layouts/header.twig" %}
+  {% block content %}
+
+ <!-- Matter -->
+
+      <div id="matter" class="matter">
+        <div class="container output-order">
+          <div id="infoTitle">
+            <h2>打印/管理订单</h2>
+            <div class="order-header"><strong>在箱订单：<em id="orderCount">{{ boxInfo.box_order_count }}</em>个</strong>物流箱：#<em id="boxId">{{ boxInfo.box_id }}</em><button id="switchBox" class="btn btn-primary">切换</button></div>
+          </div>
+          <div id="orderMain" class="order-main">
+          {% if boxInfo.orders is defined %}
+          {% for key,order in boxInfo.orders %}
+            <div class="block" id="1">
+              <div class="express-info">
+                <div>快递公司:
+                  <div class="btn-group">
+                    <select data-type="{{ order.express }}" class="form-control express-type">
+                      {% for key,value in express_list %}
+                      <option {% if order.express == key %} selected="selected" {% endif %}value="{{ key }}">{{ value }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <em>{{ order.address.name }} {{ order.address.cellphone }}     {{ order.address.addr }}</em>
+              </div>
+
+              <ul class="order-list">
+                {% for o in order.info %}
+                <li id="{{ o.order_id }}" data-id="{{ o.order_id }}">
+                  <img src="{{ staticDomain }}{{ o.img }}" alt="">
+                  <time>{{ o.stock_time }}</time>入库人：{{ boxInfo.box_created_user }}            
+                  <strong>订单号：{{ o.order_id }}</strong>
+                  <p>{{ o.goods_name }}</p>
+                  <span>{{ o.sku }}</span>
+                  <i class="fa fa-print"><em>打印</em></i>
+                  {% if is_admin %}<i class="fa fa-trash-o" data-toggle="modal" data-target="#delOrderModal"><em>删除</em></i>{% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+        {% endfor %}
+        </div>
+          <button type="submit" id="batchPrint" class="btn btn-primary btn-height" >批量打印</button>
+        {% endif %}
+        </div>
+      </div>
+{% endblock %}
+{% block modal %}
+  <!-- Modal -->
+  <!-- 删除订单 modal -->
+<div class="modal fade" id="delOrderModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">删除订单</h4>
+      </div>
+      <div class="modal-body">
+        <p>确定要删除该订单吗？(订单将返回到未入库的状态)</p>
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-expanded="true">
+            <em>请选择理由</em>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+            {% for key,reason in del_reasons%}
+            <li class="reasons" data-reason-id="{{ key }}"role="presentation"><a role="menuitem" tabindex="-1" href="#">{{ reason }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button id="confirmDelOrder" type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 批量打印 modal -->
+<div class="batch-print-modal modal fade" id="batchPrintModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">确认打印</h4>
+      </div>
+      <div class="modal-body">
+        <p>确认要打印物流箱<span>#{{ boxInfo.box_id }}</span>的快递单吗？</p>
+         <form id="shunfengForm" action="/stock/batchprint"  method="post" target="_blank" >
+            <input type="hidden" name= "eid" value="0">
+            <input type="hidden" name="orderids" value="" id="sfOrderids">
+            <input type="hidden" name="box_id" value="" id="sfBoxId">
+            <input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}">
+            <button id="shunfeng" type="submit" class="btn btn-primary express-btn">打印顺丰订单</button>
+         </form>
+         <form id="yuantongForm" action="/stock/batchprint"  method="post" target="_blank">
+            <input type="hidden" name= "eid" value="1">
+            <input type="hidden" name="orderids" value="" id="ytOrderids">
+            <input type="hidden" name="box_id" value="" id="ytBoxId">
+            <input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}">
+            <button id="yuantong" type="submit" class="btn btn-primary express-btn">打印圆通订单</button>
+         </form>
+        
+        <!-- <form id="exportData" action=""  method="post" target="">
+            <input type="hidden" name= "eid" value="1">
+            <input type="hidden" name="orderids" value="" id="ytOrderids">
+            <input type="hidden" name="box_id" value="" id="ytBoxId">
+            <input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}">
+            <button id="yuantong" type="submit" class="btn btn-primary express-btn">导出电子面单数据</button>
+        </form> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/stock-update.js"></script>
+{% endblock %}
+

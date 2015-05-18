@@ -1,0 +1,11 @@
+.btn-primary{background-color:$primary-color; color:#fff; 
+	&.touch-style{ background-color: #f74b43; }
+}
+.btn-line{ border:.1rem solid #c7c0bb; background-color:transparent; color:#AB9D94; 
+	&.touch-style{ background-color: #c7c0bb; color:#FFF; }
+}
+.btn-cancel{background-color:#878787; color:#FFF; 
+	&.touch-style{ background-color: #797979; }
+}
+.btn{ border-radius:.3rem; cursor: pointer; }
+.btn:disabled{ opacity:.5; }

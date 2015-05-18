@@ -1,0 +1,74 @@
+        <link rel="stylesheet" href="/css/blue.css">
+		<script src="/js/icheck.min.js"></script> 
+        <div class="container">
+	        <div id="infoTitle">
+	            <h2>包裹 #<em id="packageId">{{ result.pack_id }}</em>  - {{ result.logistic_provider }} {{ result.logistic_no }}</h2>
+	            <div class="order-header">
+	            	<div class="check-all"  ><input id="checkAll" type="checkbox" ></div>
+	            	<div class="package-order">包裹内订单：<em id="orderCount">{{ result.orders_count }}</em>个</div>
+	            </div>
+	        </div>
+          	<ul id="orderContent" class="order-list order-main">
+            	{% if result.orders is not empty %}
+            	{% for order in result.orders %}
+            	<li id="{{ order.order_id }}" data-id="{{ order.order_id }}">
+            		<div class="check-box"><input class="checkBox" type="checkbox" ></div>
+            		<div class="order-detail">
+
+						<a href="http://m.taoshij.com/stock-detail.html?stockId={{ order.stock_id }}" target="_blank"><img src="{{ staticDomain }}{{ order.img }}" alt=""></a>
+						{% if order.status == 'demostic' %}
+							{% if order.created_time is not empty %}
+			          	<time>{{ order.created_time }}</time>入库人：{{ order.created_user }}
+			          		{% endif %}
+			          	{% endif %}              
+			          	<strong>订单号：{{ order.order_id }}</strong>
+			          	<p>{{ order.goods_name }}</p>
+			          	<span>{{ order.sku }}</span>
+			          	{% if order.status == constant('\\backend\\models\\Order::ORDER_STATUS_IS_STOCK') or order.created_time is not empty %}
+			          	<span class="state prompt-color">已入库</span>
+			          	{% elseif order.status == constant('\\backend\\models\\Order::ORDER_STATUS_IS_SEND') %}
+			          	<span class="state prompt-color">已出库</span>
+			          	{% else %}
+			          	<span class="state">未入库</span>
+			          	{% endif %}
+			          	<i class="fa fa-print">
+			          		<em>条码</em>
+			          	</i>
+		          	</div>
+				</li>
+				{% endfor %}
+				{% endif %}
+          	</ul>
+         	<button id="batchPrintCode"  type="button" class="btn btn-primary btn-height" >批量打印条码</button>
+			<button id="batchInput"  type="button" class="btn btn-primary btn-height" >批量入箱</button>
+        </div>
+        <script>
+        	//复选框部分
+			$("input").iCheck({
+			    checkboxClass: 'icheckbox_square-blue',
+			    increaseArea: '20%' // optional
+			});
+			//全选 反选
+			$('#checkAll').on('ifClicked', function(event){
+				
+				onoff = $(this).prop("checked");
+				
+				if(onoff){
+					$(".check-box").iCheck("uncheck");
+				}else{
+					$(".check-box").iCheck("check");
+				}
+				
+			});
+			$(document).on("ifChecked",".check-box div",function(){
+				liLen = $("#orderContent li").length;
+				checkBoxLen = $("#orderContent input:checked").length;
+				
+				if(checkBoxLen == liLen){
+					$('#checkAll').iCheck('check');
+				}
+			});
+			$(document).on("ifUnchecked",".check-box input",function(){
+				$("#checkAll").iCheck("uncheck");
+			});
+        </script>

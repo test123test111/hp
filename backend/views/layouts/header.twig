@@ -1,0 +1,95 @@
+<div id="navbar" class="navbar navbar-fixed-top bs-docs-nav" role="banner">
+  
+    <div class="conjtainer">
+      <h1>淘世界仓储后台</h1>
+      <!-- Menu button for smallar screens -->
+      <div class="navbar-header">
+      <button class="navbar-toggle btn-navbar" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+      <span>Menu</span>
+      </button>
+      <!-- Site name for smallar screens -->
+      <a href="index.html" class="navbar-brand hidden-lg">MacBeth</a>
+    </div>
+      
+      
+
+      <!-- Navigation starts -->
+      <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">         
+
+        <ul class="nav navbar-nav" >  
+
+          <!-- Upload to server link. Class "dropdown-big" creates big dropdown -->
+          <!-- Sync to server link -->
+          <li class="dropdown dropdown-big">
+            {# <a href="/order/create" class="dropdown-toggle"><span class="label label-success"><i class="fa fa-cloud-upload"></i></span> 常用功能</a> #}
+            <!-- Dropdown -->
+          </li>
+
+        </ul>
+
+        <!-- Search form -->
+        <!-- <form action="/order/search" class="navbar-form navbar-left" role="search"> -->
+        
+        <!-- Links -->
+        <ul class="nav navbar-nav pull-right userName" id="userName" >
+          <li class="dropdown pull-right">            
+            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+              <i class="fa fa-user"></i> {{ App.user.identity.username }} <b class="caret"></b>              
+            </a>
+            
+            <!-- Dropdown menu -->
+            <ul class="dropdown-menu">
+              <li><a href="/manager/reset-password"><i class="icon-cogs"></i> 修改密码</a></li>
+              <li><a href="/site/logout"><i class="icon-off"></i> 退出</a></li>
+            </ul>
+          </li>
+          
+        </ul>
+      </nav>
+
+    </div>
+  </div>
+
+<!-- Main content starts -->
+
+<div class="content">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-dropdown"><a href="#">Navigation</a></div>
+
+        <!--- Sidebar navigation -->
+        <!-- If the main navigation has sub navigation, then add the class "has_sub" to "li" of main navigation. -->
+       <ul id="nav">
+          {% for menu_k,menu in App.user.getTopMenu() %}
+          <!-- Main menu with font awesome icon -->
+          {% if menu.subs is defined %}
+
+          <li class="has_sub {% if menu_name == menu_k %}open{% endif %}"><a href="#"><i
+                                class="fa fa-{{ menu.icon }}"></i> {{ menu.name }}  <span class="pull-right"><i
+                                    class="fa fa-chevron-right"></i></span></a>
+                    <ul>
+                        {% for key,value in App.user.getSubMenu(menu_k) %}
+                            <li {% if sidebar_name == value.name %}class="current"{% endif %}><a
+                                        href="/{{ value.route }}">{{ value.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+          
+          {% else %}
+          <li class="{% if menu_name == menu_k %}open{% endif %}"><a href="/{{ menu.route }}"><i class="fa fa-{{ menu.icon }}"></i> {{ menu.name }}  <span class="pull-right"><i class=""></i></span></a>
+          {% endif %}
+          {% endfor %}
+        </ul>
+    </div>
+   <!-- Mainbar ends -->
+   <div class="mainbar" id="mainbar">      
+   {% block content %}
+   {% endblock %}
+   </div>      
+   <div class="clearfix"></div>
+</div>
+
+{% block modal %}
+{% endblock %}

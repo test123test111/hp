@@ -1,0 +1,347 @@
+{% set menu_name = "order" %}
+{% set sidebar_name = "订单管理" %}
+{% extends '@view/layouts/main.twig' %}
+{% block content %}
+<div class="breadcrumbs breadcrumbs-fixed" id="breadcrumbs">
+	<script type="text/javascript">
+		try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+	</script>
+	<!-- 面包屑 开始 -->
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home home-icon"></i>
+			<a href="#">主页</a>
+		</li>
+
+		<li>
+			<a href="#">全部订单</a>
+		</li>
+		<li class="active">订单详情</li>
+	</ul><!-- 面包屑 结束 -->
+</div><!-- 主体topbar 开始 -->
+<!-- page-content 开始 -->
+<div class="page-content">
+	<!-- row 开始 -->
+	<div class="row">
+		<!-- col 开始 -->
+		<div class="col-xs-12">
+			<!-- page主要content 开始 -->
+			<div class="space-10"></div>
+			<div class="order-state">
+				<header>
+					<em>订单号: 819534534</em>
+					<time>更新时间：2015-10-12  9:12</time>
+				</header>
+				<article>
+					<strong>订单状态: </strong>
+					<ul>
+						<li>
+							<span>待发货（备货中）</span>
+							<button class="btn btn-minier btn-primary">申请退款</button>
+						</li>
+						<li>
+							<span>已发货 </span>
+							<button class="btn btn-minier btn-primary">申请退货</button>
+						</li>
+						<li>
+							<span>待发货（备货中）待发货（备货中）</span>
+							
+						</li>
+					</ul>
+				</article>
+			</div>
+			<div class="space-10"></div>
+			<div class="order-detail clear">
+				<div class="info col-xs-7">
+					<section class="order-info">
+						<h4>订单信息</h4>
+						<ul class="info-content ">
+							<li class="goods-info">
+								<img src="/ace/images/goods.jpg" alt="goods">
+								<div class="info">
+									<h6>巴宝莉(BURBERRY) 女士手帕 『作个讲究的女纸！』巴宝莉(BURBERRY)</h6>
+									<p><em>颜色:米色+粉色格子</em><strong>直播:<a href="#">12996</a></strong></p>
+								<div>
+							</li><li class="other-info pay-info">
+								<del  class="center special-color">1,123.44</del>
+				                <span class="center">1,100.48</span>
+				                <span class="center"><a href="#">支付信息</a></span>
+							</li><li class="other-info ">
+								<div class="center">
+									<div class="edit center">
+					                    <div class="center"><i class="icon-edit bigger-160"></i></div>
+					                    <p class="center"><a href="order-detail.html">修改价格</a></p>
+					                </div>
+				                </div>
+							</li>
+						</ul>
+					</section>
+					<section class="custom-info">
+						<h4>买家信息</h4>
+						<ul class="info-content ">
+							<li class="other-info custom-name">
+								<div class="space-6"></div>
+								<span class="center">李先生</span>
+								<span class="center">ID: <a href="">12338</a></span>
+								<div class="space-6"></div>
+							</li><li class="other-info custom-address">
+								<span class="">收货人:李先生</span>
+								<span class="">联系电话: 15903214254</span>
+								<span class="">收货地址：北京,朝阳,望京澳洲康都4号楼1单元24C</span>
+							</li><li class="other-info change-address">
+								<div class="center">
+									<div class="edit center">
+					                    <div class="center"><i class="icon-edit bigger-160"></i></div>
+					                    <p class="center"><a href="order-detail.html">修改地址</a></p>
+					                </div>
+				                </div>
+							</li>
+						</ul>
+					</section>
+					<section class="buyer-info">
+						<h4>买手信息</h4>
+						<ul class="info-content ">
+							<li class="other-info buyer-name">
+								<div class="space-6"></div>
+								<span class="center">果语</span>
+								<span class="center">ID: <a href="">12338</a></span>
+								<div class="space-6"></div>
+							</li><li class="other-info buyer-reg-time">
+								<span class="center">注册时间</span>
+								<span class="center">2015-4-16</span>
+								<span class="center">08:13:15</span>
+							</li><li class="other-info buyer-address">
+								<span class="center">Lamplighter, Irvine ,加利福尼亚,美国</span>
+							</li>
+						</ul>
+					</section>
+				</div>
+				<div class="note col-xs-5">
+					<h4>订单备注</h4>
+					<div class="note-box">
+						<div class="note-info">
+							<div class="note-content">
+				      			<h6>买家备注</h6>
+				      			<ul>
+				      				<li>
+				      					<span>李先生</span>
+				      					<time>15-04-13 10:00</time>
+				      					<p>这个东西我必须要红色的啊，如果是白色的就不要了这个东西我必须要红色的啊，如果是白色的就不要了这个东西我必须要红色的啊，如果是白色的就不要了</p>
+				      				</li>
+				      				<li>
+				      					<span>李先生</span>
+				      					<time>15-04-13 10:00</time>
+				      					<p>这个东西我必须要红色的啊，如果是白色的就不要了这个东西我必须要红色的啊，如果是白色的就不要了这个东西我必须要红色的啊，如果是白色的就不要了，如果是白色的就不要了这个东西我必须要红色的啊，如果是白色的就不要了</p>
+				      				</li>
+				      			</ul>
+				      		</div>
+				      		<div class="note-content">
+				      			<h6>买手备注</h6>
+				      			<ul>
+				      				<li>
+				      					<span>各种奇奇怪怪的名字</span>
+				      					<time>15-04-13 10:00</time>
+				      					<p>这个东西我必须要红色的啊，如果是白色的就不要了这个东西我必须要红色的啊，如果是白色的就不要了这个东西我必须要红色的啊，如果是白色的就不要了</p>
+				      				</li>
+				      			</ul>
+				      		</div>
+				      		<div class="note-content">
+				      			<h6>后台备注</h6>
+				      			<ul>
+				      				<li>
+				      					<span>各种名字</span>
+				      					<time>15-04-13 10:00</time>
+				      					<p>这个东西我必须要红色的啊，如果是白色的就不要了这个东西我必须要红色的啊，如果是白色的就不要了这个东西我必须要红色的啊，如果是白色的就不要了</p>
+				      				</li>
+				      			</ul>
+				      		</div>
+						</div>
+						<footer class="input-group">
+							<input type="text" class="form-control search-query input-sm" placeholder="" />
+							<span class="input-group-btn">
+								<button type="button" class="btn btn-primary btn-sm">发布</button>
+							</span>
+						</footer>
+					</div>
+				</div>
+			</div>
+			<div class="space-10"></div>
+			<div class="order-track">
+				<h4>订单追踪</h4>
+				<div class="table-responsive">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th class="center process-time">处理时间</th>
+								<th class="left">处理信息</th>
+								<th class="left">处理人</th>
+								<th class="left">订单状态</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<span class="time-line"></span>
+									<time>2014-10-25  10:12:43</time>
+								</td>
+								<td>提交已订单，正在等待支付</td>
+								<td>买家: <a href="#">就是想买</a></td>
+								<td>待支付</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="time-line"></span>
+									<time>2014-10-25  10:12:43</time>
+								</td>
+								<td>买家已付款，等待买手备货</td>
+								<td>买家: <a href="#">就是想买</a></td>
+								<td>待发货-备货中</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="time-line"></span>
+									<time>2014-10-25  10:12:43</time>
+								</td>
+								<td>买手已备货，正在准备打包</td>
+								<td>买手: <a href="#">果语</a></td>
+								<td>待发货-备货完成</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="time-line"></span>
+									<time>2014-10-25  10:12:43</time>
+								</td>
+								<td>买手打包完成【包裹ID:<a href="#">1233254</a>】</td>
+								<td>买手: <a href="#">果语</a></td>
+								<td>待发货-备货完成</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="time-line"></span>
+									<time>2014-10-25  10:12:43</time>
+								</td>
+								<td>买手已发出【EMS:<a href="#">1Z9F4E070495358545</a>】</td>
+								<td>买手: <a href="#">果语</a></td>
+								<td>已发货-买手已发货</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="time-line"></span>
+									<time>2014-10-25  10:12:43</time>
+								</td>
+								<td>验货完成，国内已入库，等待分拣</td>
+								<td>Tonny</td>
+								<td>已发货-国内已入库</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="time-line"></span>
+									<time>2014-10-25  10:12:43</time>
+								</td>
+								<td>国内已发货【顺丰:<a href="#">350317327707</a>】</td>
+								<td>Tonny</td>
+								<td>待确认收货</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="space-10"></div>
+			<div class="logistics-info">
+				<h4>物流信息</h4>
+				<div class="logistics-wrap col-sm-12 widget-container-span">
+					<div class="widget-box transparent">
+						<header >
+							<div class="basic-info">
+								<span>国内包裹</span>
+								<span>包裹ID: <a href="#">12345678</a></span>
+								<span>物流公司: <a href="#">顺丰</a></span>
+								<span>物流单号: 912038551877</span>
+							</div>
+							<div class="toggle no-border">
+								<a href="#" data-action="reload">
+									<i class="icon-refresh"></i>
+								</a>
+
+								<a href="#" data-action="collapse">
+									<i class="icon-chevron-up"></i>
+								</a>
+							</div>
+						</header>
+						
+						<div class="widget-body">
+							<div class="widget-main padding-6 no-padding-left no-padding-right">
+								<ul>
+									<li>
+										<time>2015-01-10 16:56:25</time>
+										<span class="time-line"></span>
+										<strong>卖家已发货</strong>
+									</li>
+									<li>
+										<time>2015-01-10 16:56:25</time>
+										<span class="time-line"></span>
+										<strong>韩国 441390 收寄</strong>
+									</li>
+									<li class="lately-info">
+										<time>2015-01-10 16:56:25</time>
+										<span class="time-line"></span>
+										<strong>快件到达 北京顺义集散中心</strong>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="logistics-wrap col-sm-12 widget-container-span">
+					<div class="widget-box transparent">
+						<header >
+							<div class="basic-info">
+								<span>买手包裹</span>
+								<span>包裹ID: <a href="#">12345678</a></span>
+								<span>物流公司: <a href="#">EMS</a></span>
+								<span>物流单号: 912038551877</span>
+							</div>
+							<div class="toggle no-border">
+								<a href="#" data-action="reload">
+									<i class="icon-refresh"></i>
+								</a>
+
+								<a href="#" data-action="collapse">
+									<i class="icon-chevron-up"></i>
+								</a>
+							</div>
+						</header>
+						
+						<div class="widget-body">
+							<div class="widget-main padding-6 no-padding-left no-padding-right">
+								<ul>
+									<li>
+										<time>2015-01-10 16:56:25</time>
+										<span class="time-line"></span>
+										<strong>卖家已发货</strong>
+									</li>
+									<li>
+										<time>2015-01-10 16:56:25</time>
+										<span class="time-line"></span>
+										<strong>韩国 441390 收寄</strong>
+									</li>
+									<li class="lately-info">
+										<time>2015-01-10 16:56:25</time>
+										<span class="time-line"></span>
+										<strong>快件到达 北京顺义集散中心</strong>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>	
+			<!-- page主要content 结束 -->
+		</div><!-- col 结束 -->
+	</div><!-- row 结束 -->
+</div><!-- page-content 结束 -->
+{% block page_scripts %}
+<script type="text/javascript" src="/ace/js/order-detail.js"></script>
+{% endblock %}
+{% endblock %}

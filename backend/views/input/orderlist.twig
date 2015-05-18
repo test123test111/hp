@@ -1,0 +1,8 @@
+<li id="{{ result.order_id }}" data-id="{{ result.order_id }}">
+<img src="{{ staticDomain }}{{ result.img }}" alt="">
+<time>{{ result.created_time }}</time>入库人：{{ result.created_user }}             
+<strong>订单号：{{ result.order_id }}</strong>
+<p>{{ result.goods_name }}</p>
+<span>{{ result.sku }}</span>
+<i class="fa fa-trash-o" data-toggle="modal" data-target="#delOrderModal"><em></em></i>
+</li>

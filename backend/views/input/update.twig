@@ -1,0 +1,102 @@
+{% set menu_name = "input" %}
+{% set sidebar_name = "入库" %}
+{% extends "@app/views/layouts/header.twig" %}
+  {% block content %}
+      <!-- Page heading -->
+      <div class="page-head" id="pageHead">
+          <form id="orderForm" class="head-input" action="" >
+            <input id="number" type="text" placeholder="请扫描或手动输入订单号">
+            <button id="inputBtn" type="submit" class="btn btn-primary">确定</button>
+          </form>
+      </div>
+      <!-- Page heading ends -->
+
+      <!-- Matter -->
+      <div class="matter" id="matter">
+        <div class="container">
+          <div id="infoTitle">
+            <h2>入库订单</h2>
+            <div class="order-header"><strong>在箱订单：<em id="orderCount">{{ box.orders|count }}</em>个</strong>物流箱：#<em id="boxId">{{ box.box_id }}</em><button id="printLabel" class="btn btn-primary" data-toggle="modal" data-target="#printLabelModal" >打印标签</button></div>
+          </div>
+          <ul id="orderContent" class="order-list order-main">
+            {% if box.orders is not empty %}
+            {% for order in box.orders %}
+            <li id="{{ order.order_id }}" data-id="{{ order.order_id }}">
+              <img src="{{ staticDomain }}{{ order.img }}" alt="">
+              <time>{{ order.created_time }}</time>入库人：{{ order.created_user }}             
+              <strong>订单号：{{ order.order_id }}</strong>
+              <p>{{ order.goods_name }}</p>
+              <span>{{ order.sku }}</span>
+              <i class="fa fa-trash-o" data-toggle="modal" data-target="#delOrderModal"><em>出箱</em></i>
+            </li>
+            {% endfor %}
+          {% endif %}
+          </ul>
+          <form action="/input/sealbox" method="post" id="sealBox">
+            <input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}">
+            <input type="hidden" name="box_id" value="{{ box.box_id }}" />
+            <input type="hidden" id="triggerBtn" data-toggle="modal" data-target="#sealBoxModal" >
+            <button id="storage"  type="button" class="btn btn-primary btn-height" >封箱入库</button>
+          </form>
+        </div>
+      </div>
+{% endblock %}
+{% block modal %}
+  <!-- Modal -->
+  <!-- 删除订单 modal -->
+<div class="modal fade" id="delOrderModal" tabindex="-1" role="dialog" aria-labelledby="delOrderTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="delOrderTitle">删除订单</h4>
+      </div>
+      <div class="modal-body">
+        <p>确认要删除订单吗？</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button id="confirmDel" type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 打印标签 modal -->
+<div class="modal fade" id="printLabelModal" tabindex="-1" role="dialog" aria-labelledby="printLabelTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="printLabelTitle">打印标签</h4>
+      </div>
+      <div class="modal-body">
+        <p>确认要再次打印物流箱（#{{ box.box_id }})的标签吗？</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button id="confirmPrint" type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 封箱入库 modal -->
+<div class="modal fade" id="sealBoxModal" tabindex="-1" role="dialog" aria-labelledby="sealBoxTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="sealBoxTitle">封箱入库</h4>
+      </div>
+      <div class="modal-body">
+        <p>确定要封存物流箱（#{{ box.box_id }}），并将其中商品入库吗？</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button id="confirmSealBox" type="button" class="btn btn-primary">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/input-update.js"></script>
+{% endblock %}

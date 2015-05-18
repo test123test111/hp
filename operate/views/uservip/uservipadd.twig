@@ -1,0 +1,66 @@
+{% set menu_name = "uservip" %}
+{% set sidebar_name = "VIP用户信息" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+    <div class="breadcrumbs breadcrumbs-fixed" id="breadcrumbs">
+        <script type="text/javascript">
+            try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+        </script>
+        <!-- 面包屑 开始 -->
+        <ul class="breadcrumb">
+            <li>
+                <i class="icon-home home-icon"></i>
+                <a href="/uservip/list">VIP用户管理</a>
+            </li>
+            <li class="active">VIP用户添加</li>
+        </ul><!-- 面包屑 结束 -->
+    </div><!-- 主体topbar 开始 -->
+    <div class="page-content">
+        <div class="page-header">
+            <h1>
+                添加用户到VIP表
+            </h1>
+        </div><!-- /.page-header -->
+
+        <div class="row">
+            <div class="col-xs-12">
+                <!-- PAGE CONTENT BEGINS -->
+                <p>基本信息</p>
+                <div class="form-actions">
+                    <p>用户ID：{{ userinfo.id }}</p>
+                    <p>用户名：{{ userinfo.name }}</p>
+                    <P>手机号：{% if orderPhone %}{{  orderPhone[0].cellphone }}{% else %}{{ userinfo.phone }}{% endif %}</p>
+                    <p>地址：{% if orderAddr %}{{ orderAddr[0].province }}{{ orderAddr[0].city }}{{ orderAddr[0].addr }}{% endif %}</p>
+                </div>
+                <p>VIP用户信息编辑</p>
+                <div class="form-actions">
+                {% set form = activeform.begin({'id':'create-form','layout':'horizontal','fieldConfig':{'horizontalCssClasses':{'wrapper':'col-lg-4'} } }) %}
+                    <input type="hidden" name="UserVip[user_id]" value="{{ userinfo.id }}"></input>
+                    <input type="hidden" name="UserVip[user_create_time]" value="{{ userinfo.create_time }}"></input>
+                    <input type="hidden" name="UserVip[name]" value="{{ userinfo.name }}"></input>
+                    <input type="hidden" name="UserVip[phone]" value="{% if orderPhone %}{{ orderPhone[0].cellphone }}{% else %}{{ userinfo.phone }}{% endif %}"></input>
+                    {{ form.field(model,'qq',{inputOptions:{'class':'form-control'}}).label(null,{'class':'col-sm-3 control-label no-padding-right'})|raw}}
+                    {{ form.field(model,'weixin',{inputOptions:{'class':'form-control'}}).label(null,{'class':'col-sm-3 control-label no-padding-right'})|raw}}
+                    {{ form.field(model,'phone_back',{inputOptions:{'class':'form-control'}}).label(null,{'class':'col-sm-3 control-label no-padding-right'})|raw}}
+                    {{ form.field(model,'in_weixin',{inputOptions:{'class':'form-control'}}).checkboxList(userinfo.getInWeixin()).label(null,{'class':'col-sm-3 control-label no-padding-right'})|raw}}
+                    {{ form.field(model,'remark',{inputOptions:{'class':'form-control'}}).textarea()|raw}}
+                </div>
+                <div class="clearfix form-actions">
+                    <div class="col-md-offset-3 col-md-9">
+                        <button class="btn btn-sm btn-info" type="submit">
+                            <i class="icon-ok bigger-110"></i>
+                            添加
+                        </button>
+
+                        &nbsp; &nbsp; &nbsp;
+                        <button class="btn btn-sm" type="reset">
+                            <i class="icon-undo bigger-110"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+                {{ void(form.end()) }}
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.page-content -->
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <style>
+    * { margin: 0; padding 0; border 0; }
+    .pr_tck {height:360px; font-weight: bold; font-size: 14px; position: relative; text-align: left; border: 0; page-break-after:always; } 
+    .sdr_date, .sdr_type, .sdr_desc, .sdr_pcode, .sdr_store, .sdr_order, .sdr_name, .sdr_from, .sdr_co, .sdr_addr, .sdr_addr2, .sdr_tel, .sdr_sign, .rcvr_pcode, .rcvr_user, .rcvr_name, .rcvr_to, .rcvr_co, .rcvr_addr, .rcvr_stock, .rcvr_tel { position: absolute; }
+    .sdr_date{ left: 230px; top: 64px; }
+    .sdr_name { left: 116px; top: 98px; }
+    .sdr_order { left: 80px; top: 166px; width:300px; }
+    .sdr_from { left: 250px; top: 98px; }
+    .sdr_store { left: 110px; top: 118px; }
+    .sdr_addr { left: 110px; top: 138px; }
+    .sdr_tel { left: 148px; top: 206px; }
+    .sdr_type { left: 138px; top: 236px; }
+    .sdr_desc { left: 106px; top: 256px; }
+    .rcvr_name { left: 450px; top: 98px; }
+    .rcvr_addr { left: 440px; top: 138px; width:260px; }
+    .rcvr_tel { left: 480px; top: 206px; }
+    .rcvr_to { left: 620px; top: 50px; }
+    </style>
+</head>
+<body>
+    {% for user in users %}
+    <div class="pr_tck">
+        <div class="sdr_date">{{ "now"|date("Y-m-d H:i:s") }}</div>
+        <div class="sdr_store">爱美主义</div>
+        <div class="sdr_order">订单号: {% for order in user %}{{ order.id }} {% endfor %}</div> 
+        <div class="sdr_name">淘世界</div>
+        <div class="sdr_from">北京</div>
+        <div class="sdr_tel">400 8766 388</div>
+        <div class="sdr_addr">北京市朝阳区</div>    
+        <div class="sdr_type">√</div>
+        {# <div class="sdr_desc">{% for order in user %}{{ order.stockObj.name }}({{ order.skuObj.sku_value|replace({'\t':'/'}) }}) {% endfor %}</div> #}
+        <div class="rcvr_name">{{ user.0.name }}</div>
+        <div class="rcvr_tel">{{ user.0.cellphone }}</div> 
+        <div class="rcvr_addr">{{ user.0.province }} {{ user.0.city }} {{ user.0.addr }}</div>
+        <div class="rcvr_to">{{ user.0.province }} {{ user.0.city }}</div>
+    </div>
+    {% endfor %}
+</body>
+</html>
+<script language="javascript">
+window.print();
+</script>

@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>   
+<!--#include file="common/meta.html" -->
+<title>淘世界OA 选择会议室</title>
+<!--#include file="common/stylelink.html" -->
+<link rel="stylesheet" href="css/oa.css"/>
+</head>
+<body>
+<div class="wrap">
+	<div>
+		<h4>别人约的</h4>
+		<ul class="list" id="records">
+			
+		</ul>
+	</div>
+	<div>
+		<h4>我要约</h4>
+		<ul class="list">
+			<li class="clearfix has-select second-select">
+				<label>
+					<span>哪天要用</span>
+					<select class="gray-font" id="day_range">
+					</select>	
+				</label>
+			</li>
+			<li class="clearfix has-select second-select">
+				<label>
+					<span>开始时间</span>
+					<select class="gray-font" id="start_time_range">
+				
+					</select>	
+				</label>
+			</li>
+                        <li class="clearfix has-select second-select">
+				<label>
+					<span>使用时长（分）</span>
+					<select class="gray-font" id="use_second">
+                                            <option>30</option>
+				<option>60</option>	
+                                <option>90</option>   
+                                <option>120</option>
+					</select>	
+				</label>
+			</li>
+	
+		</ul>
+	<footer>
+		<button id="bookingBtn" class="reserve-btn red-bg ">约约约(๑•̀ㅂ•́)و✧</button>
+		<!--<button class="reserve-btn gray-bg">没的约了 ╮(╯_╰)╭ </button>-->
+	</footer>
+
+</div>
+
+
+<!--#include file="common/jslink.html" -->
+<!--#include file="common/modules.html" -->
+<script type="text/javascript" src="js/boardroom-choice.js"></script>
+</body>
+</html>

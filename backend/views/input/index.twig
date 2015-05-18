@@ -1,0 +1,53 @@
+{% set menu_name = "input" %}
+{% set sidebar_name = "入库" %}
+{% extends "@app/views/layouts/header.twig" %}
+  {% block content %}
+      <!-- Page heading -->
+      <div class="page-head">
+          <form class="head-input" id="inputIndexForm" action="">
+            <input id="number" type="text" placeholder="请扫描或输入物流箱编号" value="">
+            <button type="submit" class="btn btn-primary">确定</button>
+          </form>
+      </div>
+      <!-- Page heading ends -->
+
+      <!-- Matter -->
+      <div class="matter">
+        <div class="container">
+          <ul class="box-list">
+            {% for box in boxes %}
+            <li><a href="/input/update/{{ box.id }}"><em>#{{ box.id }}</em>{{ box.boxOrders|count }}件</a></li>
+            {% endfor %}
+            <li id="addBox" class="add" data-toggle="modal" data-target="#creatBoxModal"><em>+</em>创建空箱子</li>
+          </ul>
+        </div>
+      </div>
+{% endblock %}
+
+{% block modal %}
+  <!-- Modal -->
+<div class="modal fade" id="creatBoxModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">创建物流箱</h4>
+      </div>
+      <div class="modal-body">
+        <p>确认要创建物流箱并打印条码吗？</p>
+        <p>注意：请及时将条码贴在物流箱上，以免丢失</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <form id="creatBoxForm" action="/input/create" method="post">
+          <input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}">
+          <input type="hidden" name="Box[status]" value="0" />
+          <button id="confirmCreat" type="submit" class="btn btn-primary">确定</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/scan-common.js"></script>
+ 
+{% endblock %}

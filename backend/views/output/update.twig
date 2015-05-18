@@ -1,0 +1,156 @@
+{% set menu_name = "output" %}
+{% set sidebar_name = "出库" %}
+{% extends "@app/views/layouts/header.twig" %}
+  {% block content %}
+      <!-- Page heading -->
+      <div id="pageHead" class="page-head">
+          <form id="outputUpdateForm" class="head-input" action="">
+            <input id="number" type="text" placeholder="请扫描或手动输入面单号码/订单号码">
+            <button type="submit" class="btn btn-primary" >确定</button>
+          </form>
+      </div>
+      <!-- Page heading ends -->
+
+      <!-- Matter -->
+      <div id="matter" class="matter">
+        <div class="container output-order" >
+          <div id="infoTitle">
+            <h2>出库订单</h2>
+            <div class="order-header">
+              <strong>剩余在箱订单：{{ count }}个</strong>物流箱：#<em id="boxId">{{ box.id }}</em>
+              <button id="switchBox" class="btn btn-primary">切换</button>
+            </div>
+          </div>
+          <div id="orderMain" class="order-main">  
+            <div id="expressContent">
+            <!-- <div class="express-info hide">
+              <span>快递单号：<em id="expressNo">900 151 234 523</em></span>
+              <div>快递公司:
+                <div class="btn-group">
+                  <select data-type="1" class="form-control express-type">
+                    <option> 顺风快递 </option>
+                    <option> 圆通快递</option>
+                  </select>
+                </div>
+              </div>
+            </div> -->
+            </div>
+            <div class="order-info">
+              <ul class="order-list" id="orderList">
+               <!--  <li>
+                  <img src="/img/stock.jpg" alt="">
+                  <time>2015-10-15   10:23:32</time>入库人：南篤良              
+                  <strong>订单号：132998</strong>
+                  <p>巴宝莉(BURBERRY) 女士手帕 『作个讲究的女纸！』</p>
+                  <span>颜色:米色+粉色格子</span>
+                  <i class="fa fa-trash-o"></i>
+                </li>
+                <li>
+                  <img src="/img/stock.jpg" alt="">
+                  <time>2015-10-15   10:23:32</time>入库人：南篤良              
+                  <strong>订单号：132998</strong>
+                  <p>巴宝莉(BURBERRY) 女士手帕 『作个讲究的女纸！』</p>
+                  <span>颜色:米色+粉色格子</span>
+                  <i class="fa fa-trash-o"></i>
+                </li>
+                <li>
+                  <img src="/img/stock.jpg" alt="">
+                  <time>2015-10-15   10:23:32</time>入库人：南篤良              
+                  <strong>订单号：132998</strong>
+                  <p>巴宝莉(BURBERRY) 女士手帕 『作个讲究的女纸！』</p>
+                  <span>颜色:米色+粉色格子</span>
+                  <i class="fa fa-trash-o"></i>
+                </li>   -->
+              </ul>
+              <div id="expressNum" class="express-num">请先扫描或输入快递单号</div>
+              <div id="orderNum"  class="order-num hide">请先扫描或输入订单号</div>
+              <div class="merge ">
+                 <!--  <span>同箱可合并订单</span>
+                  <span>订单号：1239987</span>
+                  <span>巴宝莉(BURBERRY) 女士手帕 『作个讲究的女纸！』</span> -->
+              </div>
+            </div>
+          </div>
+          <button id="output" class="btn btn-primary btn-height" data-toggle="modal" data-target="#outputModal">确认出库</button>
+        </div>
+          
+      </div>
+{% endblock %}
+
+{% block modal %}
+  <!-- Modal -->
+  <!-- 确认出库 modal -->
+<div class="modal fade" id="outputModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">确认出库</h4>
+      </div>
+      <div class="modal-body">
+        <p class="output">确认要出库吗？</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button id="confirmOutput" type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 二次确认出库 modal -->
+<div class="modal fade" id="scanExpressModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">确认出库</h4>
+      </div>
+      <div class="modal-body">
+        <p class="output">当前快递中存在未确认发货的订单,确定出库吗？</p>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelOutput" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button id="confirmSecondOutput" type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 确认移单 modal -->
+<div class="modal fade" id="moveOrderModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">确认移单</h4>
+      </div>
+      <div class="modal-body">
+        <p class="output">当前订单并不在该物流箱中，是否要将其移动到此物流箱？</p>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelMove" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button id="confirmmove" type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--将订单移出出库列表 -->
+    <div class="modal fade" id="rmOrderModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="delOrderTitle">移出订单</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确认要移出订单吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button id="confirmRm" type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="/js/output-update.js"></script>
+{% endblock %}

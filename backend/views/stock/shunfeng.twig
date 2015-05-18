@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <style>
+    * { margin: 0; padding 0; border 0; }
+    .pr_tck { height:400px; font-weight: bold; font-size: 16px; position: relative; text-align: left; border: 0; page-break-after:always; }
+    .sdr_date, .sdr_store, .sdr_order, .sdr_name, .sdr_from, .sdr_co, .sdr_addr, .sdr_addr2, .sdr_tel, .sdr_sign, .rcvr_user, .rcvr_name, .rcvr_to, .rcvr_co, .rcvr_addr, .rcvr_stock, .rcvr_tel, .sdr_src, .sdr_pay, .sdr_account, .sdr_reciever, .sdr_sign { position: absolute; }
+    .sdr_date { left: 100px; top: 2px; }
+    .sdr_order { left: 60px; top: 74px; }
+    .sdr_name { left: 248px; top: 100px; }
+    .sdr_store { left: 60px; top: 100px; }
+    .sdr_tel { left: 135px; top: 175px; }
+    .sdr_addr { left: 60px; top: 125px; }
+    .sdr_src { left: 490px; top: 34px; }
+    .sdr_pay { left: 494px; top: 70px; }
+    .sdr_account { left: 490px; top: 106px; }
+    .sdr_reciever { left: 540px; top: 264px; }
+    .sdr_sign { left: 582px; top: 240px; }
+    .rcvr_user { left: 173px; top: 246px; }
+    .rcvr_name { left: 248px; top: 240px; }
+    .rcvr_addr { left: 55px; top: 268px; width:260px; }
+    .rcvr_stock { left: 69px; top: 432px; }
+    .rcvr_tel { left: 125px; top: 315px; }
+    body { margin: 0; padding: 0 }
+    </style>
+
+
+</head>
+<body>
+    {% for user in users %}
+    <div class="pr_tck">
+        <div class="sdr_date">{{ "now"|date("Y-m-d H:i:s") }}</div>
+        <div class="sdr_store">爱美主义</div>
+        <div class="sdr_order">订单号: {% for order in user %}{{ order.id }} {% endfor %}</div> 
+        <div class="sdr_name">淘世界</div>
+        <div class="sdr_tel">4008766388</div>
+        <div class="sdr_addr">北京市朝阳区</div>    
+        <div class="sdr_src">010AE</div>    
+        <div class="sdr_pay">X</div>    
+        <div class="sdr_account">0 1 0 2 4 6 5 2 7 0</div>    
+        <div class="sdr_reciever"></div>    
+        <div class="sdr_sign">淘世界</div>    
+        <div class="rcvr_user"></div>
+        <div class="rcvr_name">{{ user.0.name }}</div>
+        <div class="rcvr_tel">{{ user.0.cellphone }}</div> 
+        <div class="rcvr_addr">{{ user.0.province }} {{ user.0.city }} {{ user.0.addr }}</div>
+        {# <div class="rcvr_stock">{% for order in user %}{{ order.stockObj.name }}({{ order.skuObj.sku_value|replace({'\t':'/'}) }}) {% endfor %}</div> #}
+    </div>
+    {% endfor %}
+</body>
+</html>
+
+<script language="javascript">
+window.print();
+</script>

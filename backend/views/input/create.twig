@@ -1,0 +1,20 @@
+<form role="form" method="post" action="/input/addorder" class="form-horizontal" id="create-form">   
+<input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}"> 
+<label for="box-status" class="control-label col-lg-2">box_id</label>
+<div class="col-lg-8">
+<input type="text" name="box_id" class="form-control" id="box-status">
+<div class="help-block help-block-error "></div>
+</div>
+<label for="box-status" class="control-label col-lg-2">order_id</label>
+<div class="col-lg-8">
+<input type="text" name="order_id" class="form-control" id="box-status">
+<div class="help-block help-block-error "></div>
+
+</div>
+                                    <hr>
+                                <div class="form-group">
+                                  <div class="col-lg-offset-2 col-lg-6">
+                                    <button class="btn btn-primary" type="submit">Save</button>
+                                  </div>
+                                </div>
+                               </form>

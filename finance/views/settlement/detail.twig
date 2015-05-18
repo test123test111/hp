@@ -1,0 +1,451 @@
+{% set menu_name = "balance" %}
+{% set sidebar_name = "买手结算" %}
+{% extends '@view/layouts/main.twig' %}
+{% block content %}
+<link rel="stylesheet" href="/ace/css/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" href="/ace/css/blue.css">
+
+<div class="breadcrumbs breadcrumbs-fixed" id="breadcrumbs">
+	<script type="text/javascript">
+		try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+	</script>
+	<!-- 面包屑 开始 -->
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home home-icon"></i>
+			<a href="/settlement/list">财务管理</a>
+		</li>
+		<li>
+			<a href="/settlement/list">买手结算</a>
+		</li>
+
+		<li class="active">订单详情</li>
+	</ul><!-- 面包屑 结束 -->
+</div><!-- 主体topbar 开始 -->
+<!-- page-content 开始 -->
+<div class="page-content">
+	<!-- row 开始 -->
+	<div class="row">
+		<!-- col 开始 -->
+		<div class="col-xs-12">
+			<!-- 数据汇总 开始 -->
+			{# <ul class="data-collection col-sm-12 infobox-container">
+				<li class="space-10"></li>
+				<li class="order-tody infobox infobox-black">
+					<div class="infobox-data">
+						<strong class="infobox-data-number">214</strong>
+						<span class="infobox-content">昨日买手订单</span>
+					</div>
+				</li>
+				<li class="order-yesterday infobox infobox-black">
+					<div class="infobox-data">
+						<strong class="infobox-data-number">214</strong>
+						<span class="infobox-content">昨日结算额</span>
+					</div>
+				</li>
+				<li class="order-current-month infobox infobox-black">
+					<div class="infobox-data">
+						<strong class="infobox-data-number">2124</strong>
+						<span class="infobox-content">未结算订单</span>
+						<div class="infobox-content">
+							<em>忽略: 321</em>
+							<i class="icon-arrow-up"></i>
+						</div>
+					</div>
+				</li>
+				<li class="turnover-current-month infobox infobox-black">
+					<div class="infobox-data">
+						<strong class="infobox-data-number">12,424,457</strong>
+						<span class="infobox-content">总结算额</span>
+						<div class="infobox-content">
+							<em>总结算订单:12,122,123</em>
+							<i class="icon-arrow-down"></i>
+						</div>
+					</div>
+				</li>
+			</ul> #}
+
+			<div class="space-10"></div>
+			<div class="balance-order-info col-sm-12">
+				<div class="buyer-info">
+					<h4>买手信息</h4>
+					<div class="space-4"></div>
+					<ul class="info-content ">
+						{% if buyerInfo is not empty %}
+						<li class="other-info custom-name">
+							<div class="space-6"></div>
+							<span>{{ buyerInfo.real_name }}</span>
+							<span>{{ buyerInfo.name }} ({{ buyerInfo.id }})</span>
+							
+						</li><li class="other-info custom-address">
+							<span>注册时间</span>
+							<span>{{ buyerInfo.create_time|date('Y-m-d')}}</span>
+							<span>{{ buyerInfo.create_time|date('H:i:s')}}</span>
+						</li><li class="other-info change-address">
+							<div class="space-6"></div>
+							<span>护照号码</span>
+							<span>{{ buyerInfo.id_num}}</span>
+						</li>
+						</li><li class="other-info change-address">
+							<div class="space-10"></div>
+							<span>{{ buyerInfo.country}} {{ buyerInfo.city }}</span>
+						</li>
+						</li><li class="other-info change-address">
+							<div class="space-6"></div>
+							<span>电子邮箱</span>
+							<span>{{ buyerInfo.email }}</span>
+						</li>
+						</li><li class="other-info change-address">
+							<div class="space-6"></div>
+							<span>微信账号</span>
+							<span>{{ buyerInfo.weixin }}</span>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+				<div class="space-10"></div>
+				<div class="settlement-info search-area">
+					<h4>结算信息</h4>
+					<div class="space-4"></div>
+					<div class="results-tab tabbable">
+						{% if buyerInfo.buyerAccounts is defined %}
+						<ul class="nav nav-tabs" id="tabLevelOne">
+							{% for account in buyerInfo.buyerAccounts %}
+							<li class="{% if loop.index == 1 %}active{% endif %} pay-state"><a href="#{{ account.type }}" data-toggle="tab">{{ account.getSettlementMethod() }}</a></li>
+							{% endfor %}
+						</ul>
+						<div class="tab-content">
+							{% for account in buyerInfo.buyerAccounts %}
+							<div id="{{ account.type }}" class="tab-pane {% if loop.index == 1 %}in active{% endif %}">
+								<!-- table responsive -->
+								<ul class="table-responsive ">
+									{% if account.type == constant('\\common\\models\\BuyerAccount::TYPE_IS_ALIPAY') %}
+									<li><span>帐号 : </span>{{ account.no }}</li>
+									<li><span>收款人姓名 : </span>{{ account.name }}</li>
+									{% elseif account.type == constant('\\common\\models\\BuyerAccount::TYPE_IS_LOCAL') %}
+									<li><span>收款账号 : </span>{{ account.no }}</li>
+									<li><span>收款人姓名 : </span>{{ account.name }}</li>
+									<li><span>银行 : </span>{{ account.bank }}</li>
+									{% else %}
+									<li><span>收款账号 : </span>{{ account.no }}</li>
+									<li><span>开户行名称 : </span>{{ account.bank }}</li>
+									<li><span>收款人英文姓名 : </span>{{ account.name }}</li>
+									<li><span>收款人联系地址 : </span>{{ account.address }}</li>
+									<li><span>开户行所在国家 : </span>{{ account.country }}</li>
+									<li><span>开户行所在城市 : </span>{{ account.city }}</li>
+									<li><span>Swift/BIC代码 : </span>{{ account.swift }}</li>
+									{% endif %}
+								</ul>
+								<!-- table responsive -->
+							</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+					</div>
+				</div>
+				<div class="space-10"></div>
+				<div class="order-detail">
+					<h4>订单详情</h4>
+					<div class="space-4"></div>
+					<div class="search-area col-sm-12">
+						<form mathod = "get">
+							<input type="hidden" name="buyer_id" value="{{ params.buyer_id }}" />
+						<!-- 搜索条件 开始 -->
+						<div class="search-box">
+							<div class="space-10"></div>
+							<!-- 分类搜索 开始 -->
+							<div class="classified-search">
+								<div class="input-group">
+									<input type="text" name="order_id" class="search-bar form-control search-query input-sm" value="{% if params.order_id is defined %}{{ params.order_id }}{% endif %}" />
+									<div class="classify-info btn-group">
+										<button type="button" id="classifiedBtn" data-toggle="dropdown" class="classified-btn btn btn-xs btn-primary dropdown-toggle">
+											<em>订单ID</em>
+											<span class="icon-caret-down icon-on-right"></span>
+										</button>
+
+										<ul id="searchMenu" class="dropdown-menu dropdown-default">
+											<li><a href="javascript:;">订单ID</a></li>
+										</ul>
+									</div>
+									<span class="search-btn input-group-btn">
+										<button type="submit" class="btn btn-primary btn-xs">
+											搜索
+											<i class="icon-search icon-on-right bigger-110"></i>
+										</button>
+									</span>
+									
+								</div>
+								<span class="info">可搜索订单ID</span>
+							</div>
+							<!-- 分类搜索 结束 -->
+							<!-- 时间搜索 开始 -->
+							<div class="time-search">
+								<div class="space-10"></div>
+								<div class="order-time inline-block">
+									<div class="from">
+										<strong>结算时间</strong>
+										<div class="input-append date form_datetime inline-block">
+									    	<input id="beginTime" size="16" type="text" name="begin_time" value="{% if params.begin_time is defined %}{{ params.begin_time }}{% endif %}" readonly><span class="add-on"><i class="icon-th"></i></span>
+										</div>
+									</div>
+									<div class="to">
+										<strong>to</strong>
+										<div class="input-append date form_datetime inline-block">
+									    	<input size="16" id="endTime" type="text" name="end_time" value="{% if params.end_time is defined %}{{ params.end_time }}{% endif %}" readonly><span class="add-on"><i class="icon-th"></i></span>
+										</div>
+									</div>
+									<button type="submit" class="btn btn-xs btn-primary">筛选</button>
+								</div>
+							</div>
+							<!-- 时间搜索 结束 -->
+						</div>	
+						<!-- 搜索条件 结束 -->
+						<!-- 搜索结果 开始 -->
+						<div class="search-results">
+							<div class="space-10"></div>
+							<div class="results-tab tabbable">
+								<ul class="nav nav-tabs" id="tabLevelOne">
+									<li class="{% if params.status is not defined or (params.status is defined and (params.status == 'all' or params.status == '')) %}active{% endif %} pay-state"><a href="{{ model.getUrl('/settlement/detail?','status','all') }}">全部</a></li>
+									<li data-status="0" class="{% if (params.status is defined and params.status == '0')%}active{% endif %} pay-state"><a href="{{ model.getUrl('/settlement/detail?','status','0') }}">待结算</a></li>
+									<li data-status="1" class="{% if (params.status is defined and params.status == 1)%}active{% endif %} pay-state"><a href="{{ model.getUrl('/settlement/detail?','status','1') }}">已结算</a></li>
+									<li data-status="2" class="{% if (params.status is defined and params.status == 2)%}active{% endif %} pay-state"><a href="{{ model.getUrl('/settlement/detail?','status','2') }}">忽略</a></li>
+								</ul>
+								<input id="status" type="hidden" name="status" value="" >
+								<div class="tab-content">
+									<div id="home" class="tab-pane in active">
+										<!-- table responsive -->
+										<div class="table-responsive">
+											<table class="table table-hover">
+												<thead>
+													<tr>
+														<th class="center">
+															<div class="check-all" ><input id="checkAll" type="checkbox" ></div>
+														</th>
+														<th class="center">订单ID</th>
+														<th class="center">订单状态</th>
+														<th class="center">商品名</th>
+														<th class="center">订单金额</th>
+														<th class="center">调整金额</th>
+														<th class="center">应结算金额</th>
+														<th class="center">操作</th>
+													</tr>
+												</thead>
+												<tbody id="orderList">
+													{% for result in results %}
+													<tr class="placeholder">
+										              <td colspan="6"></td>
+										            </tr>
+													
+													<tr class="info-detail" data-id="{{ result.orders.id }}">
+														<th class="center">
+															<div class="check-box"><input class="checkBox" type="checkbox" ></div>
+														</th>
+														<td>{{ result.orders.id }}</td>
+														<td>{{ result.getOrderSettlementStatus() }}</td>
+														<td>{{ result.orders.stocks.name }}</td>
+														<td>{{ result.orders.sum_price|sprintf }}</td>
+														<td>{{ result.adjust|sprintf }}</td>
+														<td>{{ (result.orders.sum_price + result.adjust)|sprintf }}</td>
+														<td class="operate">
+															<div class="center">
+																{% if result.status == constant('\\common\\models\\DeliveryAbroad::STATUS_IGNORE') %}
+																<div data-id="{{ result.orders.id }}"  class="ignore-restore edit center">
+												                    <p class="center"><a href="javascript:;">恢复</a></p>
+												                </div>
+												            	{% endif %}
+												            	{% if result.status == constant('\\common\\models\\DeliveryAbroad::STATUS_WAIT_SETTLEMENT') %}
+																<div data-id="{{ result.orders.id }}"  class="ignore-restore edit center">
+												                    <p class="center"><a href="javascript:;">忽略</a></p>
+												                </div>
+												            	{% endif %}
+												                <div data-id="{{ result.orders.id }}" class="edit change-amount center">
+												                    <p class="center"><a href="#"  data-toggle="modal" data-target="#adjustModal">调整</a></p>
+												                </div>
+												                {% if result.status == constant('\\common\\models\\DeliveryAbroad::STATUS_WAIT_SETTLEMENT') %}
+												                <div class="edit center">
+												                    <p class="center"><a href="/settlement/singlepay?order_id={{ result.orders.id }}">结算</a></p>
+												                </div>
+												            	{% endif %}
+												                <div class="note center">
+												                    <p class="center"><a data-id="{{ result.orders.id }}" href="javascript:;" class="note-single" >备注</a></p>
+												                </div>
+
+												                
+											                </div>
+														</td>
+													</tr>
+													{% endfor %}
+												</tbody>
+											</table>
+										</div>
+										<!-- table responsive -->
+										<div class="batch-operate">
+											<div class="dropdown">
+									          <button id="batchOperate"  class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+									            <em>选择批量操作</em>
+									            <span class="caret"></span>
+									          </button>
+									          <ul id="bachtMenuContent" class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+									            <li data-batch-id="0"  role="presentation"><a role="menuitem" tabindex="-1" href="javascript:;">忽略</a></li>
+									           	<li data-batch-id="1"  role="presentation"><a role="menuitem" tabindex="-1" href="javascript:;">调整</a></li>
+									           	<li data-batch-id="2"  role="presentation"><a role="menuitem" tabindex="-1" href="javascript:;">结算</a></li>
+									          </ul>
+									        </div>
+									        <button type="button" id="apply" class="apply btn btn-primary btn-xs">应用</button>
+										</div>
+										<!-- Pagination 开始 -->
+										<div class="pages">
+											<p class="search-sum">共{{ count }}个结果</p>
+											{{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
+											
+										</div>
+										<!-- pagination 结束 -->
+									</div>
+								</div>
+							</div>
+						
+						</div>
+						<!-- 搜索结果 结束 -->
+						</form>
+					</div>
+				</div>
+			</div>
+			<!-- 数据汇总 结束 -->
+		</div><!-- col 结束 -->
+	</div><!-- row 结束 -->
+</div><!-- page-content 结束 -->
+
+<!-- 忽略和恢复 dialog -->
+<div class="modal fade" id="ignoreRestoreModal" tabindex="-1" role="dialog" aria-labelledby="ignoreRestoreModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      	<div class="modal-header">
+        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        	<h4 class="modal-title" id="ignoreRestoreModalLabel">忽略</h4>
+      	</div>
+	    <div class="modal-body">
+        	<p id="ignoreRestoreBody">确定要<em>忽略</em>该笔订单吗？</p>
+      	</div>
+      
+	    <div class="modal-footer">
+	        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+	        <button id="confirmSingleBtn" data-order-id="" type="button" class="btn btn-primary btn-sm" data-dismiss="modal">确定</button>
+	    </div>
+    </div>
+  </div>
+</div>
+
+<!-- 调整 dialog -->
+<div class="modal fade" id="adjustModal" tabindex="-1" role="dialog" aria-labelledby="adjustModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    	
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="adjustModalLabel">调整结算金额</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="adjustNum clearfix">
+    		<span class="col-xs-2">调整金额: </span>
+    		<input id="changNum" value="" class="col-xs-4" type="text">
+    	</div>			          
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+        <button id="confirmChangeAmount" data-order-id="" type="button" class="btn btn-primary btn-sm" data-dismiss="modal">确定</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<!-- 统一忽略 dialog -->
+<div class="modal fade" id="ignoreBatchModal" tabindex="-1" role="dialog" aria-labelledby="ignoreBatchModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+		<form action="/settlement/batchignore" method="post">
+			<input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}">
+	      	<div class="modal-header">
+	        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title" id="ignoreBatchModalLabel">忽略</h4>
+	      	</div>
+	      	<div class="modal-body">
+	        	<p>确定要忽略这批订单吗？</p>
+	      	</div>
+	      	<input id="batchIgnoreInput" type="hidden" name="order_ids" value="">
+	      	<div class="modal-footer">
+		       	<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+		        <button type="submit" class="btn btn-primary btn-sm">确定</button>
+	      	</div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 结算 dialog -->
+<div class="modal fade" id="settlementModal" tabindex="-1" role="dialog" aria-labelledby="settlementModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    	<form action="/settlement/batchpay" method="post">
+    		<input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}">
+    		<input id="batchSettleMent" type="hidden" name="order_ids" value="">
+    		<input id="serchBeginTime" type="hidden" name="begin_time" value="">
+    		<input id="serchEndTime" type="hidden" name="end_time" value="">
+
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="settlementModalLabel">确认结算</h4>
+      		</div>
+      		<div class="modal-body">
+      			<div class="adjustNum clearfix">
+    				<p>确定要结算这批订单吗？</p>
+    			</div>			          
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+        		<button type="submit" class="btn btn-primary btn-sm" >确定</button>
+      		</div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 统一调整金额 dialog -->
+<div class="modal fade" id="adjustBatchModal" tabindex="-1" role="dialog" aria-labelledby="adjustBatchModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    	<form action="/settlement/batchadjust" method="post">
+    		<input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}">
+	      	<div class="modal-header">
+	       		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title" id="adjustBatchModalLabel">调整结算金额</h4>
+	      	</div>
+	      	<div class="modal-body">
+	      		<div class="adjustNum clearfix">
+	    			<span class="col-xs-2">统一调整金额: </span>
+	    			<input id="changBatchNum" name="price" value="" class="col-xs-4" type="text">
+	    		</div>	
+	    		<input id="batchChangeInput" type="hidden" name="order_ids" value="">		          
+	      	</div>
+	      	<div class="modal-footer">
+	        	<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+	        	<button type="submit" class="btn btn-primary btn-sm">确定</button>
+	     	 </div>
+      	</form>
+    </div>
+  </div>
+</div>
+<!-- 备注dialog -->
+<div class="modal fade"  id="noteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<script src="/ace/js/icheck.min.js"></script> 
+<script type="text/javascript" src="/ace/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="/ace/js/balance-order-detail.js"></script>
+<script type="text/javascript" src="/ace/js/balance-note-common.js"></script>
+<script type="text/javascript">
+	$(".form_datetime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii"
+    });	
+    
+</script>
+{% endblock %}

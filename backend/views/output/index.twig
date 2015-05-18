@@ -1,0 +1,39 @@
+{% set menu_name = "output" %}
+{% set sidebar_name = "出库" %}
+{% extends "@app/views/layouts/header.twig" %}
+  {% block content %}
+      <!-- Page heading -->
+      <div class="page-head">
+          <form id="outputIndexForm" class="head-input" action="">
+            <input id="number" type="text" placeholder="请扫描或输入物流箱编号">
+            <button type="submit" class="btn btn-primary">确定</button>
+          </form>
+      </div>
+      <!-- Page heading ends -->
+
+      <!-- Matter -->
+
+      <div class="matter">
+        <div class="container">
+          <div role="tabpanel clearfix">
+            <!-- 标签 -->
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" {% if status == 'all' %}class="active"{% endif %}><a href="/output/index?st=all">全部</a></li>
+              <li role="presentation" {% if status == constant('\\backend\\models\\Box::BOX_STATUS_IN') %}class="active"{% endif %}><a href="/output/index?st=1" >未打印</a></li>
+              <li role="presentation" {% if status is null or status == constant('\\backend\\models\\Box::BOX_STATUS_PRINTED') %}class="active"{% endif %}><a href="/output/index?st=2">已打印</a></li>
+            </ul>
+            <!-- Tab content -->
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="home">
+                <ul class="box-list">
+                  {% for box in boxes %}
+                  <li><a href="/output/update/{{ box.id }}"><em>#{{ box.id }}</em>{{ box.getNotSendOrderCount() }}件</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script src="/js/scan-common.js"></script>
+{% endblock %}

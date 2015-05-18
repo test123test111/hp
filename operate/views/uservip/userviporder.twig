@@ -1,0 +1,239 @@
+{% set menu_name = "uservip" %}
+{% set sidebar_name = "VIP用户信息" %}
+{% extends '@view/layouts/main.twig' %}
+{% block content %}
+
+<div class="breadcrumbs breadcrumbs-fixed" id="breadcrumbs">
+    <script type="text/javascript">
+        try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+    </script>
+    <!-- 面包屑 开始 -->
+    <ul class="breadcrumb">
+        <li>
+            <i class="icon-home home-icon"></i>
+            <a href="/uservip/list">VIP用户管理</a>
+        </li>
+        <li class="active">VIP用户订单</li>
+    </ul><!-- 面包屑 结束 -->
+</div><!-- 主体topbar 开始 -->
+{% block page_css %}
+    <style type="text/css">
+
+        .block1{
+            height: 80px;
+            margin-top:10px;
+            margin-bottom: 10px
+        }
+        .block2{
+            border: 1px solid #d8d8d8;
+            height: 100px;
+            width: 200px;
+            display: inline;
+            margin-bottom: 10px
+        }
+        .block3{
+            border: 1px solid #d8d8d8;
+            height: 100px;
+            width: 410px;
+            display: inline;
+        }
+        .block2 p {
+            text-align: right;
+        }
+        .block1_in{
+            float: right;
+            margin-top:10px;
+        }
+    </style>
+{% endblock %}
+<!-- page-content 开始 -->
+<div class="page-content">
+    <!-- row 开始 -->
+    <div class="row">
+        <!-- col 开始 -->
+        <div class="col-xs-12">
+            <!-- page主要content 开始 -->
+            <div class="search-area col-sm-12">
+                <div class="row col-sm-12 block1">
+                    <div class="col-md-1 block2">
+                        <div class="block1_in">
+                            <p style="font-size: large">{{ orderTheMonthNum }}</p>
+                            <p>本月订单</p>
+                            <p>本月成交额：{{ orderTheMonthTotalMoney }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-1 block2" style="margin-left:10px">
+                        <div class="block1_in">
+                            <p style="font-size: large">{{ orderTotalNum }}</p>
+                            <p>总订单</p>
+                            <p>总成交额：{{ orderTotalMoney }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-1 block2" style="margin-left:10px">
+                        <div class="block1_in">
+                            <p style="font-size: large">{{ tradeCartNums }}</p>
+                            <p>购物车商品总数</p>
+                            <p><a href="/uservip/cart?user_id={{ params.user_id }}">购物车详情</a></p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row col-sm-12" style="height: 80px;margin-top:20px;margin-bottom: 10px">
+                    <div class="col-md-1 block2" >
+                        <div class="center" style="margin-top: 30px;width:90px">
+                        <p>{{ vipInfo.userinfo.name }}</p>
+                        <p>ID:{{ vipInfo.userinfo.id }}</p>
+                            </div>
+                    </div>
+                    <div class="col-md-1 block3" style="margin-left:10px">
+                            <p style="margin-top: 10px">QQ:{{ vipInfo.vipinfo[0].qq }}</p>
+                            <p>微信名:{{ vipInfo.vipinfo[0].weixin }}{% if vipInfo.vipinfo[0].in_weixin == 1 %}(是){% else %}(否){% endif %}</p>
+                            <p>手机号:{% if vipInfo.userinfo.userOrderPhone[0] is defined %}{{ vipInfo.userinfo.userOrderPhone[0].cellphone }}{% else %}{{ vipInfo.vipinfo[0].phone }}{% endif %}</p>
+                            <p>地址:
+                                {% if vipInfo.userinfo.userOrderAddr[0] is defined %}
+                                {{ vipInfo.userinfo.userOrderAddr[0].province }}{{ vipInfo.userinfo.userOrderAddr[0].city }}{{ vipInfo.userinfo.userOrderAddr[0].addr }}</p>
+                                {% endif %}
+
+                    </div>
+                </div>
+                <!-- 搜索条件 开始 -->
+                <div class="search-box" style="margin-top: 200px">
+
+                    <div class="space-10"></div>
+                    <div class="space-10"></div>
+
+                    <div class="search-results">
+                        <div class="space-10"></div>
+                        <div class="results-tab tabbable">
+                            <ul id="expressType" class="nav nav-tabs" id="myTab">
+                                <li {% if params.status is not defined or params.status=='' %}class="active"{% endif %}>
+                                    <a data-toggle="tab">全部</a>
+                                </li>
+                                <li {% if params.status is defined and params.status=='wait_prepay'%}class="active"{% endif %}>
+                                    <a key="wait_prepay" data-toggle="tab">待支付</a>
+                                </li>
+                                <li {% if params.status is defined and params.status=='to_demostic'%}class="active"{% endif %}>
+                                    <a key="to_demostic" data-toggle="tab">待发货</a>
+                                </li>
+                                <li {% if params.status is defined and params.status=='to_user'%}class="active"{% endif %}>
+                                    <a key="to_user" data-toggle="tab">已发货</a>
+                                </li>
+                                <li {% if params.status is defined and params.status=='success'%}class="active"{% endif %}>
+                                    <a key="success" data-toggle="tab">已完成</a>
+                                </li>
+                                <li {% if params.status is defined and params.status=='canceled'%}class="active"{% endif %}>
+                                    <a key="canceled" data-toggle="tab">已取消</a>
+                                </li>
+                                <li {% if params.status is defined and params.status=='full_refund'%}class="active"{% endif %}>
+                                    <a key="full_refund" data-toggle="tab">退货退款</a>
+                                </li>
+                            </ul>
+
+
+                            <div class="tab-content">
+                                <div id="home" class="tab-pane in active">
+                                    <!-- table responsive -->
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+
+                                            <tbody>
+                                            <tr>
+                                                <td class="center">订单信息</td>
+                                                <td class="center">订单状态</td>
+                                                <td class="center">订单金额</td>
+                                                <td class="center">优惠券</td>
+                                                <td class="center">下单时间</td>
+                                                <td class="center">操作</td>
+                                            </tr>
+                                            {% for data in results %}
+                                                <tr class="info">
+                                                    <td class="order-num" colspan="3">
+                                                        <span>订单编号:
+                                                            {{ data.id }}
+                                                        </span>
+                                                        <span>买手:
+                                                            <a href="#">{% if data.buyer %}{{ data.buyer.name }}{% endif %}</a>
+                                                        </span>
+                                                    </td>
+                                                    <td class="time" colspan="4">
+
+                                                        <p class="">更新时间: <time>{{ data.update_time|date('Y-m-d H:i:s') }}</time></p>
+                                                    </td>
+                                                </tr>
+                                                <tr class="logistics-info-detail">
+                                                    <td style="width:40%">
+                                                        <div style="width:20%;float: left">
+                                                            <img src="http://img.taoshij.com{% if data.stock %}{{ orderImgs[data.stock.id][0] }}{% endif %}" class="img-responsive" alt="{% if data.stock %}{{ data.stock.name}}{% endif %}">
+                                                        </div>
+                                                        <div style="width:75%;float: right">
+                                                            <div>
+                                                                <span>{% if data.stock %}{{ data.stock.name}}{% endif %}</span>
+                                                            </div>
+                                                            <div style="margin-top: 20px">
+                                                                <span>
+                                                                {% if data.stock %}
+                                                                {% for key,sku in sku_meta[data.stock.id] %}
+                                                                    {{ key }}:
+                                                                    {% for k,sk in sku %}
+                                                                        {{ sk }}
+                                                                    {% endfor %}
+                                                                {% endfor %}
+                                                                {% endif %}
+                                                                </span>
+                                                                <br/>
+                                                                <span>直播:{% if data.stockLive %}{{ data.stockLive.live_id }}{% endif %}</span>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </td>
+                                                    <td class="center">{{ orderStatusList[data.status] }}</td>
+                                                    <td class="center">{{ data.sum_price }}</td>
+                                                    <td class="center">{% if data.coupon is defined %}{{ data.coupon.name }}{% else %}未使用{% endif %}</td>
+                                                    <td class="center">{{ data.create_time|date('Y-m-d H:i:s') }}</td>
+                                                    <td class="center">详情</td>
+                                                </tr>
+                                                <tr class="placeholder">
+                                                    <td colspan="7"></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- table responsive -->
+                                    <!-- Pagination 开始 -->
+                                    <div class="pages">
+
+                                        <p class="search-sum">共{{ count }}个结果</p>
+
+                                        <ul class="pagination">
+                                            {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
+                                        </ul>
+
+                                    </div>
+                                    <!-- pagination 结束 -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- page主要content 结束 -->
+            </div><!-- col 结束 -->
+        </div><!-- row 结束 -->
+    </div><!-- page-content 结束 -->
+    {% block page_scripts %}
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $("#expressType li").click(function(){
+                    var expressType = $(this).find('a').attr('key');
+                    if(typeof(expressType)=='undefined'){
+                        expressType = '';
+                    }
+                    window.location.assign('/uservip/detail?user_id={{ params.user_id }}&status='+expressType);
+                });
+            });
+
+        </script>
+    {% endblock %}
+    {% endblock %}

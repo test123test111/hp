@@ -1,0 +1,190 @@
+@mixin prefix-property($property, $value) {
+ -webkit-#{$property} : $value;
+    -moz-#{$property} : $value;
+     -ms-#{$property} : $value;
+      -o-#{$property} : $value;
+         #{$property} : $value;
+}
+@mixin background-size($parameter:cover) {
+  @include prefix-property(background-size, $parameter);
+}
+@mixin animation($parameter) {
+  @include prefix-property(animation, $parameter);
+}
+
+@mixin transform($parameter) {
+  @include prefix-property(transform, $parameter);
+}
+
+
+div#loadingBar{display:none;  width:100%; height:100%;  line-height:50rem; font-size: 3rem; color:#fff; position:fixed; top:0; left:0; z-index:10000; text-align: center;background-color:rgba(0,0,0,0.5);
+    i{ vertical-align: text-top; margin-right:.2em;}
+}
+.loading-icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background: url(../img/loading.png) no-repeat;
+    @include background-size(1em 1em);
+    @include animation(loading-animation 1s infinite step-start);
+    -webkit-animation-name: loading-animation;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: step-start;
+}
+
+@-webkit-keyframes loading-animation {
+    from {
+        -webkit-transform:rotate(0deg);
+    }
+    8.32% {
+        -webkit-transform:rotate(0deg);
+    }
+    8.33% {
+        -webkit-transform:rotate(30deg);
+    }
+    16.65% {
+        -webkit-transform:rotate(30deg);
+    }
+    16.66% {
+        -webkit-transform:rotate(60deg);
+    }
+    24.99% {
+        -webkit-transform:rotate(60deg);
+    }
+    25% {
+        -webkit-transform:rotate(90deg);
+    }
+    33.32% {
+        -webkit-transform:rotate(90deg);
+    }
+    33.33% {
+        -webkit-transform:rotate(120deg);
+    }
+    41.65% {
+        -webkit-transform:rotate(120deg);
+    }
+    41.66% {
+        -webkit-transform:rotate(150deg);
+    }
+    49.99% {
+        -webkit-transform:rotate(150deg);
+    }
+    50% {
+        -webkit-transform:rotate(180deg);
+    }
+    58.32% {
+        -webkit-transform:rotate(180deg);
+    }
+    58.33% {
+        -webkit-transform:rotate(210deg);
+    }
+    66.65% {
+        -webkit-transform:rotate(210deg);
+    }
+    66.66% {
+        -webkit-transform:rotate(240deg);
+    }
+    74.99% {
+        -webkit-transform:rotate(240deg);
+    }
+    75% {
+        -webkit-transform:rotate(270deg);
+    }
+    83.32% {
+        -webkit-transform:rotate(270deg);
+    }
+    83.33% {
+        -webkit-transform:rotate(300deg);
+    }
+    91.65% {
+        -webkit-transform:rotate(300deg);
+    }
+    91.66% {
+        -webkit-transform:rotate(330deg);
+    }
+    99.99% {
+        -webkit-transform:rotate(330deg);
+    }
+    to {
+        -webkit-transform:rotate(360deg);
+    }
+}
+
+@keyframes loading-animation {
+    from {
+        @include transform(rotate(0deg));
+    }
+    8.32% {
+        @include transform(rotate(0deg));
+    }
+    8.33% {
+        @include transform(rotate(30deg));
+    }
+    16.65% {
+        @include transform(rotate(30deg));
+    }
+    16.66% {
+        @include transform(rotate(60deg));
+    }
+    24.99% {
+        @include transform(rotate(60deg));
+    }
+    25% {
+        @include transform(rotate(90deg));
+    }
+    33.32% {
+        @include transform(rotate(90deg));
+    }
+    33.33% {
+        @include transform(rotate(120deg));
+    }
+    41.65% {
+        @include transform(rotate(120deg));
+    }
+    41.66% {
+        @include transform(rotate(150deg));
+    }
+    49.99% {
+        @include transform(rotate(150deg));
+    }
+    50% {
+        @include transform(rotate(180deg));
+    }
+    58.32% {
+        @include transform(rotate(180deg));
+    }
+    58.33% {
+        @include transform(rotate(210deg));
+    }
+    66.65% {
+        @include transform(rotate(210deg));
+    }
+    66.66% {
+        @include transform(rotate(240deg));
+    }
+    74.99% {
+        @include transform(rotate(240deg));
+    }
+    75% {
+        @include transform(rotate(270deg));
+    }
+    83.32% {
+        @include transform(rotate(270deg));
+    }
+    83.33% {
+        @include transform(rotate(300deg));
+    }
+    91.65% {
+        @include transform(rotate(300deg));
+    }
+    91.66% {
+        @include transform(rotate(330deg));
+    }
+    99.99% {
+        @include transform(rotate(330deg));
+    }
+    to {
+        @include transform(rotate(360deg));
+    }
+}

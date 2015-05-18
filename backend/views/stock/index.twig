@@ -1,0 +1,53 @@
+{% set menu_name = "stock" %}
+{% set sidebar_name = "在库" %}
+{% extends "@app/views/layouts/header.twig" %}
+  {% block content %}
+      <!-- Page heading -->
+      <div class="page-head">
+        <form  id="stockIndexForm" class="head-input" action="">
+          <input id="number" type="text" placeholder="请扫描或输入物流箱编号">
+          <button type="submit" class="btn btn-primary">确定</button>
+        </form>
+      </div>
+      <!-- Page heading ends -->
+
+ <!-- Matter -->
+
+      <div class="matter">
+        <div class="container">
+          <div role="tabpanel clearfix">
+            <!-- 标签 -->
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" {% if status == 'all' %}class="active"{% endif %}><a href="/stock/index?st=all">全部</a></li>
+              <li role="presentation" {% if status is null or status == constant('\\backend\\models\\Box::BOX_STATUS_IN') %}class="active"{% endif %}><a href="/stock/index?st=1" >未打印</a></li>
+              <li role="presentation" {% if status == constant('\\backend\\models\\Box::BOX_STATUS_PRINTED') %}class="active"{% endif %}><a href="/stock/index?st=2">已打印</a></li>
+            </ul>
+            <!-- Tab content -->
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="home">
+                <ul class="box-list">
+                  {% for box in boxes %}
+                  <li><a href="/stock/update/{{ box.id }}"><em>#{{ box.id }}</em>{{ box.getNotSendOrderCount() }}件</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}
+{% block modal %}
+  <!-- Modal -->
+<div class="modal fade" id="errorTip" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <div class="modal-body">
+        <p>您所输入的物流箱不属于可编辑状态，或者物流箱不存在，请重新再试</p>
+      </div>
+    
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="/js/scan-common.js" ></script>
+{% endblock %}

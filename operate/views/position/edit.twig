@@ -1,0 +1,192 @@
+{% set menu_name = "position" %}
+{% set sidebar_name = "创建运营位" %}
+{% extends '@view/layouts/main.twig' %}
+{% block content %}
+<div class="breadcrumbs breadcrumbs-fixed" id="breadcrumbs">
+	<script type="text/javascript">
+		try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+	</script>
+	<!-- 面包屑 开始 -->
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home home-icon"></i>
+			<a href="#">运营管理</a>
+		</li>
+		<li class="active">编辑运营位</li>
+	</ul><!-- 面包屑 结束 -->
+</div><!-- 主体topbar 开始 -->
+<div class="page-content position-edit">
+{# {% include "@app/views/layouts/notice.twig" %} #}
+	<!-- row 开始 -->
+	<div class="row">
+		<!-- col 开始 -->
+		<div class="col-xs-12">
+			<div class="space-10"></div>
+			<div class="basic-info">
+				<h4>基本信息</h4>
+				<div class="space-6"></div>
+				<div class="tab-content">
+					<!-- table responsive -->
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th class="center">推荐位信息</th>
+									<th class="center">ID</th>
+									<th class="center">字段数量</th>
+									<th class="center">创建人</th>
+									<th class="center">创建时间</th>
+									<th class="center">更新时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="placeholder">
+					              <td colspan="6"></td>
+					            </tr>
+								
+								<tr class="info-detail">
+									<td class="recommend-info">
+										
+										 <img src="{{ staticDomain }}{{ model.image }}" alt="goods"> 
+										<div class="info">
+											<h6>{{ model.name }}</h6>
+											<p class="type">{{ model.getPositionType() }}</p>
+											<p>{{ model.desc }}</p>
+										<div>
+										
+									</td>
+									<td class="position-id">
+										<div class="space-10"></div>
+										<span class="center">{{ model.id }}</span>
+									</td>
+									<td>
+										<div class="space-10"></div>
+										<span class="center">{{ model.details
+											|count }}</span>
+									</td>
+									</td>
+									<td>
+										<div class="space-10"></div>
+										<span class="center">{{ model.manager.username }}</span>
+									</td>
+									<td>
+										<time>
+											<div class="space-6"></div>
+						                  	<span class="center">{{ model.created_time|date('Y-m-d')}}<span>
+						                  	<span class="center">{{ model.created_time|date('H:i:s')}}</span>
+						                </time>
+									</td>
+									<td>
+										<time>
+											<div class="space-6"></div>
+						                  	<span class="center">{{ model.updated_time|date('Y-m-d')}}<span>
+						                  	<span class="center">{{ model.updated_time|date('H:i:s')}}</span>
+						                </time>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- table responsive -->
+				</div>
+			</div>
+			<div class="setting-info">
+				{% set form = activeform.begin() %} 
+				<h4>设置</h4>
+				<div class="space-6"></div>
+				{% for key,value in details %}
+				<ul class="recommend-list clearfix">
+
+					{% for detail in value  %}
+					<li class="col-xs-12">
+						{% if loop.index == 1 %}<span class="recommend-num">{{ key }}</span>{% endif %}
+
+						<div class="{% if loop.index != 1 %}list-content{% endif %} col-sm-10">
+							{% if detail.need_text == 1 or detail.need_image == 1 %}
+							<div class="col-xs-7">
+								
+								{% if detail.need_image == 1 %}
+
+								<div class="set-img col-xs-{% if detail.need_text == 1 %}8{% else %}13{% endif %}"><!-- 13 -->
+									<input type="text" id="image-{{ detail.id }}" class="img-url {% if detail.need_text == 1 %}has{% else %}no{% endif %}-text input-xlarge" name="OpPositionDetail[{{ detail.id }}][image_path]" id="form-field-5" value="{{ detail.image_path }}">
+
+									<button data-num="{{ detail.id }}"  type="button" class="upload-img btn btn-primary btn-sm btn-space" data-toggle="modal" data-target="#uploadImgModal">设置图片</button>	
+									<p>{{ detail.desc }}</p>
+								</div>
+								{% endif %}
+
+								{% if detail.need_text == 1 %}
+									{% if detail.need_image != 1 %}
+								<input type="text" name="OpPositionDetail[{{ detail.id }}][text_content]" class="col-xs-4 no-img" value="{{ detail.text_content }}" id="form-field-5">
+									{% else %}
+									<input type="text" name="OpPositionDetail[{{ detail.id }}][text_content]" class="col-xs-3" value="{{ detail.text_content }}" id="form-field-5">
+									{% endif %}
+									
+								{% endif %}
+							</div>
+							{% endif %}
+							<div class="classify-info btn-group  col-xs-1">
+								<button {% if loop.index > 1 %}disabled {% endif %}data-id="{{ detail.id }}" data-type="{{ detail.type }}"  data-toggle="dropdown" class="classified-btn btn btn-xs btn-primary dropdown-toggle">
+									<em>{{ detail.getDetailType() }}</em>	
+									<span class="icon-caret-down bigger-160"></span>
+								</button>
+
+								<ul class="search-menu dropdown-menu dropdown-default">
+									{% for type,value in detail.getCanUseTypes() %}
+									<li data-id="{{ detail.id }}" data-type={{type}}><a href="javascript:;">{{ value }}</a></li>
+									{% endfor %}
+								</ul>
+								<input type="hidden" id="type-{{ detail.id }}" name="OpPositionDetail[{{ detail.id }}][type]"/>
+							</div>
+							<div class="classify-content ">
+								<input type="text" name="OpPositionDetail[{{ detail.id }}][value]" class="col-xs-4 no-url no-url-{{ detail.id }} input-xlarge" value="{{ detail.value }}" id="form-field-5" >
+							</div>
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+				{% endfor %}
+
+				<button type="submit" class="btn-update btn btn-primary btn-block btn-sm">更新</button>	
+				{{ void(form.end()) }}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade"  id="uploadImgModal" tabindex="-1" role="dialog" aria-labelledby="uploadImgModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      	<div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="uploadImgModalLabel">选择上传的图片</h4>
+      	</div>
+      	<form id="uploadimageForm" action="/position/uploadfile" method="post" target="tarframe" enctype="multipart/form-data">
+		    <div class="modal-body">
+		      <p>
+		        	<input type="hidden" name="num" id="imageNum"  value=""/>
+		        	<input type="hidden" value="{{ App.request.getCsrfToken() }}" name="{{ App.request.csrfParam }}">
+		            <input type="file" id="upload_file" name="upload" />
+		            <span id="linkImg" href="#"><i class="icon-upload-alt bigger-160"></i><em>请选择上传的图片</em></span>
+		          	<iframe src='' width='0' height='0' style='display:none;' name="tarframe"></iframe>
+		      </p>
+		    </div>
+		    <div class="modal-footer">
+		      	<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+       			<button type="button" id="cofirm-button" data-dismiss="modal" class="btn btn-primary btn-sm" >确定</button>
+		    </div>
+	    </form>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+	function stopSend(num,img){
+        $("#image-"+num).val(img);
+    }
+    $("#cofirm-button").click(function(){
+    	$("#uploadimageForm").submit();
+    });
+</script>
+<script type="text/javascript" src="/ace/js/position-edit.js"></script>
+
+{% endblock %}
