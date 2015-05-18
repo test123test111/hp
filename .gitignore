@@ -9,8 +9,8 @@ backend/config/main-local.php
 backend/config/params-local.php
 finance/config/main-local.php
 finance/config/params-local.php
-operate/config/main-local.php
-operate/config/params-local.php
+customer/config/main-local.php
+customer/config/params-local.php
 buyer/config/main-local.php
 buyer/config/params-local.php
 amapi/config/main-local.php
