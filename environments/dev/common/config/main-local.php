@@ -3,22 +3,14 @@ return [
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=101.66.253.168;dbname=aimeizhuyi_test',
-            'username' => 'root',
-            'password' => 'aimei753951',
-            'charset' => 'utf8',
-        ],
-        'backenddb' => [
-            'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=101.66.253.168;dbname=backend',
+            'dsn' => 'mysql:host=127.0.0.1;dbname=yltd',
             'username' => 'root',
             'password' => 'aimei753951',
             'charset' => 'utf8',
         ],
         'redis'=>[
-			'hostname'=>'101.66.253.168',
+			'hostname'=>'127.0.0.1',
 			'port'=>6379,           
-            'password'=>'1234567890',   
         ],
     ],
 ];
