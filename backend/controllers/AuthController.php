@@ -1,5 +1,5 @@
 <?php
-namespace operate\controllers;
+namespace backend\controllers;
 
 use Yii;
 use backend\components\BackendController;
@@ -9,7 +9,6 @@ use backend\models\AssignMent;
 
 class AuthController extends BackendController{
 
-    public $layout = false;
     public $enableCsrfValidation=false;
 
     public function actionPermlist(){
@@ -22,12 +21,9 @@ class AuthController extends BackendController{
         $model = new AuthItem;
         $msg = '';
         if(!empty($_POST)){
-            $model->load(Yii::$app->request->post());
-            if($model->validate()){
-                list($status,$msg) = $model->createItemInfo($_POST['AuthItem']);
-                if($status){
-                    return $this->redirect(Yii::$app->request->getReferrer());
-                }
+            list($status,$msg) = $model->createItemInfo($_POST['AuthItem']);
+            if($status){
+                return $this->redirect(Yii::$app->request->getReferrer());
             }
         }      
         return $this->render("rolelist",['model'=>$model,'isNew'=>true,'show_error'=>$msg]);
@@ -37,8 +33,17 @@ class AuthController extends BackendController{
     public function actionFlushperms(){
         $model = new AuthItem;
         $model->flushPerms();
-        Yii::$app->session->setFlash('success', '权限导入成功,您现在可以进行权限分配');
-        return $this->render('flush');
+        // $auth = Yii::$app->authManager;
+        // $auth->removeAllPermissions();
+        // // get all perms
+        // $perms = Yii::$app->getUser()->getAllPerms();
+        // foreach($perms as $perm) {
+        //     if($auth->getPermission($perm)){
+        //         continue;
+        //     }    
+        //     $auth->add($auth->createPermission($perm));
+        // }
+        return "权限添加执行成功！";
     }
 
     //assign permissions to roles
@@ -46,15 +51,8 @@ class AuthController extends BackendController{
         $model = new AuthItem;
         $itemName = @$_GET['id']?:"";
         $status = '';
-        if($itemName && Yii::$app->request->isPost){
-            if(empty($_POST['child'])){
-                $auth_item = AuthItem::find(['name'=>$itemName,'description'=>Yii::$app->id])->one();
-                if(!empty($auth_item)){
-                    $status = Assign::deleteAll(['parent'=>$itemName]);
-                }
-            }else{
-                $status = $model->addPermToRole($itemName,$_POST['child']);
-            }
+        if($itemName && !empty($_POST['child'])){
+            $status = $model->addPermToRole($itemName,$_POST['child']);
             if($status){
                 return $this->redirect(Yii::$app->request->getReferrer());
             }
@@ -69,17 +67,11 @@ class AuthController extends BackendController{
     public function actionAssignment(){
         $model = new AuthItem;
         $userId = @$_GET['user_id']?:"";
-        if(Yii::$app->request->isPost){
-            if($userId){
-                AuthItem::clearUserPermissionByPlatform($userId,Yii::$app->id);
-                if(!empty($_POST['child']['role'])){
-                    $model->assignRoleToUser($userId,$_POST['child']['role']);
-                }
+        if($userId && !empty($_POST['child']['role'])){
+            if($model->assignRoleToUser($userId,$_POST['child']['role'])){
+                return $this->redirect(Yii::$app->request->getReferrer());
             }
-            return $this->redirect(Yii::$app->request->getReferrer());
-            
         }
-        
         $roles = $model->getUserRoles($userId);
         $allRoles = $model->getRoles();
         return $this->render("assignment",['userId'=>$userId,'roles'=>$roles,'allRoles'=>$allRoles]);

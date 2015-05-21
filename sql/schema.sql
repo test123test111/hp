@@ -33,20 +33,30 @@ CREATE TABLE `storeroom` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `project`;
+CREATE TABLE `project` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `owner`;
 CREATE TABLE `owner` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `english_name` varchar(255) NOT NULL DEFAULT '',
   `name` varchar(255) NOT NULL DEFAULT '',
   `email` varchar(255) NOT NULL DEFAULT '',
-  `phone` varchar(32) NOT NULL DEFAULT '',
-  `tell` varchar(32) NOT NULL DEFAULT '',
+  `phone` varchar(255) NOT NULL DEFAULT '',
+  `tell` varchar(255) NOT NULL DEFAULT '',
   `auth_key` varchar(64) NOT NULL DEFAULT '',
   `password_hash` varchar(128) NOT NULL DEFAULT '',
   `password_reset_token` varchar(128) NOT NULL DEFAULT '',
   `status` tinyint(4) NOT NULL DEFAULT '0',
-  `department_id` int(11) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `role` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:所属人 1:申请人', 
+  `role` smallint(6) NOT NULL DEFAULT '10',
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   `created_uid` int(11) NOT NULL DEFAULT '1',
@@ -58,76 +68,32 @@ DROP TABLE IF EXISTS `material`;
 CREATE TABLE `material` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(255) NOT NULL DEFAULT '',
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `english_name` varchar(255) NOT NULL DEFAULT '',
   `owner_id` int(11) NOT NULL DEFAULT '0', 
-  `department_id` int(11) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `product_line_id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `pn` varchar(64) NOT NULL DEFAULT '',
-  `datasource` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:导入 1:新增',
-  `size` varchar(32) NOT NULL DEFAULT '' COMMENT '规格尺寸',
-  `package` varchar(32) NOT NULL DEFAULT '' COMMENT '包装规格',
-  `weight` varchar(16) NOT NULL DEFAULT '0' COMMENT '单位重量',
-  `image` varchar(1024) NOT NULL DEFAULT '',
-  `warning_quantity` int(11) NOT NULL DEFAULT '0',
-  `proterty` varchar(64) NOT NULL DEFAULT '',
-  `is_share` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:不分享 1:分享',
+  `project_id` int(11) NOT NULL DEFAULT '0', 
+  `desc` text NOT NULL,
+  `image` varchar(255) NOT NULL DEFAULT '',
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   `created_uid` int(11) NOT NULL DEFAULT '1',
   `modified_uid` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `department`;
-CREATE TABLE `department` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `created` datetime NOT NULL,
-  `modified` datetime NOT NULL,
-  `created_uid` int(11) NOT NULL DEFAULT '1',
-  `modified_uid` int(11) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `department_id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `created` datetime NOT NULL,
-  `modified` datetime NOT NULL,
-  `created_uid` int(11) NOT NULL DEFAULT '1',
-  `modified_uid` int(11) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `product_line`;
-CREATE TABLE `product_line` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `category_id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `created` datetime NOT NULL,
-  `modified` datetime NOT NULL,
-  `created_uid` int(11) NOT NULL DEFAULT '1',
-  `modified_uid` int(11) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 DROP TABLE IF EXISTS `stock`;
 CREATE TABLE `stock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `material_id` int(11) NOT NULL DEFAULT '0',
   `storeroom_id` int(11) NOT NULL DEFAULT '0',
+  `project_id` int(11) NOT NULL DEFAULT '0',
   `owner_id` int(11) NOT NULL DEFAULT '0',
-  `product_line_id` int(11) NOT NULL,
+  `forecast_quantity` int(11) NOT NULL DEFAULT '1',
   `actual_quantity` int(11) NOT NULL DEFAULT '1',
-  `add_quantity` int(11) NOT NULL DEFAULT '0',
   `stock_time` datetime NOT NULL,
   `delivery` varchar(64) NOT NULL DEFAULT '',
-  `delivery_person` varchar(32) NOT NULL DEFAULT '',
-  `delivery_contact` varchar(64) NOT NULL DEFAULT '',
+  `increase` tinyint(4) NOT NULL DEFAULT '0',
+  `order_id` int(11) NOT NULL DEFAULT '0',
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   `created_uid` int(11) NOT NULL DEFAULT '1',
@@ -139,8 +105,6 @@ DROP TABLE IF EXISTS `stock_total`;
 CREATE TABLE `stock_total` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `material_id` int(11) NOT NULL DEFAULT '0',
-  `storeroom_id` int(11) NOT NULL,
-  `product_line_id` int(11) NOT NULL,
   `total` int(11) NOT NULL DEFAULT '0',
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
@@ -154,21 +118,18 @@ DROP TABLE IF EXISTS `order`;
 CREATE TABLE `order` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `viewid` varchar(128) NOT NULL DEFAULT '',
+  `goods_active` varchar(255) NOT NULL DEFAULT '',
+  `storeroom_id` int(11) NOT NULL DEFAULT '0',
   `owner_id` int(11) NOT NULL DEFAULT '0',
-  `company` varchar(128) NOT NULL,
-  `to_city` varchar(64) NOT NULL,
-  `recipients` varchar(64) NOT NULL,
-  `recipients_address` varchar(255),
-  `recipients_contact` varchar(255),
-  `insurance` tinyint(4) NOT NULL DEFAULT '0',
-  `insurance_fee` float(10,2) NOT NULL DEFAULT '0.00',
-  `borrow` tinyint(4) NOT NULL DEFAULT '0' COMMENT '借用',
-  `revert` datetime NOT NULL COMMENT '归还时间',
-  `limitday` varchar(64) NOT NULL DEFAULT '' COMMENT '运输时效',
+  `to_city` varchar(64) NOT NULL DEFAULT '',
+  `recipients` varchar(64) NOT NULL DEFAULT '',
+  `recipients_address` varchar(255) NOT NULL DEFAULT '',
+  `recipients_contact` varchar(255) NOT NULL DEFAULT '',
+  `info` text NOT NULL,
+  `limitday` varchar(64) NOT NULL DEFAULT '',
   `status` tinyint(4) NOT NULL DEFAULT '0',
   `is_del` tinyint(4) NOT NULL DEFAULT '0',
-  `purpose` varchar(255) NOT NULL DEFAULT '' COMMENT '用途',
-  `info` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `source` tinyint(4) NOT NULL DEFAULT '0',
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   `created_uid` int(11) NOT NULL DEFAULT '1',
@@ -180,9 +141,8 @@ DROP TABLE IF EXISTS `order_detail`;
 CREATE TABLE `order_detail` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `order_id` int(11) NOT NULL DEFAULT '0',
-  `material_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL DEFAULT '0',
-  `storeroom_id` int(11) NOT NULL,
+  `goods_code` varchar(128) NOT NULL DEFAULT '',
+  `goods_quantity` int(11) NOT NULL DEFAULT '0',
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   `created_uid` int(11) NOT NULL DEFAULT '1',
@@ -190,6 +150,145 @@ CREATE TABLE `order_detail` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `package`;
+CREATE TABLE `package` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `num` int(11) NOT NULL,
+  `actual_weight` int(11) NOT NULL,
+  `throw_weight` int(11) NOT NULL,
+  `volume` int(11) NOT NULL,
+  `box` varchar(255) NOT NULL DEFAULT '',
+  `method` tinyint(4) NOT NULL DEFAULT '1',
+  `trunk` varchar(64) NOT NULL DEFAULT '',
+  `delivery` varchar(64) NOT NULL DEFAULT '',
+  `price` decimal(32,2) NOT NULL DEFAULT '0.00', 
+  `info` text NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table `package` add column height int(11) NOT NULL DEFAULT '0';
+alter table `package` add column width int(11) NOT NULL DEFAULT '0';
+alter table `package` add column length int(11) NOT NULL DEFAULT '0';
+
+DROP TABLE IF EXISTS `order_package`;
+CREATE TABLE `order_package` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `package_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `channel`;
+CREATE TABLE `channel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `connect_number` varchar(64) NOT NULL DEFAULT '',
+  `channel_number` varchar(64) NOT NULL DEFAULT '',
+  `goods_name` varchar(255) NOT NULL DEFAULT '',
+  `goods_quantity` int(11) NOT NULL DEFAULT '0',
+  `goods_weight` int(11) NOT NULL DEFAULT '0',
+  `goods_volume` int(11) NOT NULL DEFAULT '0',
+  `expected_time` datetime NOT NULL,
+  `actual_time` datetime NOT NULL,
+  `receiver` varchar(64) NOT NULL DEFAULT '',
+  `order_receiver` varchar(64) NOT NULL DEFAULT '',
+  `image` varchar(255) NOT NULL DEFAULT '',
+  `packing_details` text,
+  `info` text,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `order_channel`;
+CREATE TABLE `order_channel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `connect_number` varchar(64) NOT NULL DEFAULT '',
+  `order_id` text,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `order_channel`;
+CREATE TABLE `order_channel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `connect_number` varchar(64) NOT NULL DEFAULT '',
+  `order_id` text,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `trunk`;
+CREATE TABLE `trunk` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `contact` varchar(64) NOT NULL DEFAULT '',
+  `phone` varchar(255) NOT NULL DEFAULT '',
+  `city` varchar(255) NOT NULL DEFAULT '',
+  `address` varchar(255) NOT NULL DEFAULT '',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `delivery`;
+CREATE TABLE `delivery` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `contact` varchar(64) NOT NULL DEFAULT '',
+  `phone` varchar(255) NOT NULL DEFAULT '',
+  `city` varchar(255) NOT NULL DEFAULT '',
+  `address` varchar(255) NOT NULL DEFAULT '',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `order_sign`;
+CREATE TABLE `order_sign` (
+  `order_id` int(11) NOT NULL,
+  `sign_date` datetime NOT NULL,
+  `signer` varchar(64) NOT NULL DEFAULT '',
+  `image` varchar(255) NOT NULL DEFAULT '',
+  `info` text NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table `stock` add column `destory` int(11) NOT NULL DEFAULT '0';
+alter table `stock` add column `destory_reason` blob NOT NULL;
+alter table `stock_total` add column `storeroom_id` int(11) NOT NULL DEFAULT '1';
+alter table `stock` add column activite varchar(64) NOT NULL DEFAULT '';
+alter table `order_sign` add column `type` tinyint(4) NOT NULL DEFAULT '0';
+alter table `owner` add column `department` varchar(64) NOT NULL DEFAULT '';
+alter table stock add column active varchar(64) NOT NULL DEFAULT '';
+alter table package change volume volume varchar(32) NOT NULL DEFAULT '';
+alter table manager add column storeroom_id int(11) NOT NULL DEFAULT '1';
+alter table `order` add column to_province varchar(32) NOT NULL DEFAULT '';
 
 CREATE TABLE `city` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -215,6 +314,13 @@ CREATE TABLE `cart` (
   KEY `uid` (`uid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
+alter table order_detail add column storeroom_id int(11) NOT NULL DEFAULT '1';
+alter table material add column property tinyint(4) NOT NULL DEFAULT '0';
+alter table material add column channel varchar(16) NOT NULL DEFAULT '';
+alter table material add column datasource tinyint(4) NOT NULL DEFAULT '0';
+alter table material add column `size` varchar(16) NOT NULL DEFAULT '';
+alter table material add column `weight` varchar(8) NOT NULL DEFAULT '';
+alter table material add column `stuff` varchar(16) NOT NULL DEFAULT '';
 
 DROP TABLE IF EXISTS `news`;
 CREATE TABLE `news` (
@@ -247,3 +353,10 @@ CREATE TABLE `customer_address` (
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+
+alter table material add column pn varchar(64) not null default '';
+alter table material add column package varchar(64) not null default '';
+alter table material change column `desc` `desc` varchar(255) NOT NULL DEFAULT '';
+alter table stock add column warning_quantity int(11) NOT NULL DEFAULT '0';
+

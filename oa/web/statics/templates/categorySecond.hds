@@ -1,9 +1,0 @@
-<ul id="secondList" class="list">
-{{#scate}}
-	<li data-id="{{id}}" class="clearfix">
-		<p>{{name}}</p>	
-		<i class="icon-right"></i>
-		<em class="touch-style"></em>	
-	</li>
-{{/scate}}
-</ul>

@@ -1,9 +1,0 @@
-body{ padding-bottom:3.6rem; }
-.dock{ background-color:#f6f6f6; @include box-shadow(#d5d1cf 0 -1px 0); font-size:.7rem; color: #acacac; position: fixed; text-align: center; z-index:100; width:100%; left:0; bottom:0;
-	li{ cursor: pointer; display: inline-block; width:33%; }
-	a{padding:.6rem 0 .4rem;display:block;color: #acacac;
-		&.touch-style{ background-color: #EBEBEB; }
-	}
-	i{ display:block; font-size:1.5rem; margin-bottom:.1rem;}
-}
-.body-index .nav-live,.body-buyer-list .nav-buyer,.body-download .nav-download{ color:$primary-color; }

@@ -1,6 +1,0 @@
-{{#stock}}
-<header id="stockHeader" data-id={{stock_id}}>
-	<h1>{{stock_ename}}</h1>
-	<img src="{{imgs}}" alt="stockimg">
-</header>
-{{/stock}}

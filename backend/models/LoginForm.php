@@ -4,7 +4,7 @@ namespace backend\models;
 
 use Yii;
 use yii\base\Model;
-use backend\models\ManagerPlatform;
+
 /**
  * LoginForm is the model behind the login form.
  */
@@ -29,7 +29,7 @@ class LoginForm extends Model
             ['password', 'validatePassword'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
-            ['username','validatePlatform']
+            // verifycode needs to be entered correctly
         ];
     }
 
@@ -44,21 +44,7 @@ class LoginForm extends Model
             $this->addError('password', 'Incorrect username or password.');
         }
     }
-    /**
-     * Validates the password.
-     * This method serves as the inline validation for password.
-     */
-    public function validatePlatform()
-    {
-        $user = $this->getUser();
-        if($user->id != Manager::SUPER_ADMIN){
-            $platform = ManagerPlatform::find()->where(['manager_id'=>$user->id,'platform'=>Yii::$app->id])->one();
-            if(empty($platform)){
-                $this->addError('username', 'This username can not login this platform.');
-            }
-        }
-        
-    }
+
     /**
      * Logs in a user using the provided username and password.
      * @return boolean whether the user is logged in successfully
@@ -84,14 +70,10 @@ class LoginForm extends Model
         }
         return $this->_user;
     }
-    /**
-     * @return array customized attribute labels
-     */
-    public function attributeLabels()
-    {
+    public function attributeLabels(){
         return [
-            'username' => '用户名：',
-            'password' => '密码：',
+            'username'=>'用户名',
+            'password'=>'密码',
         ];
     }
 }

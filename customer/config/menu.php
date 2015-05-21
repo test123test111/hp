@@ -1,91 +1,76 @@
 <?php
 return [
-        'managers' => [
-            'name' => '用户',
-            'route' => 'manager/admin',
-            'icon'=>'user',
-            'style'=>'',
+        'material'=>[
+            'name'=>'物料',
+            'route'=>'',
+            'icon'=>'tasks',
+            'style'=>'tasks',
             'subs' => [
                 [
-                    'name' => '用户列表',
-                    'route' => 'manager/admin',
-                ],
-                [
-                    'name' => '添加用户',
-                    'route' => 'manager/create',
-                ],
-                [
-                    'name' => '角色列表',
-                    'route' => 'auth/rolelist',
+                    'name' => '我的物料',
+                    'route' => 'material/list',
                 ],
                 // [
-                //     'name' => '分配权限',
-                //     'route' => 'auth/assign',
+                //     'name' => '添加物料',
+                //     'route' => 'material/create',
                 // ],
+            ],
+        ],
+        'stock'=>[
+            'name'=>'库存',
+            'route'=>'',
+            'icon'=>'cloud-upload',
+            'subs' => [
                 [
-                    'name' => '权限添加',
-                    'route' => 'auth/flushperms',
+                    'name' => '入库明细',
+                    'route' => 'stock/list',
+                ],
+                [
+                    'name' => '出库明细',
+                    'route' => 'stock/output',
                 ],
             ],
         ],
-        'logistic' => [
-            'name' => '物流管理',
-            'route' => 'logistic/domestic',
+        'order'=>[
+            'name'=>'订单',
+            'route'=>'',
             'icon'=>'truck',
-            'style'=>'',
             'subs' => [
                 [
-                    'name' => '国内物流',
-                    'route' => 'logistic/domestic',
-                ],
-            ],
-        ],
-        'uservip' => [
-            'name' => 'VIP用户管理',
-            'route' => 'uservip/list',
-            'icon' => 'credit-card',
-            'style' => '',
-            'subs' => [
-                [
-                    'name' => 'VIP用户信息',
-                    'route' => 'uservip/list',
+                    'name' => '未处理订单',
+                    'route' => 'order/list?OrderSearch[status]=0',
                 ],
                 [
-                    'name' => 'VIP用户购物车',
-                    'route' => 'uservip/cart',
-                ]
-
-
-            ],
-        ],
-        'position'=>[
-            'name'=>'运营位管理',
-            'route'=>'position/list',
-            'icon'=>'hdd',
-            'subs'=>[
-                [
-                    'name'=>'运营位列表',
-                    'route'=>'position/list',
-                ],
-                // [
-                //     'name'=>'创建运营位',
-                //     'route'=>'position/create',
-                // ],
-            ],
-        ],
-        'commodity' => [
-            'name'  => '商品管理',
-            'route' => 'brand/list',
-            'icon'  => 'list',
-            'style' => '',
-            'subs'  => [
-                [
-                    'name' => '品牌管理',
-                    'route' => 'brand/list',
+                    'name' => '已确认订单',
+                    'route' => 'order/list?OrderSearch[status]=4',
                 ],
                 [
-                    'name' => '类目管理',
-                    'route' => 'category/list',
+                    'name' => '已包装订单',
+                    'route' => 'order/list?OrderSearch[status]=1',
+                ],
+                [
+                    'name' => '已发货订单',
+                    'route' => 'order/list?OrderSearch[status]=2',
+                ],
+                [
+                    'name' => '已签收订单',
+                    'route' => 'order/list?OrderSearch[status]=3',
+                ],
+                [
+                    'name' => '未签收订单',
+                    'route' => 'order/list?OrderSearch[status]=7',
+                ],
+                [
+                    'name' => '已拒绝订单',
+                    'route' => 'order/list?OrderSearch[status]=5',
+                ],
+                [
+                    'name' => '下订单',
+                    'route' => 'order/create',
+                ],
+                [
+                    'name' => '导入excel订单',
+                    'route' => 'order/import',
                 ],
             ],
         ],

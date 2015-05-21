@@ -9,41 +9,23 @@ $params = array_merge(
 );
 
 return [
-    'id' => 'customer',
-    'basePath' => dirname(__DIR__),
-    'vendorPath' => $rootDir . '/vendor',
-    'controllerNamespace' => 'customer\controllers',
-    'language'=>'zh-CN',
-    'aliases' => [
-        '@view' => '@app/views'
+	'id' => 'yltd-backend',
+	'basePath' => dirname(__DIR__),
+	'vendorPath' => $rootDir . '/vendor',
+	'controllerNamespace' => 'customer\controllers',
+  'language'=>'zh-CN',
+	'modules'=>[
+		'gii' => 'yii\gii\Module',
+    'gridview'=>[
+        'class'=>'\kartik\grid\Module',
     ],
-    'modules'=>[
-        'gridview'=>[
-            'class'=>'\kartik\grid\Module',
-        ],
-        'datecontrol'=>[
-            'class' => 'kartik\datecontrol\Module',
-        ],
+	],
+	'extensions' => require($rootDir . '/vendor/yiisoft/extensions.php'),
+	'components' => [
+    'authManager' =>[
+        'class'=>'yii\rbac\DbManager',
     ],
-    'extensions' => require($rootDir . '/vendor/yiisoft/extensions.php'),
-    'components' => [
-        'session' => [
-            'class' => 'yii\web\DbSession',
-            'db'=>'backenddb',
-            'timeout'=> 3600*24,
-        ],
-        'authManager' =>[
-            'class'=>'yii\rbac\DbManager',
-            'db'=>'backenddb',
-        ],
-        'assetManager' => [
-            'bundles' => [
-                'yii\bootstrap\BootstrapAsset' => [
-                    'css' => [],
-                ],
-            ],
-        ],
-        'view' => [
+		'view' => [
             'renderers' => [
                 'twig' => [
                     'class' => 'yii\twig\ViewRenderer',
@@ -59,6 +41,7 @@ return [
                         'activeform' =>'\yii\bootstrap\ActiveForm',
                         'kactiveform'=>'\kartik\widgets\ActiveForm',
                         'dialog' =>'\yii\jui\Dialog',
+                        'appasset' =>'backend\assets\AppAsset',
                     ],
                     'functions' => [
                         't' => '\Yii::t',
@@ -78,21 +61,21 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules'=>[
-                '<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
-                '<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
-                '<module:\w+>/<controller:\w+>/<action:\w+>'=>'<module>/<controller>/<action>',
+            	'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
+            	'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+            	'<module:\w+>/<controller:\w+>/<action:\w+>'=>'<module>/<controller>/<action>',
             ]
+        ],
+        'shoppingCart' => [
+            'class' => 'common\components\ShoppingCart',
         ],
         'user' => [
             'class' => customer\components\ManagerUser::className(),
             'identityClass' => 'customer\models\Owner',//common\models\User
             'enableAutoLogin' => true,
         ],
-        // 'RoleMenu' =>[
-        //     'class'=>'backend\components\RoleMenu',
-        // ],
-        'notify' =>[
-            'class'=>'common\components\Notification',
+        'RoleMenu' =>[
+            'class'=>'backend\components\RoleMenu',
         ],
         'log' => [
               'targets' => [
@@ -110,10 +93,9 @@ return [
                   ],
               ],
           ],
-          
-        'errorHandler' => [
-            'errorAction' => 'site/error',
-        ],
-    ],
-    'params' => $params,
+		'errorHandler' => [
+			'errorAction' => 'site/error',
+		],
+	],
+	'params' => $params,
 ];

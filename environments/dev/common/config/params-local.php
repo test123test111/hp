@@ -1,6 +1,6 @@
 <?php
 return [
-	'attachDir'=>'/static_files',
-	'staticDomain'=>'http://static.yltd.com',
-	'resource_folder'=>"/static_files/",
+	'attachDir'=>'/data/static_files',
+	'targetDomain'=>'http://static.yltd.com',
+	'resource_folder'=>"/data0/goumindata/static_files/",
 ];

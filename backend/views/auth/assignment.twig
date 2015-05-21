@@ -1,18 +1,10 @@
 {% set menu_name = "managers" %}
 {% set sidebar_name = "分配权限" %}
-{% extends "@app/views/layouts/main.twig" %}
+{% extends "@app/views/layouts/header.twig" %}
 {% block content %}
-<div class="page-content">
-      <div class="page-header">
-        <h1>
-          Setting Assignment
-        </h1>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <!-- PAGE CONTENT BEGINS -->
-
-          {% set form = activeform.begin({'id':'create-form','options':{'enctype':'multipart/form-data'}}) %}
+<div class="container">
+    <h3>分配权限</h3>
+                {% set form = activeform.begin({'id':'create-form','options':{'enctype':'multipart/form-data'}}) %}
                 <div class="form-group field-authitem-name required">
                     <label for="authitem-name" class="checkbox inline">Assign Roles to Users*</label>
                     <div class="checkbox inline" id="authitem-name">
@@ -29,7 +21,5 @@
                     </div>
                 </div>
                 {{ void(form.end()) }}
-        </div><!-- /.col -->
-      </div><!-- /.row -->
 </div>
 {% endblock %}

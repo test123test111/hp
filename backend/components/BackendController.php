@@ -15,5 +15,4 @@ class BackendController extends Controller
             ],
         ];
     }
-
 }

@@ -1,11 +1,10 @@
 <?php
 namespace backend\models;
 
-use backend\components\BackendActiveRecord;
+use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
-use yii\db\ActiveRecord;
 /**
  * Class User
  * @package common\models
@@ -27,15 +26,13 @@ class Manager extends ActiveRecord implements IdentityInterface
 	 * @var string the raw password. Used to collect password input and isn't saved in database
 	 */
 	public $password;
-    public $platform;
+
 	const STATUS_DELETED = 0;
 	const STATUS_ACTIVE = 10;
 
 	const ROLE_USER = 10;
 
-    const SUPER_ADMIN = 1;
 	public static function findIdentityByAccessToken($token,$type=null){}
-
 	public function behaviors()
 	{
 		return [
@@ -45,6 +42,7 @@ class Manager extends ActiveRecord implements IdentityInterface
 					ActiveRecord::EVENT_BEFORE_INSERT => ['created', 'modified'],
 					ActiveRecord::EVENT_BEFORE_UPDATE => 'modified',
 				],
+                'value' => function (){ return date("Y-m-d H:i:s");}
 			],
 		];
 	}
@@ -61,6 +59,7 @@ class Manager extends ActiveRecord implements IdentityInterface
 	{
 		return static::findOne($id);
 	}
+
 	/**
 	 * Finds user by username
 	 *
@@ -79,7 +78,6 @@ class Manager extends ActiveRecord implements IdentityInterface
 	{
 		return $this->getPrimaryKey();
 	}
-
 	public function getUsername() {
         return $this->user->username;
     }
@@ -112,7 +110,6 @@ class Manager extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-
             ['status', 'default', 'value' => self::STATUS_ACTIVE,'on'=>'update'],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
 
@@ -122,7 +119,6 @@ class Manager extends ActiveRecord implements IdentityInterface
             ['username', 'filter', 'filter' => 'trim'],
             ['username', 'required'],
             ['username', 'string', 'min' => 2, 'max' => 255],
-            ['username','unique'],
 
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
@@ -130,8 +126,8 @@ class Manager extends ActiveRecord implements IdentityInterface
             ['email', 'unique', 'message' => 'This email address has already been taken.', 'on' => 'signup,update'],
             ['email', 'exist', 'message' => 'There is no user with such email.', 'on' => 'requestPasswordResetToken'],
 
-
             ['password', 'required'],
+            ['storeroom_id', 'required'],
             ['password', 'string', 'min' => 6],
         ];
     }
@@ -139,11 +135,11 @@ class Manager extends ActiveRecord implements IdentityInterface
     public function scenarios()
     {
         return [
-            'signup' => ['username', 'email', 'password', '!status', '!role'],
+            'signup' => ['username', 'email','storeroom_id','password', '!status', '!role'],
             'update'=>['status'],
             'resetPassword' => ['username', 'email', 'password'],
             'resetPassword' => ['password'],
-            'default'=>[],
+            'requestPasswordResetToken' => ['email'],
         ];
     }
 
@@ -154,17 +150,28 @@ class Manager extends ActiveRecord implements IdentityInterface
                 $this->password_hash = \Yii::$app->getSecurity()->generatePasswordHash($this->password);
             }
             if ($this->isNewRecord) {
-                $this->auth_key = \Yii::$app->getSecurity()->generateRandomKey();
+                $this->auth_key = \Yii::$app->getSecurity()->generateRandomString();
             }
             return true;
         }
         return false;
     }
-    /**
-     * update manager object attritbutes
-     * @param  [type] $attributes [description]
-     * @return [type]             [description]
-     */
+
+    public function getAllData(){
+        $provider = new ActiveDataProvider([
+              'query' => static::find()
+                         // ->where(['status'=>10])
+                         ->orderby('id desc'),
+            'sort' => [
+                'attributes' => ['id',],
+            ],
+            'pagination' => [
+                'pageSize' => 30,
+            ],
+        ]);
+        return $provider;
+    }
+
     public function updateAttrs($attributes){
         $attrs = array();
         if (!empty($attributes['username']) && $attributes['username'] != $this->username) {
@@ -180,110 +187,50 @@ class Manager extends ActiveRecord implements IdentityInterface
             $this->password = $attributes['password'];
         }
         $this->setScenario('resetPassword');
-        $this->status = self::STATUS_ACTIVE;
         if ($this->validate($attrs)) {
             return $this->save(false);
         } else {
             return false;
         }
     }
-    /**
-     * set user status is delete
-     * @param  [type] $uid [description]
-     * @return [type]      [description]
-     */
+
+    // public function 
     public function deleteUser($uid){
-        $this->status = self::STATUS_DELETED;
-        if($this->save()){
+        $model = Manager::find($uid);
+        $model->setScenario('update');
+        $model->status = 0;
+        $model->update();
+        if($model->update()){
             return true;
         }
         return false;
     }
-    /**
-     * get manager object status
-     */
-    public function getManagerStatus(){
-        return function ($model) {
-            return $this->getCanUseStatus()[$model->status];
-        };
-    }
-    /**
-     * user status list array
-     * @return [type] [description]
-     */
-    public function getCanUseStatus(){
-        return [
-            self::STATUS_ACTIVE=>'正常',
-            self::STATUS_DELETED=>'禁用',
-        ];
-    }
-    /**
-     * user status list array
-     * @return [type] [description]
-     */
-    public function getCanUsePlatform(){
-        return [
-            ManagerPlatform::PLATFORM_CANGCHU=>'仓储',
-            ManagerPlatform::PLATFORM_OPERATE=>'运营',
-            ManagerPlatform::PLATFORM_BOSS=>'财务',
-        ];
-    }
-    /**
-     * get platforms
-     * @return [type] [description]
-     */
-    public function getPlatforms(){
-        return [
-            ManagerPlatform::PLATFORM_CANGCHU => '仓储',
-            ManagerPlatform::PLATFORM_OPERATE => '运营',
-            ManagerPlatform::PLATFORM_BOSS =>'财务',
-        ];
-    }
-    /**
-     * [savePlatform description]
-     * @param  [type] $platforms [description]
-     * @return [type]            [description]
-     */
-    public function savePlatform($platforms){
-        $manager_id = $this->id;
-        $model = new ManagerPlatform;
-        return $model->updateManagerPlatform($manager_id,$platforms);
-    }
-    public function fields()
-    {
-        $fields = parent::fields();
-        $fields['platform']='boss';
-        return $fields;
-    }
-    /**
-     * 
-     * @return [type] [description]
-     */
+
     public function attributeLabels(){
         return [
             'username'=>'用户名',
             'email'=>'邮箱',
-            'create_time'=>'创建时间',
-            'status'=>'状态',
             'password'=>'密码',
-            'platform'=>'平台',
+            'create_time'=>'创建时间',
+            'storeroom_id'=>'所属库房',
         ];
     }
     /**
-     * get user platform
+     * [getCanUseStorerooms description]
      * @return [type] [description]
      */
-    public function getUserPlatform(){
-        return function ($model) {
-            $str = '';
-            if(!empty($model->platformRelation)){
-                foreach($model->platformRelation as $value){
-                    $str .= $model->getPlatforms()[$value->platform];
-                    $str .= ' ';
-                }
+    public function getCanUseStorerooms(){
+        $rs = Storeroom::find()->all();
+        $arr = [];
+        if($rs){
+            foreach($rs as $key=>$v){
+                $arr[$v['id']]=$v['name'];
             }
-            return $str;
-        };
+
+        }
+        return $arr;
     }
-    
+    public function getStores(){
+        return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']); 
+    }
 }

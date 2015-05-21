@@ -10,8 +10,7 @@ use yii\filters\VerbFilter;
 
 class SiteController extends Controller
 {
-    public $layout = false;
-    
+    public $sidebars=[];
     public function behaviors()
     {
         return [
@@ -41,33 +40,33 @@ class SiteController extends Controller
     }
 
 
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
+	public function actionIndex()
+	{
 
-    public function actionLogin()
-    {
-        if (!\Yii::$app->user->isGuest) {
-            $this->goHome();
-        }
+		return $this->render('index');
+	}
 
-        $model = new LoginForm();
-        if ($model->load($_POST) && $model->login()) {
-            return $this->goBack();
-        }
-        
-        return $this->render('login', [
-                'model' => $model,
-            ]);
-    }
+	public function actionLogin()
+	{
+		if (!\Yii::$app->user->isGuest) {
+			$this->goHome();
+		}
+		$model = new LoginForm();
+		if ($model->load($_POST) && $model->login()) {
+			return $this->goBack();
+		} else {
+			return $this->render('login', [
+				'model' => $model,
+			]);
+		}
+	}
 
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-        return $this->goHome();
-    }
-    public function actionError(){
-        return "执行错误操作！";
-    }
+	public function actionLogout()
+	{
+		Yii::$app->user->logout();
+		return $this->goHome();
+	}
+	public function actionError(){
+		return $this->render("404");
+	}
 }

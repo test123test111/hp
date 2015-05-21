@@ -20,11 +20,19 @@ class GTwigExtension extends \Twig_Extension
     */
     public function getGlobals()
     {
+        if(Yii::$app->id == "app-console"){
+            return array(
+                // 'ActiveForm'=>\yii\widgets\ActiveForm,
+                'App' =>Yii::$app,
+                'staticUrl'=>Yii::$app->params['targetDomain'],
+                 // 'u' => Yii::$app->user->isGuest ? null : \common\components\UserInfo::factory(Yii::$app->user->id),
+            );
+        }
         return array(
             // 'ActiveForm'=>\yii\widgets\ActiveForm,
             'App' =>Yii::$app,
-            'staticDomain'=>Yii::$app->params['staticDomain'],
-             'u' => Yii::$app->user->isGuest ? null : \backend\components\UserInfo::factory(Yii::$app->user->id),
+            'staticUrl'=>Yii::$app->params['targetDomain'],
+             'u' => Yii::$app->user->isGuest ? null : \common\components\UserInfo::factory(Yii::$app->user->id),
         );
     }
      
@@ -47,27 +55,18 @@ class GTwigExtension extends \Twig_Extension
             "value_callback"=> new \Twig_Filter_Method($this,'eval_string',array()),
             "cut"=> new \Twig_Filter_Method($this,'cutstr',array()),
             "count"=> new \Twig_Filter_Method($this,'countArray',array()),
-            "format_http"=> new \Twig_Filter_Method($this,'formatHttp',array()),
-            "sprintf"=> new \Twig_Filter_Method($this,'formatnumber',array()),
         );
     }
 
     public function eval_string($s){
         return eval('return function($model,$index,$column_data){'.$s.'};');
     }
-
-    public function widget($viewName, array $config) 
-    {
-        return $viewName::widget($config);
-    }
     function countArray($arr){
         return count($arr);
     }
-    function formatHttp($arr){
-        return substr($arr,7);
-    }
-    function formatnumber($number){
-        return sprintf("%01.2f", $number);
+    public function widget($viewName, array $config) 
+    {
+        return $viewName::widget($config);
     }
     /**
      * sub str
