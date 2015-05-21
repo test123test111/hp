@@ -12,7 +12,6 @@ use backend\models\search\ProductLineSearch;
 use backend\components\BackendController;
 
 class DepartmentController extends BackendController{
-    public $layout = false;
     /**
      * Displays the manager list
      */
