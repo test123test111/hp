@@ -135,7 +135,7 @@ class Owner extends ActiveRecord implements IdentityInterface
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            [['department','category','product_line','product_two_line'],'safe'],
+            [['department','category','product_line','product_two_line','big_owner','is_budget','budget'],'safe'],
             ['email', 'unique', 'message' => 'This email address has already been taken.', 'on' => 'signup,update'],
             ['email', 'exist', 'message' => 'There is no user with such email.', 'on' => 'requestPasswordResetToken'],
 
@@ -210,6 +210,30 @@ class Owner extends ActiveRecord implements IdentityInterface
             $attrs[] = 'department';
             $this->department = $attributes['department'];
         }
+        if (!empty($attributes['category']) && $attributes['category'] != $this->category) {
+            $attrs[] = 'category';
+            $this->category = $attributes['category'];
+        }
+        if (!empty($attributes['product_line']) && $attributes['product_line'] != $this->product_line) {
+            $attrs[] = 'product_line';
+            $this->product_line = $attributes['product_line'];
+        }
+        if (!empty($attributes['product_two_line']) && $attributes['product_two_line'] != $this->product_two_line) {
+            $attrs[] = 'product_two_line';
+            $this->product_two_line = $attributes['product_two_line'];
+        }
+        if (!empty($attributes['big_owner']) && $attributes['big_owner'] != $this->big_owner) {
+            $attrs[] = 'big_owner';
+            $this->big_owner = $attributes['big_owner'];
+        }
+        if (!empty($attributes['is_budget']) && $attributes['is_budget'] != $this->is_budget) {
+            $attrs[] = 'is_budget';
+            $this->is_budget = $attributes['is_budget'];
+        }
+        if (!empty($attributes['budget']) && $attributes['budget'] != $this->budget) {
+            $attrs[] = 'budget';
+            $this->budget = $attributes['budget'];
+        }
         $this->setScenario('resetPassword');
         if ($this->validate($attrs)) {
             return $this->save(false);
@@ -227,7 +251,7 @@ class Owner extends ActiveRecord implements IdentityInterface
 
     public function attributeLabels(){
         return [
-            'english_name'=>'英文名称',
+            'english_name'=>'名称',
             'email'=>'邮箱',
             'password'=>'密码',
             'phone'=>'移动电话',
@@ -237,6 +261,9 @@ class Owner extends ActiveRecord implements IdentityInterface
             'product_line'=>'一级产品线',
             'product_two_line'=>'二级产品线',
             'created'=>'创建时间',
+            'big_owner'=>'是否大owner',
+            'is_budget'=>'有无预算权',
+            'budget'=>'预算金额',
         ];
     }
     /**
