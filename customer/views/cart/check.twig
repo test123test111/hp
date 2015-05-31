@@ -1,0 +1,112 @@
+{% set sidebar_name = "专属物料" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block body_class %}
+{% endblock%}
+{% block content %}
+	<div class="view_wrap">
+        <div class="o_box">
+        	{% set form = activeform.begin({'action':'/order/buy','id':'buyForm'}) %}
+            {# <form enctype="multipart/form-data" method="post" action="success.html" id="buyForm"> #}
+                <div class="buy_list">
+                    <div class="dt">1 活动信息</div>
+                    <div class="dd">
+                        <input type="text" value="" name="Order[goods_active]" class="active_input" />
+                    </div>
+                    <div class="dt">2 收货人信息</div>
+                    <div class="dd">
+                        <ul class="addr_list" id="address_area">
+                            {% for addr in address %}
+                            <li class="clearfix {% if addr.status == 1 %}selected{% endif %}" id="addr_{{ addr.id }}">
+                                <input type="radio" name="address" value="{{ addr.id }}" {% if addr.status == 1 %}checked="checked"{% endif %} class="hookbox"/>
+                                <label>
+                                    <b>{{ addr.name }}</b>{{ addr.province }} {{ addr.city }} {{ addr.area }} {{ addr.address }}
+                                    <em>{{ addr.phone }}</em>
+                                </label>
+                            <span class="edit">
+                                {% if addr.status == 0 %}<a href="javascript:;" class="del_link apink" data-id="{{ addr.id }}">删除</a>{% endif %}
+                                <a href="javascript:;" class="edit_link apink" data-id="{{ addr.id }}">编辑</a>
+                            </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <ul class="addr_list">
+                            <li class="clearfix addnew">
+                                <a href="javascript:;">+新收货地址</a>
+                            </li>
+                        </ul>
+                      
+                    </div>
+                    <div class="dt">3 到货需求</div>
+                    <div class="dd">
+                        <ul id="delivery_time" class="delivery_time clearfix">
+                            <li class="selected">
+                                <label><input type="radio" class="hookbox" checked="checked" value="4小时" name="Order[limitday]">4小时</label>
+                            </li>
+                            <li>
+                                <label><input type="radio" class="hookbox" value="12小时" name="Order[limitday]">12小时</label>
+                            </li>
+                            <li>
+                                <label><input type="radio" class="hookbox" value="24小时" name="Order[limitday]">24小时</label>
+                            </li>
+                            <li>
+                                <label><input type="radio" class="hookbox" value="3天" name="Order[limitday]">3天</label>
+                            </li>
+                             <li>
+                                <label><input type="radio" class="hookbox" value="5天" name="Order[limitday]">5天</label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dt">4 物料信息</div>
+                    <div class="dd">
+                        <div class="buy_goods">
+                            <div class="cart_tt clearfix">
+                                <span class="goods">物料</span>
+                                <span class="room">库房</span>
+                                <span class="qty">数量</span>
+                            </div>
+                            <ul>
+                            	{% for result in results %}
+                            	<input type="hidden" name="Carts[{{ result.cart_id }}][id]" value="{{ result.cart_id }}" />
+                            	<input type="hidden" name="Carts[{{ result.cart_id }}][quantity]" value="{{ result.quantity }}" />
+                                <li class="clearfix" id="cart_294" data-stock="4" data-storeroom-id="1" data-materiel-id="1">
+                                    <div class="goods">
+                                        <a href="#" class="pic">
+                                        	{% for im in result.info.material.image %}
+					                            {% if loop.index == 1 %}
+					                            <img src="{{ im }}">
+					                            {% endif %}
+					                        {% endfor %}
+                                        </a>
+                                        <div class="name">
+                                            <p><a href="#">{{ result.info.material.name }}</a></p>
+                                            <div class="property">
+                                                <span>{{ result.info.material.getMyPropertyName() }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="room">{{ result.info.storeroom.name }}</span>
+                                    <span class="qty">×{{ result.quantity }}</span>
+                                </li>
+                            	{% endfor %}
+                            	<input type="hidden" name="Order[owner_id]" value="{{ App.user.id }}" />
+                            </ul>
+                        </div>
+
+                        <input type="text" placeholder="输入备注信息" name="Order[info]" class="memo_input" />
+                    </div>
+
+                    <div class="cart_submit clearfix">
+                        <a href="javascript:;" class="buy_btn">确认订单</a>
+                        <div class="amount">共<span class="red" id="selectedCount">2</span> 件商品</div>
+                    </div>
+                    
+                </div>
+            {{ void(form.end()) }}
+        </div>
+    </div>
+    <script type='text/javascript' src='/js/layer.min.js'></script>
+    <script type='text/javascript' src='/js/buy.js'></script>
+    <script type='text/javascript' src='/js/province.js'></script>
+    <script type='text/javascript' src='/js/city.js'></script>
+    <script type='text/javascript' src="/js/district.js"></script>
+{% endblock %}

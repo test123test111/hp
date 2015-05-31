@@ -1,0 +1,62 @@
+
+<!-- address dialog -->
+    <div class="address_popup">
+        <table>
+            <tbody>
+                <tr>
+                    <th>所在地区：<em>*</em></th>
+                    <td>
+                        {% if isNew == false %}
+                        <input type="hidden" id="default_province" value="{{ model.province }}" />
+                        <input type="hidden" id="default_city" value="{{ model.city }}" />
+                        <input type="hidden" id="default_district" value="{{ model.area }}" />
+                        <input type="hidden" id="default_addr_id" value="{{ model.id }}" />
+                        {% else %}
+                        <input type="hidden" id="default_province" value="" />
+                        <input type="hidden" id="default_city" value="" />
+                        <input type="hidden" id="default_district" value="" />
+                        <input type="hidden" id="default_addr_id" value="" />
+                        {% endif %}
+
+                        <select id="addr_province" onchange="doCity();"></select>
+                        <select id="addr_city" onchange="doDistrict();"></select>
+                        <select id="addr_district"></select><span class="error_tip" id="error_area">请选择所在地区</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>邮政编码：<em>*</em></th>
+                    <td>
+                        <input type="text" id="addr_zip" {% if isNew == false %}value="{{ model.zip }}"{% endif %} class="tc-text"><span class="error_tip" id="error_zip">不是正确的邮编编码</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>街道地址：<em>*</em></th>
+                    <td>
+                        <textarea name="addrMail" id="addr_address" class="tc-text" id="amaddr">{% if isNew == false %}{{ model.address }}{% endif %} </textarea><span class="error_tip" id="error_address">街道地址不能为空</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>收货人姓名：<em>*</em></th>
+                    <td>
+                        <input type="text" name="addrName"  id="addr_name" {% if isNew == false %}value="{{ model.name }}"{% endif %} class="tc-text" id="amname"><span class="error_tip" id="error_name">收货人姓名不能为空</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>电话：<em></em></th>
+                    <td>
+                        <input type="text" name="addrArea" id="addr_area" {% if isNew == false %}value="{{ model.tel_area_code }}"{% endif %} class="tc-text"> -
+                        <input type="text" name="addrNum" id="addr_tel" {% if isNew == false %}value="{{ model.tel }}"{% endif %} class="tc-text"> -
+                        <input type="text" name="addrExt" id="addr_ext" {% if isNew == false %}value="{{ model.tel_ext }}"{% endif %} class="tc-text">
+                        <span class="tip">格式：区号 - 电话号码 - 分机号</span><span class="error_tip" id="error_tel"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>手机：<em></em></th>
+                    <td>
+                        <input type="text" name="addrMobi" id="addr_phone" class="tc-text" {% if isNew == false %}value="{{ model.phone }}"{% endif %} id="ammobi">
+                        <span class="tip">电话和手机请至少填写一个</span><span class="error_tip" id="error_phone">电话和手机请至少填写一个</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>

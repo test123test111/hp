@@ -36,4 +36,14 @@ class Category extends Cg
              return \yii\helpers\Html::a("编辑","/department/updatecat/$model->id")."|".\yii\helpers\Html::a("设置产品线","/department/setting-prod?ProductLineSearch[category_id]=$model->id");
         ';
     }
+    public static function getCategoryByPid($pro_id){
+        $city = static::find()->where(['department_id'=>$pro_id])->asArray()->all();
+        $ret = [];
+        return array_map(function($a) use ($ret){
+            $ret = ['id'=>$a['id'],'name'=>$a['name']];
+            return $ret;
+        },$city);
+
+        // return \yii\helpers\ArrayHelper::map($city,'id','name');
+    }
 }

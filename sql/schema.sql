@@ -360,3 +360,50 @@ alter table material add column package varchar(64) not null default '';
 alter table material change column `desc` `desc` varchar(255) NOT NULL DEFAULT '';
 alter table stock add column warning_quantity int(11) NOT NULL DEFAULT '0';
 
+
+DROP TABLE IF EXISTS `customer_share`;
+CREATE TABLE `customer_share` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `customer_id` int(10) NOT NULL COMMENT '用户id',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `to_customer_id` int(10) NOT NULL,
+  `share_time` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `customer_id` (`customer_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `owner`;
+CREATE TABLE `owner` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `email` varchar(255) NOT NULL DEFAULT '',
+  `phone` varchar(255) NOT NULL DEFAULT '',
+  `tell` varchar(255) NOT NULL DEFAULT '',
+  `department_id` int(11) NOT NULL COMMENT '部门',
+  `category_id` int(11) NOT NULL COMMENT '组别',
+  `role` tinyint(4) NOT NULL COMMENT '0 HHG 1:customer',
+  `is_budget` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否有预算权限',
+  `budget_num` float(10,2) NOT NULL DEFAULT '0.00', 
+  `auth_key` varchar(64) NOT NULL DEFAULT '',
+  `password_hash` varchar(128) NOT NULL DEFAULT '',
+  `password_reset_token` varchar(128) NOT NULL DEFAULT '',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `product_two_line` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_line_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
+
+

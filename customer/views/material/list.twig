@@ -1,0 +1,149 @@
+{% set sidebar_name = "专属物料" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+  {% include '@app/views/layouts/base_with_sidebar.twig' %}
+  <div class="main">
+        <div class="order_search">
+          <form>
+            <ul class="clearfix">
+                <li>
+                    <label>关键字：</label>
+                    <input type="text" name="material_id" value="" class="search_input" placeholder="输入关键字进行搜索" />
+                </li>
+                <li>
+                    <label>选择仓库：</label>
+                    <select name="storeroom_id">
+                        {% for storeroom in storerooms %}
+                        <option value="{{ storeroom.id }}">{{ storeroom.name }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>
+                    <label>所属人：</label>
+                    <select>
+                        <option value="{{ App.user.id }}">{{ App.user.identity.english_name }}</option>
+                        {# <option value="1">周星星</option>
+                        <option value="1">张学友</option> #}
+                    </select>
+                </li>
+                <li>
+                    <label>产&ensp;品&ensp;线：</label>
+                    <input type="text" name="channel" value="" class="search_input" placeholder="" />
+                </li>
+            </ul>
+            
+            <input type="submit" value="搜索" class="search_btn" />
+          </form>
+        </div>
+        <div class="material_cart clearfix">
+            <a href="javascript:void(0);" class="cart_btn" onclick="materiel_cart();"></a>
+            <span class="cart_success">已成功加入购物车！</span>
+        </div>
+        <div class="materiel_box">
+                <table id="material_list" class="materiel_table">
+                    <thead>
+                        <tr>
+                            <td>选择</td>
+                            <td>物料编号</td>
+                            <td>物料名称</td>
+                            <td>属性</td>
+                            <td>产品线</td>
+                            <td>入库时间</td>
+                            <td>库房地址</td>
+                            <td>所属人</td>
+                            <td>实际库存数</td>
+                            <td>计划数量</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key,result in results %}
+                        <tr>
+                            <td><input type="checkbox" name="" value="{{ key }}" data-id="{{ result.material.id }}" data-storeroom="{{ result.storeroom.id }}" data-stock="{{ result.total }}" /></td>
+                            <td>{{ result.material.code }}</td>
+                            <td><a href="/material/view?id={{ result.material_id }}&sid={{ result.material.id }}" class="blue">{{ result.material.name }}</a></td>
+                            <td>{{ result.material.getMyPropertyName() }}</td>
+                            <td>{{ result.material.channel }}</td>
+                            <td>{{ result.created }}</td>
+                            <td>{{ result.storeroom.name }}</td>
+                            <td>{{ result.owners.english_name }}</td>
+                            <td>{{ result.total }}</td>
+                            <td><input type="text" value="" name="" class="m_amount" id="amount_{{ key }}" /></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>      
+            </div>
+            <div class="pages clearfix">
+                <div class="fr">
+                    {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
+                </div>
+            </div>
+      </div>
+      <script type='text/javascript'>
+            $(function(){
+                $(".m_amount").bind('keyup',function(){
+                    var cur_qty = parseInt($(this).val());
+                    if(!/^[1-9][0-9]*$/.test(cur_qty)){
+                        $(this).val("");
+                    }
+                });
+            });
+
+            function materiel_cart(){
+                var ischeck = $("#material_list input[type=checkbox]:checked").length;
+                if(ischeck == 0){
+                    alert("请选择物料！");
+                    return false;
+                }
+                var isok = true;
+                $.each($("#material_list input[type=checkbox]:checked"),function(i,k){
+                    var id = $(this).val();
+                    var stock = parseInt($(this).attr("data-stock"));
+                    var $amount = $("#amount_"+id);
+                    var amount = parseInt($amount.val());
+                    if(amount == "" || amount > stock){
+                        $amount.addClass('error');
+                        isok = false;
+                    }
+                });
+                if(!isok){
+                    alert("计划数量输入有误！");
+                }else{
+                    $(".m_amount").removeClass("error");
+                    addCart();
+                }
+            }
+
+            function addCart(){
+                var material_data = [];
+                $.each($("#material_list input[type=checkbox]:checked"),function(i,k){
+                    var id = $(this).attr("data-id");
+                    var sid = $(this).val();
+                    var $amount = $("#amount_"+sid);
+                    var amount = parseInt($amount.val());
+                    var storeroom_id = $(this).attr("data-storeroom");
+                    var item = {"material_id":id,"quantity":amount,"storeroom_id":storeroom_id};
+                    material_data.push(item);
+                });
+                var safeCode = $('meta[name=csrf-token]');
+                $.ajax({
+                    url : "/cart/batchadd",
+                    type : "POST",
+                    dataType : "json",
+                    data : {"items":material_data,"_csrf":safeCode.attr('content')},
+                    success : function(json){
+                        $(".cart_success").fadeIn();
+                        $("#material_list input[type=checkbox]").removeAttr("checked");
+                        window.setTimeout(hideTip,3000);
+                    }
+                });
+            }
+
+            function hideTip(){
+                $(".cart_success").fadeOut();
+            }
+        </script>
+{% endblock %}
+
+
+

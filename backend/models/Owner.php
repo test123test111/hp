@@ -135,7 +135,7 @@ class Owner extends ActiveRecord implements IdentityInterface
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            ['department','safe'],
+            [['department','category','product_line','product_two_line'],'safe'],
             ['email', 'unique', 'message' => 'This email address has already been taken.', 'on' => 'signup,update'],
             ['email', 'exist', 'message' => 'There is no user with such email.', 'on' => 'requestPasswordResetToken'],
 
@@ -233,7 +233,31 @@ class Owner extends ActiveRecord implements IdentityInterface
             'phone'=>'移动电话',
             'tell'=>'固定电话',
             'department'=>'部门',
+            'category'=>'组别',
+            'product_line'=>'一级产品线',
+            'product_two_line'=>'二级产品线',
             'created'=>'创建时间',
         ];
+    }
+    /**
+     * [getCanChoseProvince description]
+     * @return [type] [description]
+     */
+    public function getCanChoseDepartment(){
+        $province = Department::find()->all();
+        $ret = ['0'=>'请选择...'];
+        foreach($province as $pro){
+            $ret[$pro->id] = $pro->name;
+        }
+        return $ret;
+    }
+    public function getDefaultCategory(){
+        return \yii\helpers\ArrayHelper::map(Category::find()->where(['department_id' => $this->department])->all(),'id','name');
+    }
+    public function getDefaultProductLine(){
+        return \yii\helpers\ArrayHelper::map(ProductLine::find()->where(['category_id' => $this->category])->all(),'id','name');
+    }
+    public function getDefaultProductTwoLine(){
+        return \yii\helpers\ArrayHelper::map(ProductTwoLine::find()->where(['product_line_id' => $this->product_line])->all(),'id','name');
     }
 }

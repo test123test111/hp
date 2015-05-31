@@ -1,0 +1,37 @@
+{% extends '@app/views/layouts/base.twig' %}
+{% block body %}
+	<div class="header">
+    	<!-- top -->
+        <div class="mtop clearfix">
+        	<h1 class="logo"><a href="/"></a></h1>
+        	<div class="info">
+        		{# <div class="search">
+                    <form action="/material/list" method="get">
+        			     <input type="text" class="search_input" value="" placeholder="输入物料号搜索" name="material_id" />
+        			     <input type="submit" class="search_btn" value="&nbsp;" />
+                    </form>
+        		</div> #}
+        		<a class="feedback">欢迎您:</a>
+        		<div class="avatar"><img src="/images/avatar.png"></div>
+        		<div class="user">
+        			<span>{{ App.user.identity.english_name }}</span>
+        			<div class="sub">
+        				{# <a href="#">账号管理</a> #}
+        				<a href="/site/logout">退出登录</a>
+        			</div>
+        		</div>
+                <a href="/cart" class="cart">购物车</a>
+        	</div>
+        </div>
+        <!-- top end -->
+
+        <!-- banner -->
+        <div class="mban">
+        	<h2 class="title"><img src="/images/title.png"></h2>
+        </div>
+        <!-- banner end -->
+    </div>
+    {% block content %}
+    
+    {% endblock %}
+{% endblock %}

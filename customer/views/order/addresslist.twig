@@ -1,0 +1,13 @@
+{% for addr in address %}
+<li class="clearfix {% if addr.status == 1 %}selected{% endif %}" id="addr_{{ addr.id }}">
+    <input type="radio" name="address" value="{{ addr.id }}" {% if addr.status == 1 %}checked="checked"{% endif %} class="hookbox" />
+    <label>
+        <b>{{ addr.name }}</b>{{ addr.province }} {{ addr.city }} {{ addr.area }} {{ addr.address }}
+        <em>{{ addr.phone }}</em>
+    </label>
+    <span class="edit">
+         {% if addr.status == 0 %}<a href="javascript:;" class="del_link apink" data-id="{{ addr.id }}">删除</a>{% endif %}
+        <a href="javascript:;" class="edit_link apink" data-id="{{ addr.id }}">编辑</a>
+    </span>
+</li>
+{% endfor %}

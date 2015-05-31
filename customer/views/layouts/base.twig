@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content=""/>
+    <title>惠普仓储管理系统</title>
+    {{ html.csrfMetaTags()|raw }}
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+    <script type='text/javascript' src='/js/base.js'></script>
+    </head>
+    <body id="{% block body_class %}w{% endblock %}">
+        {{ this.beginBody() }}
+        {% block body %}
+        {% endblock %}
+        {{ this.endBody() }}
+        <!-- ace 脚本 -->
+        <!-- quick link -->
+        {# <div class="quick_box">
+            <a href="javascript:void(0);" class="q1" onclick="gotop();"></a>
+            <a href="javascript:window.location.reload();" class="q2"></a>
+            <a href="index.html" class="q3"></a>
+        </div> #}
+        <!-- quick link end -->
+        <div class="footer">
+            <p><img src="/images/f_logo.png" align="absmiddle"> &copy;2015 北京宏昊寰宇国际贸易有限公司版权所有。所有权利受到保护。</p>
+        </div>
+    </body>
+</html>

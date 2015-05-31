@@ -1,0 +1,82 @@
+{% set sidebar_name = "库存报告" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+<div class="main">
+        <div class="order_search">
+          <form>
+            <ul class="clearfix">
+                <li>
+                    <label>关键字：</label>
+                    <input type="text" name="material_id" value="" class="search_input" placeholder="输入关键字进行搜索" />
+                </li>
+                <li>
+                    <label>选择仓库：</label>
+                    <select name="storeroom_id">
+                        {% for storeroom in storerooms %}
+                        <option value="{{ storeroom.id }}">{{ storeroom.name }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>
+                    <label>所属人：</label>
+                    <select>
+                        <option value="{{ App.user.id }}">{{ App.user.identity.english_name }}</option>
+                        {# <option value="1">周星星</option>
+                        <option value="1">张学友</option> #}
+                    </select>
+                </li>
+                <li>
+                    <label>产&ensp;品&ensp;线：</label>
+                    <input type="text" name="channel" value="" class="search_input" placeholder="" />
+                </li>
+            </ul>
+            
+            <input type="submit" value="搜索" class="search_btn" />
+          </form>
+        </div>
+        <div class="material_cart clearfix">
+            <a href="javascript:void(0);" class="export_btn">导出库存报告</a>
+        </div>
+        <div class="materiel_box">
+                <table class="materiel_table">
+                    <thead>
+                        <tr>
+                            <td>物料编号</td>
+                            <td>物料名称</td>
+                            <td>库房名称</td>
+                            <td>现有库存</td>
+                            <td>操作</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr>
+                            <td>{{ result.material.code }}</td>
+                            <td><a href="/material/view/{{ result.material_id }}" class="blue">{{ result.material.name }}</a></td>
+                            <td>{{ result.storeroom.name }}</td>
+                            <td>{{ result.total }}</td>
+                            <td>
+                            <a class="blue" href="/stock/detail?material_id={{ result.material.id }}&storeroom_id={{ result.storeroom.id }}" target="_blank">查看出入库记录</a>
+                           {#  <a class="blue" href="/stock/exportstock?sid={{ result.storeroom.id }}&mid={{ result.material.id }}" target="_blank">导出报表</a> #}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>      
+            </div>
+            <div class="pages clearfix">
+                <div class="fr">
+                    {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
+                </div>
+            </div>
+      </div>
+      <script type="text/javascript">
+
+        $(function(){
+            var url = window.location.search;
+            $(".export_btn").attr("href","/stock/export"+url);
+        });
+        
+      </script>
+{% endblock %}

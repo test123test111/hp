@@ -1,0 +1,35 @@
+{% set sidebar_name = "物料进出" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+<div class="main">
+	<div class="search_mod">
+        <form>
+            <ul>
+                <li class="clearfix">
+                    <label>输入物料号:</label>
+                    <input type="text" name="material_code" class="search_ipt" value="" placeholder="" />
+                </li>
+                <li class="clearfix">
+                    <label>&nbsp;</label>
+                    <span class="item"><input type="radio" name="action" value="0" /> 出库报告</span>
+                    <span class="item"><input type="radio" name="action" value="0" /> 入库报告</span>
+                </li>
+                <li class="clearfix">
+                    <label>开始日期：</label>
+                    <input type="text" name="begin_time" class="search_ipt date_input" value="{% if params.begin_time is defined %}{{ params.begin_time }}{% endif %}" placeholder="点击选择开始日期" />
+                </li>
+                <li class="clearfix">
+                    <label>结束日期：</label>
+                    <input type="text" name="end_time" class="search_ipt date_input" value="{% if params.end_time is defined %}{{ params.end_time }}{% endif %}" placeholder="点击选择结束日期" />
+                </li>
+                <li class="clearfix">
+                    <label>&nbsp;</label>
+                    <input type="submit" name="" class="search_btn" value="搜索" />
+                </li>
+                <input type="hidden" name="search" value="1" />
+            </ul>
+        </form>
+    </div>
+</div>
+{% endblock %}

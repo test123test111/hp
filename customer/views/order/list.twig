@@ -1,0 +1,61 @@
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+  <div class="main">
+        <div class="order_search">
+          <form>
+            <input type="text" name="order_id" value="" class="search_input" placeholder="输入订单号进行搜索" />
+            <input type="submit" value="订单搜索" class="search_btn" />
+          </form>
+        </div>
+        <div class="order_box">
+          <table class="bought_table">
+            <!-- 单个商品 -->
+                    {% for result in results %}
+                    <!-- 多个商品 -->
+                    <tbody id="myorder_1979">
+                            <tr class="sep_row">
+                                <td colspan="5"></td>
+                            </tr>
+                            <tr class="order_hd">
+                                <td colspan="5">
+                                  <span><input type="checkbox" value="" name="" /></span>
+                                    <span class="date">下单日期：{{ result.created }}</span>
+                                    <span class="order_no">订单号码：{{ result.viewid }}</span>
+                                    <span class="user">下单人：
+                                      {% if result.source == 0 %}
+                                        {{ result.createduser.username }}
+                                      {% else %}
+                                        {{ result.createduser.english_name }}
+                                      {% endif %}
+                                    </span>
+                                    <span class="del"></span>
+                                </td>
+                            </tr>
+                            {% for d in result.details %}
+                            <tr class="order_bd">
+                                <td class="baobei">
+                                    {% for im in d.material.image %}
+                                      {% if loop.index == 1%}
+                                    <a class="pic" href="#" target="_blank"><img src="{{ im }}"></a>
+                                  {% endif %}
+                                  {% endfor %}
+                                    <div class="goods">
+                                        <p class="name"><a class='blue' href="/material/view/{{ d.material.id }}" target="_blank">{{ d.material.name }}</a></p>
+                                    </div>
+                                </td>
+                                <td class="price">物料编号：{{ d.goods_code }}</td>
+                                <td class="qty">数量：{{ d.goods_quantity}}</td>
+                                {% if loop.index == 1 %}
+                                <td rowspan="2" class="edit">交易成功<br/>订单详情</td>
+                                <td rowspan="2" class="status">订单状态<br/>{{ result.getOrderStatus()|raw }}</td>
+                              {% endif %}
+                            </tr>
+                          {% endfor %}
+                    </tbody>
+                  {% endfor %}
+                    
+                </table>
+        </div>
+      </div>
+{% endblock %}

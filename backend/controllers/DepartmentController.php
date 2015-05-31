@@ -6,9 +6,11 @@ use yii\filters\AccessControl;
 use backend\models\Department;
 use backend\models\Category;
 use backend\models\ProductLine;
+use backend\models\ProductTwoLine;
 use backend\models\search\DepartmentSearch;
 use backend\models\search\CategorySearch;
 use backend\models\search\ProductLineSearch;
+use backend\models\search\ProductTwoLineSearch;
 use backend\components\BackendController;
 
 class DepartmentController extends BackendController{
@@ -117,6 +119,24 @@ class DepartmentController extends BackendController{
         return $this->render('setting-prod',['model'=>$model,'category'=>$category,'dataProvider'=>$dataProvider]);
     }   
     /**
+     * action for set product for category
+     * @return [type] [description]
+     */
+    public function actionSettingProdTwo(){
+        $category = new ProductTwoLineSearch;
+        $dataProvider = $category->search(Yii::$app->request->getQueryParams());
+        $id = Yii::$app->request->get('ProductTwoLineSearch')['product_line_id'];
+        $model = ProductLineSearch::findOne($id);
+        if(Yii::$app->request->isPost){
+            $category->load(Yii::$app->request->post());
+            if($model->validate()){
+                $model->saveProduceTwoLine(Yii::$app->request->post()['ProductTwoLineSearch']);
+                return $this->redirect(Yii::$app->request->getReferrer());
+            }
+        }
+        return $this->render('setting-prod-two',['model'=>$model,'category'=>$category,'dataProvider'=>$dataProvider]);
+    }   
+    /**
      * action for update productline 
      * @return [type] [description]
      */
@@ -134,6 +154,25 @@ class DepartmentController extends BackendController{
             }
         }
         return $this->render('setting-prod',['model'=>$model,'category'=>$category,'dataProvider'=>$dataProvider]);
+    }
+     /**
+     * action for update productline 
+     * @return [type] [description]
+     */
+    public function actionUpdateprodtwo(){
+        $category = new ProductTwoLineSearch;
+        $dataProvider = $category->search(Yii::$app->request->getQueryParams());
+        $category = ProductTwoLine::findOne(Yii::$app->request->get('id'));
+        $id = Yii::$app->request->get('ProductLineTwoSearch')['product_line_id'];
+        $model = ProductLineSearch::findOne($category->product_line_id);
+        if(Yii::$app->request->isPost){
+            $category->load(Yii::$app->request->post());
+            if($category->validate()){
+                $category->update();
+                return $this->redirect(Yii::$app->request->getReferrer());
+            }
+        }
+        return $this->render('setting-prod-two',['model'=>$model,'category'=>$category,'dataProvider'=>$dataProvider]);
     }
     /**
      * Returns the data model based on the primary key given in the GET variable.

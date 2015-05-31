@@ -4,7 +4,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 
-class ProductLine extends ActiveRecord
+class ProductTwoLine extends ActiveRecord
 {
 	public function behaviors()
 	{
@@ -26,7 +26,7 @@ class ProductLine extends ActiveRecord
      * @return
      */
     public static function tableName() {
-        return 'product_line';
+        return 'product_two_line';
     }
     /**
      * 
@@ -34,7 +34,7 @@ class ProductLine extends ActiveRecord
      */
     public function attributeLabels(){
         return [
-            'name'=>'一级产品线名称',
+            'name'=>'二级产品线名称',
             'created'=>'创建时间',
         ];
     }
