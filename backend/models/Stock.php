@@ -29,8 +29,9 @@ class Stock extends BackendActiveRecord {
      */
     public function rules() {
         return [
-            [['material_id','storeroom_id','stock_time','actual_quantity','active','project_id'],'required'],
-            [['forecast_quantity','delivery','warning_quantity'],'safe'],
+            [['material_id','storeroom_id','stock_time','actual_quantity'],'required'],
+            [['forecast_quantity','delivery'],'safe'],
+            ['warning_quantity','safe'],
             [['material_id','storeroom_id'],'required','on'=>'search'],
             [['material_id','actual_quantity','destory_reason'],'required','on'=>'destory'],
             [['actual_quantity'],'checkQuantity','on'=>'destory'],

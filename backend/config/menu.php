@@ -44,46 +44,46 @@ return [
                 ],
             ],
         ],
-        'supplier'=>[
-            'name'=>'供应商',
-            'route'=>'',
-            'icon'=>'group',
-            'style'=>'',
-            'subs' => [
-                [
-                    'name' => '干线列表',
-                    'route' => 'trunk/list',
-                ],
-                [
-                    'name' => '添加干线',
-                    'route' => 'trunk/create',
-                ],
-                [
-                    'name' => '派送公司列表',
-                    'route' => 'delivery/list',
-                ],
-                [
-                    'name' => '添加派送公司',
-                    'route' => 'delivery/create',
-                ],
-            ],
-        ],
-        'project'=>[
-            'name'=>'项目',
-            'route'=>'',
-            'icon'=>'tags',
-            'style'=>'tags',
-            'subs' => [
-                [
-                    'name' => '项目列表',
-                    'route' => 'project/list',
-                ],
-                [
-                    'name' => '添加项目',
-                    'route' => 'project/create',
-                ],
-            ],
-        ],
+        // 'supplier'=>[
+        //     'name'=>'供应商',
+        //     'route'=>'',
+        //     'icon'=>'group',
+        //     'style'=>'',
+        //     'subs' => [
+        //         [
+        //             'name' => '干线列表',
+        //             'route' => 'trunk/list',
+        //         ],
+        //         [
+        //             'name' => '添加干线',
+        //             'route' => 'trunk/create',
+        //         ],
+        //         [
+        //             'name' => '派送公司列表',
+        //             'route' => 'delivery/list',
+        //         ],
+        //         [
+        //             'name' => '添加派送公司',
+        //             'route' => 'delivery/create',
+        //         ],
+        //     ],
+        // ],
+        // 'project'=>[
+        //     'name'=>'项目',
+        //     'route'=>'',
+        //     'icon'=>'tags',
+        //     'style'=>'tags',
+        //     'subs' => [
+        //         [
+        //             'name' => '项目列表',
+        //             'route' => 'project/list',
+        //         ],
+        //         [
+        //             'name' => '添加项目',
+        //             'route' => 'project/create',
+        //         ],
+        //     ],
+        // ],
         'owner' => [
             'name' => '物主',
             'route' => 'owner/list',

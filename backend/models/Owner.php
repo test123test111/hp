@@ -241,7 +241,18 @@ class Owner extends ActiveRecord implements IdentityInterface
             return false;
         }
     }
-
+    public function getDepartments(){
+        return $this->hasOne(Department::className(),['id'=>'department']);
+    }
+    public function getCategorys(){
+        return $this->hasOne(Category::className(),['id'=>'category']);
+    }
+    public function getProductlines(){
+        return $this->hasOne(ProductLine::className(),['id'=>'product_line']);
+    }
+    public function getProducttwolines(){
+        return $this->hasOne(ProductTwoLine::className(),['id'=>'product_two_line']);
+    }
     // public function 
     public function deleteUser(){
         $this->status = self::STATUS_DELETED;
@@ -286,5 +297,17 @@ class Owner extends ActiveRecord implements IdentityInterface
     }
     public function getDefaultProductTwoLine(){
         return \yii\helpers\ArrayHelper::map(ProductTwoLine::find()->where(['product_line_id' => $this->product_line])->all(),'id','name');
+    }
+    public function getDepartmentName(){
+        return Department::findOne($this->department)->name;
+    }
+    public function getCategoryName(){
+        return Category::findOne($this->category)->name;
+    }
+    public function getProductLineName(){
+        return ProductLine::findOne($this->product_line)->name;
+    }
+    public function getProductTwoLineName(){
+        return ProductTwoLine::findOne($this->product_two_line)->name;
     }
 }

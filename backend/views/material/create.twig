@@ -120,16 +120,30 @@ cursor:hand;
                              }}
                               </div>
                             </div>
-                          {{ form.field(model,'name',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}  
-                          {{ form.field(model,'project_id').dropDownList(model.getCanUseProjects()).label(null,{'class':'control-label col-lg-2'})|raw }}
+                          {{ form.field(model,'name',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
+                          {{ form.field(model,'expire').widget('\\yii\\jui\\DatePicker',{'name' : 'expire',
+                              'attribute' : 'expire', 
+                              'model':model,
+                              'options':{'class':'form-control'},
+                              'clientOptions' : 
+                              {
+                                  
+                                  'changeMonth':true,
+                                  'changeYear':true,
+                                  'yearRange':'-1:+25',  
+                                  'dateFormat' : 'yy-mm-dd', 
+                              },
+                              }).label(null,{'class':'control-label col-lg-2'})|raw
+                          }}  
                           {{ form.field(model,'property').dropDownList(model.getCanUseProperty()).label(null,{'class':'control-label col-lg-2'})|raw }}
                           {{ form.field(model,'pn',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                           {{ form.field(model,'package',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
-                          {{ form.field(model,'channel',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                           {{ form.field(model,'datasource').dropDownList(model.getCanUseDataSource()).label(null,{'class':'control-label col-lg-2'})|raw }}
                           {{ form.field(model,'size',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
+                          {{ form.field(model,'jiliang').dropDownList({'个':'个','只':'只','套':'套','件':'件'}).label(null,{'class':'control-label col-lg-2'})|raw }}
                           {{ form.field(model,'weight',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
-                          {{ form.field(model,'stuff',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
+                         {#  {{ form.field(model,'warning_quantity',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}} #}
+                          {# {{ form.field(model,'stuff',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}} #}
                           {# {{ form.field(model,'desc').textArea({'row':2}).label(null,{'class':'control-label col-lg-2'})|raw }} #}
                           
                           <div id="uploads">

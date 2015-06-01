@@ -52,6 +52,7 @@
                      {% set form = activeform.begin({'id':'create-form','layout':'horizontal','fieldConfig':{'horizontalCssClasses':{'wrapper':'col-lg-6'} } }) %}     
                             {{ form.field(model,'english_name',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'email',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
+                            {{ form.field(model,'password',{'inputOptions':{'class':'form-control'}}).passwordInput().label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'phone',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'tell',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             
@@ -95,7 +96,7 @@
                             {{ form.field(model,'big_owner',{'inputOptions':{'class':'form-control'}}).radioList({0:'否',1:'是'}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'is_budget',{'inputOptions':{'class':'form-control'}}).radioList({0:'否',1:'是'}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'budget',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
-                            {{ form.field(model,'password',{'inputOptions':{'class':'form-control'}}).passwordInput().label(null,{'class':'control-label col-lg-2'})|raw}}
+                            
 
                                     <hr />
                                 <div class="form-group">

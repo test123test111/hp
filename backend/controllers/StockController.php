@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\models\Stock;
 use backend\models\Material;
+use backend\models\Share;
 use backend\models\StockTotal;
 use backend\models\search\StockSearch;
 use backend\components\BackendController;
@@ -50,6 +51,7 @@ class StockController extends BackendController {
         // collect user input data
         if (isset($_POST['Stock'])) {
             $model->load($_POST);
+            $model->warning_quantity = $_POST['Stock']['warning_quantity'];
             if ($model->validate()) {
                 $db = Stock::getDb();
                 $transaction = $db->beginTransaction();
@@ -58,11 +60,13 @@ class StockController extends BackendController {
                     $model->owner_id = $material->owner_id;
                     $model->save();
                     //create a data in stock total
-                    StockTotal::updateTotal($model->storeroom_id,$model->material_id,$model->actual_quantity);
+                    StockTotal::updateTotal($model->storeroom_id,$model->material_id,$model->actual_quantity,$model->warning_quantity);
+
+                    Share::updateShare($model->owner_id,$model->owner_id,$model->material_id,$model->storeroom_id);
                     $transaction->commit();
 
                     Yii::$app->session->setFlash('success', '新建成功！');
-                    $this->redirect("/stock/list");
+                    $this->redirect("/stocktotal/list");
                 }catch (\Exception $e) {
                     $transaction->rollback();
                     throw new \Exception($e->getMessage(), $e->getCode());

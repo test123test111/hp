@@ -36,9 +36,9 @@ class Material extends BackendActiveRecord {
      */
     public function rules() {
         return [
-            [['name','project_id','property','package','owner_id','pn','channel','datasource'],'required'],
+            [['name','property','package','owner_id','pn','datasource'],'required'],
             // ['code','unique'],
-            [['desc','image','size','weight','stuff'],'safe']
+            [['desc','image','size','weight','stuff','expire','jiliang','code'],'safe']
         ];
     }
     public function behaviors()
@@ -212,7 +212,8 @@ class Material extends BackendActiveRecord {
             'project_id'=>'所属项目',
             'desc'=>'物料描述',
             'image'=>'物料图片',
-            'property'=>'属性',
+            'property'=>'类别',
+            'expire'=>'使用期限',
             'channel'=>'产品线',
             'datasource'=>'数据来源',
             'size'=>'规格尺寸',
@@ -221,6 +222,7 @@ class Material extends BackendActiveRecord {
             'created'=>'添加时间',
             'created_uid'=>'创建人',
             'package'=>'包装规格',
+            'jiliang'=>'计量规格',
         ];
     }
 }

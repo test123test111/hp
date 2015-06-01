@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\Material;
+use backend\models\Owner;
+use backend\models\ProductLine;
 use backend\models\search\MaterialSearch;
 use backend\components\BackendController;
 use backend\models\Upload;
@@ -62,10 +64,14 @@ class MaterialController extends BackendController {
             $model->load($_POST);
             if ($model->validate()) {
                 $model->save();
-                $model->code = 'LES-'.date('Ymd').'-'.$model->id;
+                $owner = Owner::findOne($model->owner_id);
+                $product_line = ProductLine::findOne($owner->product_line);
+                $model->code = $product_line->name.'-'.date('Ymd').'-'.$model->id;
                 $model->update();
                 Yii::$app->session->setFlash('success', '新建成功！');
                 $this->redirect("/material/list");
+            }else{
+                print_r($model->getErrors());exit;
             }
         }
         return $this->render('create', array(

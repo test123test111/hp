@@ -20,7 +20,7 @@ class StockTotal extends BackendActiveRecord {
      * @param  [type] $material_id [description]
      * @return [type]              [description]
      */
-    public static function updateTotal($storeroom_id,$material_id,$count){
+    public static function updateTotal($storeroom_id,$material_id,$count,$warning_quantity){
     	$material = self::find()->where(['material_id'=>$material_id,"storeroom_id"=>$storeroom_id])->one();
     	if(empty($material)){
     		$model = new self;
@@ -29,10 +29,12 @@ class StockTotal extends BackendActiveRecord {
     		$model->total = $count;
             $model->created = date('Y-m-d H:i:s');
             $model->modified = date('Y-m-d H:i:s');
+            $model->warning_quantity = $warning_quantity;
     		$model->save();
     		return true;
     	}else{
     		$material->total = $material->total + $count;
+            $material->warning_quantity = $warning_quantity;
             $material->modified = date('Y-m-d H:i:s');
     		$material->save();
     	}
@@ -58,6 +60,8 @@ class StockTotal extends BackendActiveRecord {
         return [
             'material_id'=>'物料',
             'total'=>'现有库存',
+            'storeroom_id'=>'库房',
+            'warning_quantity'=>'预警数量',
         ];
     }
     /**

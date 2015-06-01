@@ -53,7 +53,7 @@
                     <!-- Form starts.  -->
                      {% set form = activeform.begin({'id':'create-form','layout':'horizontal','fieldConfig':{'horizontalCssClasses':{'wrapper':'col-lg-8'} } }) %}     
                             {{ form.field(model,'name',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
-                            {{ form.field(model,'level',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
+                            {{ form.field(model,'level').dropDownList({1:'中央库',2:'平台库'}).label(null,{'class':'control-label col-lg-2'})|raw }}  
                             {{ form.field(model,'address',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'contact',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'phone',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
