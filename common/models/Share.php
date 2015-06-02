@@ -3,7 +3,10 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
-
+use backend\models\Material;
+use backend\models\Owner;
+use backend\models\StockTotal;
+use backend\models\Storeroom;
 class Share extends ActiveRecord
 {
     const STATUS_IS_NORMAL = 0;
@@ -31,6 +34,18 @@ class Share extends ActiveRecord
         return 'share';
     }
 
+    public function getMaterials(){
+        return $this->hasOne(Material::className(),['id'=>'material_id']);
+    }
+    public function getOwners(){
+        return $this->hasOne(Owner::className(),['id'=>'owner_id']);
+    }
+    public function getStockTotals(){
+        return $this->hasOne(StockTotal::className(),['material_id'=>'material_id','storeroom_id'=>'storeroom_id']);
+    }
+    public function getStorerooms(){
+        return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']);
+    }
     public static function updateShare($owner_id,$to_customer_id,$material_id,$storeroom_id){
         $result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$to_customer_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
         if(empty($result)){

@@ -5,6 +5,8 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\BaseArrayHelper;
 use customer\components\CustomerActiveRecord;
+use common\models\Share;
+use common\models\ProductLine;
 
 class Stock extends CustomerActiveRecord {
     const IS_NOT_INCREASE = 1;
@@ -158,12 +160,43 @@ class Stock extends CustomerActiveRecord {
      */
     public static function getMyData($params){
 
-        $needData = ['material_id','created','owner_id','storeroom_id','total'=>'sum(actual_quantity)'];
-        $query = Stock::find()->select($needData)->with(['material','owners'])->where(['owner_id'=>Yii::$app->user->id])->groupby(['storeroom_id','material_id'])->orderBy(['id'=>SORT_DESC]);
+        // $needData = ['material_id','created','owner_id','storeroom_id','total'=>'sum(actual_quantity)'];
+        // $query = Stock::find()->select($needData)->with(['material','owners'])->where(['owner_id'=>Yii::$app->user->id])->groupby(['storeroom_id','material_id'])->orderBy(['id'=>SORT_DESC]);
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
+        // $dataProvider = new ActiveDataProvider([
+        //     'query' => $query,
+        // ]);
+        // if(isset($params['material_id']) && $params['material_id'] != ""){
+        //     $material = Material::find()->select('id')->where(['code'=>$params['material_id']])->column();
+        //     // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
+        //     if(empty($material)){
+        //         $material = Material::find()->where(['like','name',$params['material_id']])->column();
+        //     }
+        //     if(empty($material)){
+        //         $query->andWhere(['material_id'=>""]);
+        //     }else{
+        //         $query->andWhere(['material_id'=>$material]);
+        //     }
+            
+        // }
+        // if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
+        //     $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);
+        // }
+        // if(isset($params['channel']) && $params['channel'] != ""){
+        //     $material = Material::find()->where(['channel'=>$params['channel']])->one();
+        //     $query->andWhere(['material_id'=>$params['material_id']]);
+        // }
+        // $count = $query->count();
+        // $pages = new \yii\data\Pagination(['totalCount' => $count]);
+        // $ret = [];
+        // $query->offset($pages->offset)->limit(20);
+
+        // $data = $query->all();
+        // return [$data,$pages,$count];
+        // 
+        $query = Share::find()->with(['materials','storerooms','owners'=>function($query){
+                                            return $query->with('productlines');
+                                        },'stockTotals'])->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
             $material = Material::find()->select('id')->where(['code'=>$params['material_id']])->column();
             // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
@@ -177,12 +210,22 @@ class Stock extends CustomerActiveRecord {
             }
             
         }
-        if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
+        if(isset($params['owner_id']) && $params['owner_id'] !=""){
+            $query->andWhere(['owner_id'=>$params['owner_id']]);
+        }
+        if(isset($params['storeroom_id']) && $params['storeroom_id'] !=""){
             $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);
         }
         if(isset($params['channel']) && $params['channel'] != ""){
-            $material = Material::find()->where(['channel'=>$params['channel']])->one();
-            $query->andWhere(['material_id'=>$params['material_id']]);
+            $productLine = ProductLine::find()->where(['name'=>$params['channel']])->one();
+            if(!empty($productLine)){
+                $owners = Owner::find()->select('id')->where(['product_line'=>$productLine->id])->column();
+                $to_customer_ids = Share::find()->select('owner_id')->where(['to_customer_id'=>Yii::$app->user->id])->column();
+                $resultIds = array_intersect($owners,$to_customer_ids);
+                $query->andWhere(['owner_id'=>$resultIds]);
+            }else{
+                $query->andWhere(['to_customer_id'=>'-1']);
+            }
         }
         $count = $query->count();
         $pages = new \yii\data\Pagination(['totalCount' => $count]);

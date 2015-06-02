@@ -8,27 +8,31 @@
             <ul class="clearfix">
                 <li>
                     <label>关键字：</label>
-                    <input type="text" name="material_id" value="" class="search_input" placeholder="输入关键字进行搜索" />
+                    <input type="text" name="material_id" value="{% if params.material_id is defined %}{{ params.material_id }}{% endif %}" class="search_input" placeholder="输入关键字进行搜索" />
                 </li>
                 <li>
                     <label>选择仓库：</label>
                     <select name="storeroom_id">
+                        <option value="">请选择仓库</option>
                         {% for storeroom in storerooms %}
-                        <option value="{{ storeroom.id }}">{{ storeroom.name }}</option>
+                        <option {% if params.storeroom_id is defined and params.storeroom_id == storeroom.id %}selected="selected"{% endif %} value="{{ storeroom.id }}">{{ storeroom.name }}</option>
                         {% endfor %}
                     </select>
                 </li>
                 <li>
                     <label>所属人：</label>
-                    <select>
-                        <option value="{{ App.user.id }}">{{ App.user.identity.english_name }}</option>
+                    <select name="owner_id">
+                        <option value="">请选择所属人</option>
+                        {% for owner in ownersData %}
+                        <option {% if params.owner_id is defined and params.owner_id == owner.owners.id %}selected="selected"{% endif %} value="{{ owner.owners.id }}">{{ owner.owners.english_name }}</option>
+                        {% endfor %}
                         {# <option value="1">周星星</option>
                         <option value="1">张学友</option> #}
                     </select>
                 </li>
                 <li>
                     <label>产&ensp;品&ensp;线：</label>
-                    <input type="text" name="channel" value="" class="search_input" placeholder="" />
+                    <input type="text" name="channel" value="{% if params.channel is defined %}{{ params.channel }}{% endif %}" class="search_input" placeholder="" />
                 </li>
             </ul>
             
@@ -58,15 +62,15 @@
                     <tbody>
                         {% for key,result in results %}
                         <tr>
-                            <td><input type="checkbox" name="" value="{{ key }}" data-id="{{ result.material.id }}" data-storeroom="{{ result.storeroom.id }}" data-stock="{{ result.total }}" /></td>
-                            <td>{{ result.material.code }}</td>
-                            <td><a href="/material/view?id={{ result.material_id }}&sid={{ result.material.id }}" class="blue">{{ result.material.name }}</a></td>
-                            <td>{{ result.material.getMyPropertyName() }}</td>
-                            <td>{{ result.material.channel }}</td>
+                            <td><input type="checkbox" name="" value="{{ key }}" data-id="{{ result.materials.id }}" data-storeroom="{{ result.storeroom_id }}" data-stock="{{ result.stockTotals.total }}" /></td>
+                            <td>{{ result.materials.code }}</td>
+                            <td><a href="/material/view?id={{ result.material_id }}&sid={{ result.material_id }}" class="blue">{{ result.materials.name }}</a></td>
+                            <td>{{ result.materials.getMyPropertyName() }}</td>
+                            <td>{{ result.owners.productlines.name }}</td>
                             <td>{{ result.created }}</td>
-                            <td>{{ result.storeroom.name }}</td>
+                            <td>{{ result.storerooms.name }}</td>
                             <td>{{ result.owners.english_name }}</td>
-                            <td>{{ result.total }}</td>
+                            <td>{{ result.stockTotals.total }}</td>
                             <td><input type="text" value="" name="" class="m_amount" id="amount_{{ key }}" /></td>
                         </tr>
                         {% endfor %}

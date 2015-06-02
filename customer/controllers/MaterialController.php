@@ -10,7 +10,7 @@ use customer\models\search\MaterialSearch;
 use customer\models\search\StockSearch;
 use customer\components\CustomerController;
 use backend\models\Upload;
-
+use common\models\Share;
 class MaterialController extends \yii\web\Controller {
     public $layout = false;
     public $enableCsrfValidation;
@@ -65,12 +65,14 @@ class MaterialController extends \yii\web\Controller {
         //     'searchModel' => $searchModel,
         // ]);
         list($data,$pages,$count) = Stock::getMyData(Yii::$app->request->getQueryParams());
+        $owners = Share::find()->select('owner_id')->distinct('owner_id')->with('owners')->where(['to_customer_id'=>Yii::$app->user->id])->all();
         return $this->render('list', [
              'results' => $data,
              'pages' => $pages,
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'storerooms'=>Storeroom::find()->all(),
+             'ownersData'=>$owners,
         ]);
     }
     /**

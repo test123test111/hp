@@ -147,7 +147,7 @@ class Owner extends ActiveRecord implements IdentityInterface
     public function scenarios()
     {
         return [
-            'signup' => ['english_name', 'email', 'password','phone','tell', '!status', '!role'],
+            'signup' => ['english_name', 'department','category','product_line','product_two_line','email', 'password','phone','tell', '!status', '!role'],
             'update'=>['status'],
             'resetPassword' => ['username', 'email', 'password'],
             'resetPassword' => ['password'],
