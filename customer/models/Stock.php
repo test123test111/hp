@@ -7,6 +7,7 @@ use yii\helpers\BaseArrayHelper;
 use customer\components\CustomerActiveRecord;
 use common\models\Share;
 use common\models\ProductLine;
+use common\models\ProductTwoLine;
 
 class Stock extends CustomerActiveRecord {
     const IS_NOT_INCREASE = 1;
@@ -217,9 +218,9 @@ class Stock extends CustomerActiveRecord {
             $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);
         }
         if(isset($params['channel']) && $params['channel'] != ""){
-            $productLine = ProductLine::find()->where(['name'=>$params['channel']])->one();
+            $productLine = ProductTwoLine::find()->where(['name'=>$params['channel']])->one();
             if(!empty($productLine)){
-                $owners = Owner::find()->select('id')->where(['product_line'=>$productLine->id])->column();
+                $owners = Owner::find()->select('id')->where(['product_two_line'=>$productLine->id])->column();
                 $to_customer_ids = Share::find()->select('owner_id')->where(['to_customer_id'=>Yii::$app->user->id])->column();
                 $resultIds = array_intersect($owners,$to_customer_ids);
                 $query->andWhere(['owner_id'=>$resultIds]);

@@ -76,11 +76,11 @@
                 },
                 10:{
                   'attribute':'product_line',
-                  'value':'return $model->productlines->name;'|value_callback,
+                  'value':'if(isset($model->productlines)){return $model->productlines->name;}'|value_callback,
                 },
                 11:{
                   'attribute':'product_two_line',
-                  'value':'return $model->producttwolines->name;'|value_callback,
+                  'value':'if(isset($model->producttwolines)){return $model->producttwolines->name;}'|value_callback,
                 },
                 6:{
                     'attribute':'big_owner',
