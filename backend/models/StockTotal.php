@@ -20,12 +20,13 @@ class StockTotal extends BackendActiveRecord {
      * @param  [type] $material_id [description]
      * @return [type]              [description]
      */
-    public static function updateTotal($storeroom_id,$material_id,$count,$warning_quantity){
+    public static function updateTotal($storeroom_id,$material_id,$count,$warning_quantity,$owner_id){
     	$material = self::find()->where(['material_id'=>$material_id,"storeroom_id"=>$storeroom_id])->one();
     	if(empty($material)){
     		$model = new self;
     		$model->material_id = $material_id;
             $model->storeroom_id = $storeroom_id;
+            $model->owner_id = $owner_id;
     		$model->total = $count;
             $model->created = date('Y-m-d H:i:s');
             $model->modified = date('Y-m-d H:i:s');

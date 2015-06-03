@@ -60,7 +60,7 @@ class StockController extends BackendController {
                     $model->owner_id = $material->owner_id;
                     $model->save();
                     //create a data in stock total
-                    StockTotal::updateTotal($model->storeroom_id,$model->material_id,$model->actual_quantity,$model->warning_quantity);
+                    StockTotal::updateTotal($model->storeroom_id,$model->material_id,$model->actual_quantity,$model->warning_quantity,$model->owner_id);
 
                     Share::updateShare($model->owner_id,$model->owner_id,$model->material_id,$model->storeroom_id);
                     $transaction->commit();

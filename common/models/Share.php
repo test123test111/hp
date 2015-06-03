@@ -62,4 +62,31 @@ class Share extends ActiveRecord
         }
         
     }
+    public static function updateMaterial($uid,$category){
+        $owner_ids = Owner::find()->select('id')->where(['category'=>$category])->column();
+        foreach($owner_ids as $owner_id){
+            $results = StockTotal::find()->where(['owner_id'=>$owner_id])->all();
+            foreach($results as $result){
+                $share = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$uid,'material_id'=>$result->material_id,'status'=>self::STATUS_IS_NORMAL])->one();
+                if(empty($share)){
+                    $model = new static;
+                    $model->material_id = $result->material_id;
+                    $model->storeroom_id = $result->storeroom_id;
+                    $model->owner_id = $result->owner_id;
+                    $model->to_customer_id = $uid;
+                    $model->created = date('Y-m-d H:i:s');
+                    $model->modified = date('Y-m-d H:i:s');
+                    $model->save(false);
+                }
+            }
+        }
+    }
+    /**
+     * [recove description]
+     * @param  [type] $to_customer_id [description]
+     * @return [type]                 [description]
+     */
+    public static function recove($to_customer_id){
+        return static::updateAll(['status'=>self::STATUS_IS_NOT_NORMAL],['to_customer_id'=>$to_customer_id]);
+    }
 }

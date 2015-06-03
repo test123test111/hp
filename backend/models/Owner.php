@@ -33,6 +33,8 @@ class Owner extends ActiveRecord implements IdentityInterface
 
     const ROLE_USER = 10;
 
+    const IS_BIG_OWNER = 1;
+    const IS_NOT_BIG_OWNER = 0;
     public static function findIdentityByAccessToken($token,$type=null){}
     public function behaviors()
     {
@@ -135,25 +137,45 @@ class Owner extends ActiveRecord implements IdentityInterface
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            [['department','category','product_line','product_two_line','big_owner','is_budget','budget'],'safe'],
+            [['department','category','phone','tell','product_line','product_two_line','big_owner','is_budget','budget'],'safe'],
             ['email', 'unique', 'message' => 'This email address has already been taken.', 'on' => 'signup,update'],
             ['email', 'exist', 'message' => 'There is no user with such email.', 'on' => 'requestPasswordResetToken'],
+            ['big_owner','checkBigOwnerOnly'],
 
             // ['password', 'required'],
             ['password', 'string', 'min' => 6],
         ];
     }
-
-    public function scenarios()
+    /**
+     * Validates the password.
+     * This method serves as the inline validation for password.
+     */
+    public function checkBigOwnerOnly()
     {
-        return [
-            'signup' => ['english_name', 'department','category','product_line','product_two_line','email', 'password','phone','tell', '!status', '!role'],
-            'update'=>['status'],
-            'resetPassword' => ['username', 'email', 'password'],
-            'resetPassword' => ['password'],
-            'requestPasswordResetToken' => ['email'],
-        ];
+        if($this->big_owner == self::IS_BIG_OWNER){
+            $result = static::find()->where(['big_owner'=>self::IS_BIG_OWNER,'category'=>$this->category])->one();
+            if($this->id){
+                if(!empty($result) && $result->id != $this->id){
+                    $this->addError('big_owner', '一个部门只能有一个大owner');
+                }
+            }else{
+                if(!empty($result)){
+                    $this->addError('big_owner', '一个部门只能有一个大owner');
+                }
+            }
+            
+        }
     }
+    // public function scenarios()
+    // {
+    //     return [
+    //         'signup' => ['english_name','big_owner', 'is_budget','budget','department','category','product_line','product_two_line','email', 'password','phone','tell', '!status', '!role'],
+    //         // 'signup' => ['english_name','big_owner', 'is_budget','budget','department','category','product_line','product_two_line','email', 'password','phone','tell', '!status', '!role'],
+    //         'resetPassword' => ['english_name', 'email', 'password','big_owner'],
+    //         // 'resetPassword' => ['password'],
+    //         'requestPasswordResetToken' => ['email'],
+    //     ];
+    // }
 
     public function beforeSave($insert)
     {
@@ -236,7 +258,7 @@ class Owner extends ActiveRecord implements IdentityInterface
         }
         $this->setScenario('resetPassword');
         if ($this->validate($attrs)) {
-            return $this->save(false);
+            return $this->update(false);
         } else {
             return false;
         }

@@ -9,6 +9,7 @@ use backend\models\ProductLine;
 use backend\models\ProductTwoLine;
 use backend\models\search\OwnerSearch;
 use backend\components\BackendController;
+use backend\models\Share;
 
 class OwnerController extends BackendController {
     /**
@@ -48,10 +49,14 @@ class OwnerController extends BackendController {
         $model = new Owner;
         // collect user input data
         if (isset($_POST['Owner'])) {
-            $model->setScenario('signup');
+            // $model->setScenario('signup');
             $model->load($_POST);
             if ($model->validate()) {
                 $model->save();
+                if($model->big_owner == Owner::IS_BIG_OWNER){
+                    //update material share
+                    Share::updateMaterial($model->id,$model->category);
+                }
                 Yii::$app->session->setFlash('success', '新建成功！');
                 $this->redirect("/owner/list");
             }
@@ -80,10 +85,21 @@ class OwnerController extends BackendController {
         $id = $_GET['id'];
         if($id){
             $model = $this->loadModel($id);
-            if (!empty($_POST)) {
-                if ($model->updateAttrs($_POST['Owner'])) {
-                    Yii::$app->session->setFlash('success', '修改成功!');
-                    return $this->redirect(Yii::$app->request->getReferrer());
+            $flag1 = $model->big_owner;
+            if(Yii::$app->request->isPost){
+                $model->load(Yii::$app->request->post());
+                // $model->setScenario('resetPassword');
+                if($model->validate()){
+                    $flag2 = $model->big_owner;
+                    $model->update();
+                    if($model->big_owner == Owner::IS_BIG_OWNER){
+                        //update material share
+                        Share::updateMaterial($model->id,$model->category);
+                    }else{
+                        if($flag1 != $flag2){
+                            Share::recove($model->id);
+                        }
+                    }
                 }
             }
         }

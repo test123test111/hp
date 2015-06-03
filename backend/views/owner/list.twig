@@ -83,9 +83,9 @@
                   'value':'return $model->producttwolines->name;'|value_callback,
                 },
                 6:{
-                    'attribute':'status',
-                    'label':'状态',
-                    'value':'if($model->status == 0){return "正常";}else{return "禁用";}'|value_callback,
+                    'attribute':'big_owner',
+                    'label':'是否大owner',
+                    'value':'if($model->big_owner == 0){return "否";}else{return "是";}'|value_callback,
                 },
                 7:'created',
                 8:{

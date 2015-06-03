@@ -33,3 +33,4 @@ backapi/config/params-local.php
 backapi/runtime/*
 backapi/web/index.php
 backapi/web/assets/*
+customer/web/assets/*
