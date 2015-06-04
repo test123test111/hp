@@ -421,6 +421,32 @@ CREATE TABLE `share` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `hp_city` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pid` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(20) NOT NULL DEFAULT '',
+  `level` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `province_id` (`pid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `shippment_cost` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `storeroom_id` int(11) NOT NULL,
+  `transport_type` tinyint(4) NOT NULL,
+  `to_city` varchar(32) NOT NULL,
+  `city_level` int(11) NOT NULL,
+  `fob_weight` int(11) NOT NULL,
+  `fob_price` float(10,2) NOT NULL DEFAULT '0.00',
+  `increase_weight` int(11) NOT NULL,
+  `increase_price` float(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id`),
+  KEY `storeroom_id` (`storeroom_id`),
+  KEY `to_city` (`to_city`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 
 
 

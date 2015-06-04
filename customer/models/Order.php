@@ -22,6 +22,13 @@ class Order extends CustomerActiveRecord {
     const ORDER_IS_NOT_DEL = 0;
 
     const ORDER_SOURCE_CUSTOMER = 1;
+
+    const TRANSPORT_24_HOUR = 1;
+    const TRANSPORT_5_DAYS = 2;
+    const TRANSPORT_3_DAYS = 3;
+    const TRANSPORT_CAR = 4;
+    const TRANSPORT_OTHER = 5;
+
     public $goods_code;
     public $goods_quantity;
     /**
