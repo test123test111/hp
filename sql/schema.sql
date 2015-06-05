@@ -446,6 +446,53 @@ CREATE TABLE `shippment_cost` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `order`;
+CREATE TABLE `order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `viewid` varchar(128) NOT NULL DEFAULT '',
+  `send_date` datetime NOT NULL,
+  `storeroom_id` int(11) NOT NULL DEFAULT '0',
+  `transport_type` tinyint(4) NOT NULL DEFAULT '0',
+  `arrive_date` datetime NOT NULL DEFAULT '',
+  `insurance` tinyint(4) NOT NULL DEFAULT '0',
+  `insurance_price` float(10,2) NOT NULL DEFAULT '0.00',
+  `purpose` varchar(255) NOT NULL DEFAULT '',
+  `info` varchar(255) NOT NULL DEFAULT '',
+  `recipients` varchar(64) NOT NULL DEFAULT '',
+  `to_province` varchar(32) NOT NULL,
+  `to_city` varchar(32) NOT NULL,
+  `to_district` varchar(32) NOT NULL DEFAULT '',
+  `address` varchar(255) NOT NULL DEFAULT '',
+  `contact` varchar(255) NOT NULL DEFAULT '',
+  `phone` varchar(32) NOT NULL DEFAULT '',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `is_del` tinyint(4) NOT NULL DEFAULT '0',
+  `need_fee_approval` tinyint(4) NOT NULL DEFAULT '0',
+  `fee_approval` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否通过费用审批',
+  `fee_approval_uid` int(11) NOT NULL,
+  `owner_approval` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否通过所属人审批',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL,
+  `modified_uid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=100;
+
+DROP TABLE IF EXISTS `order_detail`;
+CREATE TABLE `order_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) NOT NULL,
+  `material_id` int(11) NOT NULL,
+  `owner_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `is_owner_approval` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否通过物主审批',
+  `approval_uid` int(11) NOT NULL,
+  `approval_date` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=100;
+
+
+
 
 
 

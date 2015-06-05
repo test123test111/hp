@@ -66,6 +66,9 @@ return [
             	'<module:\w+>/<controller:\w+>/<action:\w+>'=>'<module>/<controller>/<action>',
             ]
         ],
+        'budget'=>[
+            'class'=>'common\components\Budget',
+        ],
         'shoppingCart' => [
             'class' => 'common\components\ShoppingCart',
         ],
