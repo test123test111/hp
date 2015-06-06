@@ -9,6 +9,9 @@ use backend\models\Stock;
 use backend\models\OrderChannel;
 
 class OrderDetail extends BackendActiveRecord {
+    //是否通过物主审批
+    const IS_OWNER_APPROVAL = 1;
+    const IS_NOT_OWNER_APPROVAL = 0;
     /**
      * function_description
      *

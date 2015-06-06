@@ -199,9 +199,12 @@ class GridActionColumn extends ActionColumn
         }
         if (!isset($this->buttons['update-attribute-value'])) {
             $this->buttons['update-attribute-value'] = function ($url, $model) {
-                return Html::a('<span class="glyphicon glyphicon-edit"></span>', 'attribute-value/update?id='.$model->goods_id.'&type_id='.$model->type_id, [
-                    'title' => Yii::t('yii', '修改商品属性值'),
-                ]);
+                if($model->big_owner == 1){
+                    return Html::a('<span class="glyphicon glyphicon-edit"></span>', 'updatebudget/'.$model->id, [
+                        'title' => Yii::t('yii', '增加预算金额'),
+                    ]);
+                }
+                
             };
         }
 

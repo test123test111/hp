@@ -145,33 +145,64 @@ class OrderController extends CustomerController {
         //     )); 
         // }
     }
+    // public function actionBuy() {
+    //     $model = new Order;
+    //     // collect user input data
+    //     if(Yii::$app->request->isPost){
+    //         $model->load($_POST);
+    //         if ($model->validate()) {
+    //             $db = Order::getDb();
+    //             $transaction = $db->beginTransaction();
+    //             try{
+    //                 $address_id = Yii::$app->request->post('address');
+    //                 $address = Address::findOne($address_id);
+    //                 $model->to_province = $address->province;
+    //                 $model->to_city = $address->city;
+    //                 $model->source = Order::ORDER_SOURCE_CUSTOMER;
+    //                 $model->save();
+    //                 $model->viewid = date('Ymd')."-".$model->id;
+    //                 $model->update();
+    //                 //create order detail 
+    //                 $model->createOrderDetail($_POST['Carts']);
+    //                 $transaction->commit();
+    //                 $this->redirect("/order/success?id={$model->viewid}");
+    //             }catch (\Exception $e) {
+    //                 $transaction->rollback();
+    //                 throw new \Exception($e->getMessage(), $e->getCode());
+    //             }
+                
+    //         }
+    //     }
+    // }
     public function actionBuy() {
         $model = new Order;
         // collect user input data
         if(Yii::$app->request->isPost){
             $model->load($_POST);
-            if ($model->validate()) {
-                $db = Order::getDb();
-                $transaction = $db->beginTransaction();
-                try{
-                    $address_id = Yii::$app->request->post('address');
-                    $address = Address::findOne($address_id);
-                    $model->to_province = $address->province;
-                    $model->to_city = $address->city;
-                    $model->source = Order::ORDER_SOURCE_CUSTOMER;
-                    $model->save();
-                    $model->viewid = date('Ymd')."-".$model->id;
-                    $model->update();
-                    //create order detail 
-                    $model->createOrderDetail($_POST['Carts']);
-                    $transaction->commit();
-                    $this->redirect("/order/success?id={$model->viewid}");
-                }catch (\Exception $e) {
-                    $transaction->rollback();
-                    throw new \Exception($e->getMessage(), $e->getCode());
-                }
-                
+            $db = Order::getDb();
+            $transaction = $db->beginTransaction();
+            try{
+                $address_id = Yii::$app->request->post('address');
+                $address = Address::findOne($address_id);
+                $model->to_province = $address->province;
+                $model->to_city = $address->city;
+                $model->to_district = $address->area;
+                $model->phone = $address->phone;
+                $model->recipients = $address->name;
+                $model->address = $address->address;
+
+                $model->save();
+                $model->viewid = date('Ymd')."-".$model->id;
+                $model->update();
+                //create order detail 
+                $model->createOrderDetail($_POST['Carts'],Yii::$app->user->id);
+                $transaction->commit();
+                $this->redirect("/order/success?id={$model->viewid}");
+            }catch (\Exception $e) {
+                $transaction->rollback();
+                throw new \Exception($e->getMessage(), $e->getCode());
             }
+                
         }
     }
     /**

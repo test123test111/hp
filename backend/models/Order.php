@@ -28,6 +28,9 @@ class Order extends BackendActiveRecord {
     public $file;
 
     const BIGEST_STOREROOM_ID = 1;
+
+    const OWNER_PASS_APPROVAL = 1;
+    const OWNER_NOT_PASS_APPROVAL = 0;
     /**
      * function_description
      *
@@ -46,10 +49,10 @@ class Order extends BackendActiveRecord {
      */
     public function rules() {
         return [
-            [['owner_id'],'required'],
-            [['goods_active','storeroom_id','info','limitday','status'],'safe'],
-            ['goods_quantity','integer'],
-            ['goods_quantity','checkQuantity']
+            [['info','purpose','insurance','insurance_price','status','to_district','address','contact'],'safe'],
+            [['recipients','to_province','to_city','transport_type','send_date'],'safe'],
+            // ['goods_quantity','integer'],
+            // ['goods_quantity','checkQuantity']
             // ['goods_quantity',]/
         ];
     }
@@ -243,7 +246,7 @@ class Order extends BackendActiveRecord {
             return \yii\helpers\Html::input("text","selection[]");
         ';
     }
-    public function createOrderDetail($postData){
+    public function createOrderDetail($postData,$uid){
         if(!is_array($postData)){
             return false;
         }
@@ -251,32 +254,42 @@ class Order extends BackendActiveRecord {
             $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
             $model = new OrderDetail;
             $model->order_id = $this->id;
-            $model->storeroom_id = $cart->storeroom_id;
-            $model->goods_code = $cart->material->code;
-            $model->goods_quantity = $value['quantity'];
-            $model->created = date('Y-m-d H:i:s');
-            $model->modified = date('Y-m-d H:i:s');
+            $model->material_id = $cart->material->id;
+            $model->quantity = $value['quantity'];
+            $flag = 1;
+            if($cart->material->owner_id != $uid){
+                $model->owner_id = $cart->material->owner_id;
+                $flag ++;
+            }else{
+                $model->owner_id = $uid;
+                $model->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
+                $model->approval_uid = $uid;
+                $model->approval_date = $this->created;
+            }
             $model->save();
 
 
-            $stock = new Stock;
-            $stock->material_id = $cart->material->id;
-            $stock->storeroom_id = $cart->storeroom_id;
-            $stock->owner_id = $this->owner_id;
-            $stock->project_id = $cart->material->project_id;
-            $stock->actual_quantity = 0 - $value['quantity'];
-            $stock->stock_time = date('Y-m-d H:i:s');
-            $stock->created = date('Y-m-d H:i:s');
-            $stock->increase = Stock::IS_NOT_INCREASE;
-            $stock->order_id = $this->id;
-            $stock->active = $this->goods_active;
-            $stock->save(false);
+            // $stock = new Stock;
+            // $stock->material_id = $cart->material->id;
+            // $stock->storeroom_id = $cart->storeroom_id;
+            // $stock->owner_id = $this->owner_id;
+            // $stock->actual_quantity = 0 - $value['quantity'];
+            // $stock->stock_time = date('Y-m-d H:i:s');
+            // $stock->created = date('Y-m-d H:i:s');
+            // $stock->increase = Stock::IS_NOT_INCREASE;
+            // $stock->order_id = $this->id;
+            // $stock->save(false);
 
-            //subtract stock total
-            StockTotal::updateTotal($stock->storeroom_id,$cart->material->id,(0 - $value['quantity']));
+            // //subtract stock total
+            // StockTotal::updateTotal($stock->storeroom_id,$cart->material->id,(0 - $value['quantity']));
 
             Cart::deleteAll(['id'=>$cart->id]);
         }
+        if($falg > 1){
+            $this->owner_approval = self::OWNER_PASS_APPROVAL;
+            $this->update();
+        }
+        $budget_fee = Yii::$app->budget->reckon($this->id);
         return true;
     }
     public function attributeLabels(){

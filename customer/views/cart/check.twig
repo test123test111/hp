@@ -8,10 +8,11 @@
         	{% set form = activeform.begin({'action':'/order/buy','id':'buyForm'}) %}
             {# <form enctype="multipart/form-data" method="post" action="success.html" id="buyForm"> #}
                 <div class="buy_list">
-                    <div class="dt">1 活动信息</div>
+                    <div class="dt">1 计划日期</div>
                     <div class="dd">
-                        <input type="text" value="" name="Order[goods_active]" class="active_input" />
+                        <input type="text" value="" name="Order[send_date]" class="active_input" />
                     </div>
+                    <input type="hidden" value="{{ storeroom_id }}" name="Order[storeroom_id]" />
                     <div class="dt">2 收货人信息</div>
                     <div class="dd">
                         <ul class="addr_list" id="address_area">
@@ -40,19 +41,22 @@
                     <div class="dd">
                         <ul id="delivery_time" class="delivery_time clearfix">
                             <li class="selected">
-                                <label><input type="radio" class="hookbox" checked="checked" value="4小时" name="Order[limitday]">4小时</label>
+                                <label><input type="radio" class="hookbox" checked="checked" value="1" name="Order[transport_type]">24小时</label>
                             </li>
                             <li>
-                                <label><input type="radio" class="hookbox" value="12小时" name="Order[limitday]">12小时</label>
+                                <label><input type="radio" class="hookbox" value="3" name="Order[transport_type]">3天门到门</label>
                             </li>
                             <li>
-                                <label><input type="radio" class="hookbox" value="24小时" name="Order[limitday]">24小时</label>
+                                <label><input type="radio" class="hookbox" value="2" name="Order[transport_type]">5天门到门</label>
                             </li>
-                            <li>
-                                <label><input type="radio" class="hookbox" value="3天" name="Order[limitday]">3天</label>
-                            </li>
+                            {# <li>
+                                <label><input type="radio" class="hookbox" value="6" name="Order[transport_type]">4小时</label>
+                            </li> #}
                              <li>
-                                <label><input type="radio" class="hookbox" value="5天" name="Order[limitday]">5天</label>
+                                <label><input type="radio" class="hookbox" value="4" name="Order[transport_type]">包车服务</label>
+                            </li>
+                            <li>
+                                <label><input type="radio" class="hookbox" value="5" name="Order[transport_type]">其他</label>
                             </li>
                         </ul>
                     </div>

@@ -35,6 +35,8 @@ class Owner extends ActiveRecord implements IdentityInterface
 
     const IS_BIG_OWNER = 1;
     const IS_NOT_BIG_OWNER = 0;
+
+    const IS_BUDGET = 1;
     public static function findIdentityByAccessToken($token,$type=null){}
     public function behaviors()
     {

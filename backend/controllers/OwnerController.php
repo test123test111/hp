@@ -10,6 +10,7 @@ use backend\models\ProductTwoLine;
 use backend\models\search\OwnerSearch;
 use backend\components\BackendController;
 use backend\models\Share;
+use common\models\Budget;
 
 class OwnerController extends BackendController {
     /**
@@ -56,6 +57,9 @@ class OwnerController extends BackendController {
                 if($model->big_owner == Owner::IS_BIG_OWNER){
                     //update material share
                     Share::updateMaterial($model->id,$model->category);
+                    if($model->is_budget == Owner::IS_BUDGET && $model->budget != "0"){
+                        Budget::updateOwnerBudget($model->id,$model->budget);
+                    }
                 }
                 Yii::$app->session->setFlash('success', '新建成功！');
                 $this->redirect("/owner/list");
@@ -95,6 +99,9 @@ class OwnerController extends BackendController {
                     if($model->big_owner == Owner::IS_BIG_OWNER){
                         //update material share
                         Share::updateMaterial($model->id,$model->category);
+                        // if($model->is_budget == Owner::IS_BUDGET && $model->budget != "0"){
+                        //     Budget::updateOwnerBudget($model->id,$model->budget);
+                        // }
                     }else{
                         if($flag1 != $flag2){
                             Share::recove($model->id);
@@ -104,6 +111,20 @@ class OwnerController extends BackendController {
             }
         }
         return $this->render('create',['model'=>$model]);
+    }
+    /**
+     * action for update big owner budget 
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
+    public function actionUpdatebudget($id){
+        $model = $this->loadModel($id);
+        if(Yii::$app->request->isPost){
+            $model->load(Yii::$app->request->post());
+            Budget::updateOwnerBudget($model->id,$model->budget);
+            Yii::$app->session->setFlash('success', '修改预算成功');
+        }
+        return $this->render('updatebudget',['model'=>$model]);
     }
     public function actionDelete(){
         $id = $_GET['id'];

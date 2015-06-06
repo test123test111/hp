@@ -486,10 +486,42 @@ CREATE TABLE `order_detail` (
   `owner_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `is_owner_approval` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否通过物主审批 0:未处理 1通过 2驳回',
-  `approval_uid` int(11) NOT NULL,
+  `approval_uid` int(11) NOT NULL DEFAULT '0',
   `approval_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `budget`;
+CREATE TABLE `budget` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owner_id` int(11) NOT NULL,
+  `price` float(10,2) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL,
+  `created_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:yltd 1:hhg',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `budget_total`;
+CREATE TABLE `budget_total` (
+  `owner_id` int(11) NOT NULL,
+  `price` float(10,2) NOT NULL,
+  PRIMARY KEY (`owner_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `budget_consume`;
+CREATE TABLE `budget_consume` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owner_id` int(11) NOT NULL,
+  `price` float(10,2) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `consume_owner_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `owner_id`(`owner_id`),
+  KEY `consume_owner_id`(`consume_owner_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 
