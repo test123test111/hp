@@ -1,0 +1,3 @@
+{% for user in users %}
+	<input type="checkBox" {% if user.id in shares %}checked="checked" {% endif %}value="{{ user.id }}">{{ user.english_name }}
+{% endfor %}

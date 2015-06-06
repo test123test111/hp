@@ -465,7 +465,7 @@ CREATE TABLE `order` (
   `address` varchar(255) NOT NULL DEFAULT '',
   `contact` varchar(255) NOT NULL DEFAULT '',
   `phone` varchar(32) NOT NULL DEFAULT '',
-  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:预订单 1:已审批',
   `is_del` tinyint(4) NOT NULL DEFAULT '0',
   `need_fee_approval` tinyint(4) NOT NULL DEFAULT '0',
   `fee_approval` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否通过费用审批',
@@ -485,11 +485,11 @@ CREATE TABLE `order_detail` (
   `material_id` int(11) NOT NULL,
   `owner_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
-  `is_owner_approval` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否通过物主审批',
+  `is_owner_approval` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否通过物主审批 0:未处理 1通过 2驳回',
   `approval_uid` int(11) NOT NULL,
   `approval_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=100;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 

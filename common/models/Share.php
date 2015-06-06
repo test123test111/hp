@@ -82,6 +82,72 @@ class Share extends ActiveRecord
         }
     }
     /**
+     * [updateShare description]
+     * @return [type] [description]
+     */
+    public static function updateShareByOwnerId($material_id,$storeroom_id,$owner_id,$to_uids){
+        if(empty($to_uids)){
+            return static::removeShare($material_id,$storeroom_id,$owner_id,$to_uids);
+        }
+        $current = Share::find()->select('to_customer_id')->where(['material_id'=>$material_id,'owner_id'=>$owner_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->andWhere(['<>','to_customer_id',$owner_id])->column();
+        // calculate need to delete
+        $to_del = array_diff($current, $to_uids);
+        // calculate need to insert
+        $to_insert = array_diff($to_uids, $current);
+        // save to db
+        if (!empty($to_del)) {
+            static::removeShare($material_id,$storeroom_id,$owner_id,$to_del);
+        }
+        if (!empty($to_insert)) {
+            static::addShare($material_id,$storeroom_id,$owner_id,$to_insert);
+        }
+        return true;
+    }
+    /**
+     * function_description
+     *
+     *
+     * @return
+     */
+    protected static function addShare($material_id,$storeroom_id,$owner_id,$to_customer_ids) {
+        if (empty($to_customer_ids)) {
+            return true;
+        }
+        foreach($to_customer_ids as $to_customer_id){
+            $share = static::find()->where(['material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'owner_id'=>$owner_id,'to_customer_id'=>$to_customer_id])->one();
+            if(!empty($share)){
+                $share->status = self::STATUS_IS_NORMAL;
+                $share->update();
+            }else{
+                $model = new static;
+                $model->material_id = $material_id;
+                $model->storeroom_id = $storeroom_id;
+                $model->owner_id = $owner_id;
+                $model->to_customer_id = $to_customer_id;
+                $model->created_uid = $owner_id;
+                $model->modified_uid = $owner_id;
+                $model->save();
+            }
+        }
+        return true;
+    }
+    /**
+     * function_description
+     *
+     * @param $model_type:
+     * @param $model_id:
+     * @param $dep_type:
+     * @param $dep_ids:
+     *
+     * @return
+     */
+    protected static function removeShare($material_id,$storeroom_id,$owner_id,$to_customer_ids) {
+        if (empty($to_customer_ids)) {
+            return true;
+        }
+        return static::updateAll(['status'=>self::STATUS_IS_NOT_NORMAL],['material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'owner_id'=>$owner_id,'to_customer_id'=>$to_customer_ids]);
+    }
+    /**
      * [recove description]
      * @param  [type] $to_customer_id [description]
      * @return [type]                 [description]
