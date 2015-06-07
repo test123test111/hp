@@ -8,7 +8,10 @@ use backend\components\BackendActiveRecord;
 use backend\models\Stock;
 use backend\models\OrderChannel;
 use customer\models\Cart;
-
+use common\models\Department;
+use common\models\Budget;
+use common\models\BudgetConsume;
+use common\models\BudgetTotal;
 class Order extends BackendActiveRecord {
 
     const NEW_ORDER = 0;
@@ -31,6 +34,11 @@ class Order extends BackendActiveRecord {
 
     const OWNER_PASS_APPROVAL = 1;
     const OWNER_NOT_PASS_APPROVAL = 0;
+
+    const ORDER_NEED_FEE_APPROVAL = 1;
+
+    const IS_FORMAL = 0;
+    const IS_NOT_FORMAL = 1;
     /**
      * function_description
      *
@@ -289,8 +297,51 @@ class Order extends BackendActiveRecord {
             $this->owner_approval = self::OWNER_PASS_APPROVAL;
             $this->update();
         }
-        $budget_fee = Yii::$app->budget->reckon($this->id);
+        $this->checkOrderNeedApproval();
         return true;
+    }
+    /**
+     * [checkOrderNeedApproval description]
+     * @return [type] [description]
+     */
+    public function checkOrderNeedApproval(){
+        $budget_fee = Yii::$app->budget->reckon($this->id);
+        $owner = Owner::findOne($this->created_uid);
+        $department_id = $owner->department;
+        $department = Department::findOne($department_id);
+        $storeroom = Storeroom::findOne($this->storeroom_id);
+        //商用部门规则
+        if($department->id == Department::IS_COMERCIAL){
+            //中央库规则
+            $total = BudgetTotal::getPriceTotalByCategory($owner->category);
+            $consume = BudgetConsume::getConsumePriceByCategory($owner->category);
+            if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+                if($budget_fee > ($total - $consume)){
+                    $this->can_formal = self::IS_NOT_FORMAL;
+                    $this->update();
+                }else{
+                    if(($consume / $total) < 0.85 && $budget_fee >= 1000){
+                        $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+                        $this->update();
+                    }
+                    if(($consume / $total) >= 0.85 && $budget_fee >= 500){
+                        $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+                        $this->update();
+                    }
+                }
+            }else{
+                if($budget_fee > ($total - $consume)){
+                    $this->can_formal = self::IS_NOT_FORMAL;
+                    $this->update();
+                }
+            }
+        }
+        if($deparment->id == Department::IS_CONSUMER){
+            if($budget_fee > ($total - $consume)){
+                $this->can_formal = self::IS_NOT_FORMAL;
+                $this->update();
+            }
+        }
     }
     public function attributeLabels(){
         return [

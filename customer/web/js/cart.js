@@ -105,6 +105,8 @@ $(function(){
     $("#buy_btn").click(function(){
         if($(".cart_list li span.selected").length > 0){
             cartSubmit();
+        }else{
+            alert("请选择下订单的物料!");return false;
         }
     });
 });
@@ -115,6 +117,7 @@ function cartSubmit(){
     $.each($(".cart_list li"),function(i){
         if($(this).find(".check").hasClass("selected")){
             var cart_id = $(".cart_list li").eq(i).attr("data-cart-id");
+            var storeroom_id = $(".cart_list li").eq(i).attr("data-storeroom");
             var quantity = $(".amount_input").eq(i).val();
             var one_info = {"cart_id":cart_id,"quantity":quantity};
             goods_data["items"].push(one_info);

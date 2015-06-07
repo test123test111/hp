@@ -467,6 +467,7 @@ CREATE TABLE `order` (
   `phone` varchar(32) NOT NULL DEFAULT '',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:预订单 1:已审批',
   `is_del` tinyint(4) NOT NULL DEFAULT '0',
+  `can_formal` tinyint(4) NOT NULL DEFAULT '0' COMMENT '能否生成正式订单 0:能 1:不能',
   `need_fee_approval` tinyint(4) NOT NULL DEFAULT '0',
   `fee_approval` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否通过费用审批',
   `fee_approval_uid` int(11) NOT NULL,
@@ -495,6 +496,7 @@ DROP TABLE IF EXISTS `budget`;
 CREATE TABLE `budget` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `owner_id` int(11) NOT NULL,
+  `category` int(11) NOT NULL,
   `price` float(10,2) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
@@ -506,6 +508,7 @@ CREATE TABLE `budget` (
 DROP TABLE IF EXISTS `budget_total`;
 CREATE TABLE `budget_total` (
   `owner_id` int(11) NOT NULL,
+  `category` int(11) NOT NULL,
   `price` float(10,2) NOT NULL,
   PRIMARY KEY (`owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -514,6 +517,7 @@ DROP TABLE IF EXISTS `budget_consume`;
 CREATE TABLE `budget_consume` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `owner_id` int(11) NOT NULL,
+  `category` int(11) NOT NULL,
   `price` float(10,2) NOT NULL,
   `order_id` int(11) NOT NULL,
   `consume_owner_id` int(11) NOT NULL,

@@ -6,6 +6,8 @@ use yii\db\ActiveRecord;
 use yii\helpers\BaseArrayHelper;
 
 class Storeroom extends ActiveRecord {
+    const STOREROOM_LEVEL_IS_CENTER = 1;
+    const STOREROOM_LEVEL_IS_PLATFORM = 2;
     /**
      * function_description
      *

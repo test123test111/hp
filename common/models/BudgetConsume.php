@@ -15,4 +15,12 @@ class BudgetConsume extends ActiveRecord
     public static function tableName() {
         return 'budget_consume';
     }
+    /**
+     * [getConsumePriceByCategory description]
+     * @param  [type] $category_id [description]
+     * @return [type]              [description]
+     */
+    public static function getConsumePriceByCategory($category_id){
+    	return static::find()->select('price')->where(['category'=>$category_id])->sum();
+    }
 }

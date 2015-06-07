@@ -6,6 +6,8 @@ use yii\db\ActiveRecord;
 
 class Department extends ActiveRecord
 {
+    const IS_COMERCIAL = 2;
+    const IS_CONSUMER = 1;
     public function behaviors()
     {
         return [
