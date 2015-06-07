@@ -82,20 +82,18 @@ class MaterialController extends \yii\web\Controller {
      * @return [type] [description]
      */
     public function actionShare(){
-        // if(Yii::$app->request->isPost){
+        if(Yii::$app->request->isPost){
             $uid = Yii::$app->user->id;
             $user = Owner::findOne($uid);
             $material_id = Yii::$app->request->post('material_id');
-            $material_id = 2;
             $storeroom_id = Yii::$app->request->post('storeroom_id');
-            $storeroom_id = 1;
             if(!empty($user)){
                 $category_id = $user->category;
                 $users = Owner::find()->where(['category'=>$category_id])->andWhere(['<>','id',$uid])->all();
                 $shares = Share::find()->select('to_customer_id')->where(['material_id'=>$material_id,'owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'status'=>Share::STATUS_IS_NORMAL])->andWhere(['<>','to_customer_id',$uid])->column();
                 return $this->renderPartial('share',['users'=>$users,'shares'=>$shares]);
             }
-        // }
+        }
     }
     /**
      * action for update owner shares 
