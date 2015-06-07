@@ -46,12 +46,13 @@ class Budget extends ActiveRecord
      * @param  [type] $price    [description]
      * @return [type]           [description]
      */
-    public static function updateOwnerBudget($owner_id,$price,$created_type = '0'){
+    public static function updateOwnerBudget($owner_id,$category_id,$price,$created_type = '0'){
         $db = static::getDb();
         $transaction = $db->beginTransaction();
         try{
     		$model = new static;
-    		$model->owner_id = $owner_id;
+        $model->owner_id = $owner_id;
+    		$model->category = $category_id;
     		$model->price = $price;
     		$model->created_type = $created_type;
     		$model->save();
@@ -60,6 +61,7 @@ class Budget extends ActiveRecord
     		if(empty($budgetTotal)){
     			$budgetTotal = new BudgetTotal;
 	    		$budgetTotal->owner_id = $owner_id;
+          $budgetTotal->category = $category_id;
 	    		$budgetTotal->price = $price;
 	    		$budgetTotal->save();
     		}else{

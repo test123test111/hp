@@ -58,7 +58,7 @@ class OwnerController extends BackendController {
                     //update material share
                     Share::updateMaterial($model->id,$model->category);
                     if($model->is_budget == Owner::IS_BUDGET && $model->budget != "0"){
-                        Budget::updateOwnerBudget($model->id,$model->budget);
+                        Budget::updateOwnerBudget($model->id,$model->category,$model->budget);
                     }
                 }
                 Yii::$app->session->setFlash('success', '新建成功！');
@@ -121,7 +121,7 @@ class OwnerController extends BackendController {
         $model = $this->loadModel($id);
         if(Yii::$app->request->isPost){
             $model->load(Yii::$app->request->post());
-            Budget::updateOwnerBudget($model->id,$model->budget);
+            Budget::updateOwnerBudget($model->id,$model->category,$model->budget);
             Yii::$app->session->setFlash('success', '修改预算成功');
         }
         return $this->render('updatebudget',['model'=>$model]);
