@@ -37,8 +37,14 @@ class Order extends BackendActiveRecord {
 
     const ORDER_NEED_FEE_APPROVAL = 1;
 
+    const ORDER_PASS_FEE_APPROVAL = 1;
+
     const IS_FORMAL = 0;
     const IS_NOT_FORMAL = 1;
+
+    const ORDER_STATUS_IS_PRE = 0;
+    const ORDER_STATUS_IS_NEED_APPROVAL = 1;
+    const ORDER_STATUS_IS_APPROVALED = 2;
     /**
      * function_description
      *

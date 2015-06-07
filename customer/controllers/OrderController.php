@@ -599,8 +599,74 @@ class OrderController extends CustomerController {
             echo $this->renderPartial('addressdisplay', ['model' => $model, 'isNew' => true]);
         }
     }
+    //物主审批物料(批量审批)
+    public function actionApprovalmaterial(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('order_id');
+            $orderInfo = Order::findOne($order_id);
+            $material_ids = Yii::$app->request->post('material_ids');
+            $details = OrderDetail::find()->where(['order_id'=>$order_id,'material_id'=>$material_ids,'owner_id'=>Yii::$app->user->id])->all();
+            foreach($details as $detail){
+                $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
+                $detail->approval_uid = Yii::$app->user->id;
+                $detail->approval_date = date('Y-m-d H:i:s');
+                $detail->update();
+            }
+            $orders = OrderDetail::find()->where(['order_id'=>$order_id])->all();
+            $flag = 0;
+            foreach($orders as $order){
+                if($order->is_owner_approval == OrderDetail::IS_OWNER_APPROVAL){
+                    
+                }else{
+                    $flag ++;
+                }
+            }
+            if($flag == 0){
+                Order::updateAll(['owner_approval'=>Order::OWNER_PASS_APPROVAL],['id'=>$order_id]);
+            }
+            if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Orde::IS_FORMAL){
+                $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
+                $orderInfo->update();
+            }
+        }
+    }
+    //预算所属人审批预算
+    public function actionApprovalfee(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('order_id');
+            $order = Order::findOne($order_id);
+            if($order->need_fee_approval == Order::ORDER_NEED_FEE_APPROVAL){
+                $order->fee_approval = Order::ORDER_PASS_FEE_APPROVAL;
+                $order->fee_approval_uid = Yii::$app->user->id;
+                $order->update();
+            }
+            if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Orde::IS_FORMAL){
+                $order->status = Order::ORDER_STATUS_IS_APPROVALED;
+                $order->update();
+            }
+        }
+    }
+    //发送审批
+    public function actionSendapproval(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('order_id');
+            $order = Order::findOne($order_id);
+            $orderDetail = OrderDetail::find()->with('material')->where(['order_id'=>$order_id])->all();
+            $flag = '';
+            foreach($orderDetail as $detail){
+                if(StockTotal::checkQuantity($detail->material_id,$detail->storeroom_id,$detail->quantity) == false){
+                    $flag .= $detail->material->name." ";
+                }
+            }
+            if($flag == ''){
+                $order->status = Order::ORDER_STATUS_IS_NEED_APPROVAL;
+                $order->update();
+            }else{
+                echo '由于较长时间没有发送审批,您订单中包含的物料'.$flag."已经库存不足，请您重新下单";
+            }
 
-
+        }
+    }
     /**
      * action for delete user address
      * @throws \yii\web\HttpException
