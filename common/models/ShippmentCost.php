@@ -9,6 +9,9 @@ class ShippmentCost extends ActiveRecord
 	const REQUEST_IS_SUCCESS = 10000;
 	const SHIPPMENT_COST_TEMPLETE_NOTEXIST = 10001;
 	const TRANSPORT_TYPE_NOT_EXIST = 10002;
+
+    const TO_TYPE_IS_CUSTOMER = 0;
+    const TO_TYPE_IS_PLATFORM = 1;
     /**
      * function_description
      *
@@ -26,8 +29,8 @@ class ShippmentCost extends ActiveRecord
      * @param  [type] $transport_type [description]
      * @return [type]                 [description]
      */
-    public static function getFeeByProperty($storeroom_id,$to_city,$weight,$transport_type){
-    	$templete = static::find()->where(['storeroom_id'=>$storeroom_id,'to_city'=>$to_city,'transport_type'=>$transport_type])->one();
+    public static function getFeeByProperty($storeroom_id,$to_city,$weight,$transport_type,$to_type){
+    	$templete = static::find()->where(['storeroom_id'=>$storeroom_id,'to_city'=>$to_city,'transport_type'=>$transport_type,'to_type'=>$to_type])->one();
     	if(empty($templete)){
     		return [false,0,self::SHIPPMENT_COST_TEMPLETE_NOTEXIST];
     	}
