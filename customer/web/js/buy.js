@@ -23,6 +23,18 @@ $(function(){
         $(this).addClass("selected");
     });
 
+    // select safe
+    $("#safe_label li").click(function(){
+        var data_show = $(this).attr("data-show");
+        $("#safe_label li").removeClass("selected");
+        $(this).addClass("selected");
+        if(data_show == 1){
+            $("#safe_price").show();
+        }else{
+            $("#safe_price").hide();
+        }
+    });
+
     // select time
     $("#delivery_style li").click(function(){
         $("#delivery_style li").removeClass("selected");
@@ -58,6 +70,15 @@ $(function(){
     });
 
     doProvince();
+
+    $(".type_tab li").click(function(){
+        $(".type_tab li").removeClass("cur");
+        $(this).addClass("cur");
+        $(".add_content").hide();
+        $(".add_content").eq($(this).index()).show();
+    });
+
+    
 });
 
 // edit address

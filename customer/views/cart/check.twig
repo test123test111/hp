@@ -3,6 +3,7 @@
 {% block body_class %}
 {% endblock%}
 {% block content %}
+    <link rel="stylesheet" href="/css/autocomplete.css">
 	<div class="view_wrap">
         <div class="o_box">
         	{% set form = activeform.begin({'action':'/order/buy','id':'buyForm'}) %}
@@ -10,31 +11,49 @@
                 <div class="buy_list">
                     <div class="dt">1 计划日期</div>
                     <div class="dd">
-                        <input type="text" value="" name="Order[send_date]" class="active_input" />
+                        <input type="text" value="" name="Order[send_date]" class="active_input date_input" />
                     </div>
-                    <input type="hidden" value="{{ storeroom_id }}" name="Order[storeroom_id]" />
+                    <div class="dt">1 送达日期</div>
+                    <div class="dd">
+                        <input type="text" value="" name="Order[send_date]" class="active_input date_input" />
+                    </div>
+                    <input type="hidden" value="{{ results.0.info.storeroom_id }}" name="Order[storeroom_id]" />
                     <div class="dt">2 收货人信息</div>
                     <div class="dd">
-                        <ul class="addr_list" id="address_area">
-                            {% for addr in address %}
-                            <li class="clearfix {% if addr.status == 1 %}selected{% endif %}" id="addr_{{ addr.id }}">
-                                <input type="radio" name="address" value="{{ addr.id }}" {% if addr.status == 1 %}checked="checked"{% endif %} class="hookbox"/>
-                                <label>
-                                    <b>{{ addr.name }}</b>{{ addr.province }} {{ addr.city }} {{ addr.area }} {{ addr.address }}
-                                    <em>{{ addr.phone }}</em>
-                                </label>
-                            <span class="edit">
-                                {% if addr.status == 0 %}<a href="javascript:;" class="del_link apink" data-id="{{ addr.id }}">删除</a>{% endif %}
-                                <a href="javascript:;" class="edit_link apink" data-id="{{ addr.id }}">编辑</a>
-                            </span>
-                            </li>
-                            {% endfor %}
+                        <ul class="type_tab clearfix">
+                            <li class="cur">平台库</li>
+                            <li>收件人</li>
                         </ul>
-                        <ul class="addr_list">
-                            <li class="clearfix addnew">
-                                <a href="javascript:;">+新收货地址</a>
-                            </li>
-                        </ul>
+                        <div class="add_content">
+                            <select>
+                                <option>请选择平台库</option>
+                                <option>西安平台库</option>
+                                <option>天津平台库</option>
+                            </select>
+                        </div>
+                        <div class="add_content none">
+                            <p>单位名称：<input type="text" value="" id="autocompleteName" name="Order[send_date]" class="active_input" /></p>
+                            <input type="hidden" value="" name="" />
+                            <ul class="addr_list" id="address_area">
+                                {% for addr in address %}
+                                <li class="clearfix selected" id="addr_{{ addr.id }}">
+                                    <label>
+                                        <b>{{ addr.name }}</b>{{ addr.province }} {{ addr.city }} {{ addr.area }} {{ addr.address }}
+                                        <em>{{ addr.phone }}</em>
+                                    </label>
+                                    <span class="edit">
+                                        {% if addr.status == 0 %}<a href="javascript:;" class="del_link apink" data-id="{{ addr.id }}">删除</a>{% endif %}
+                                        <a href="javascript:;" class="edit_link apink" data-id="{{ addr.id }}">编辑</a>
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <ul class="addr_list">
+                                <li class="clearfix addnew">
+                                    <a href="javascript:;">+新收货地址</a>
+                                </li>
+                            </ul>
+                        </div>
                       
                     </div>
                     <div class="dt">3 到货需求</div>
@@ -59,6 +78,18 @@
                                 <label><input type="radio" class="hookbox" value="5" name="Order[transport_type]">其他</label>
                             </li>
                         </ul>
+                    </div>
+                    <div class="dt">3 是否保险</div>
+                    <div class="dd">
+                        <ul id="safe_label" class="delivery_time clearfix">
+                            <li data-show="1">
+                                <label><input type="radio" class="hookbox" value="1" name="Order[safe]">是</label>
+                            </li>
+                            <li class="selected" data-show="0">
+                                <label><input type="radio" class="hookbox" checked="checked" value="3" name="Order[safe]">否</label>
+                            </li>
+                        </ul>
+                        <input type="text" placeholder="输入保险金额" name="" class="memo_input none" id="safe_price" />
                     </div>
                     <div class="dt">4 物料信息</div>
                     <div class="dd">
@@ -96,6 +127,7 @@
                             </ul>
                         </div>
 
+                        <input type="text" placeholder="输入用途" name="" class="memo_input" />
                         <input type="text" placeholder="输入备注信息" name="Order[info]" class="memo_input" />
                     </div>
 
@@ -109,8 +141,27 @@
         </div>
     </div>
     <script type='text/javascript' src='/js/layer.min.js'></script>
+    <script type='text/javascript' src='/js/autocomplete.js'></script>
     <script type='text/javascript' src='/js/buy.js'></script>
     <script type='text/javascript' src='/js/province.js'></script>
     <script type='text/javascript' src='/js/city.js'></script>
     <script type='text/javascript' src="/js/district.js"></script>
+    <script type='text/javascript' src='/js/date_input.js'></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.date_input').date_input();
+        })
+    </script>
+    <script type="text/javascript">
+    $(function(){
+        var data = [{text:'Link A', url:'/page1'}, {text:'Link B', url: '/page2'} ]; 
+        $("#autocompleteName").autocomplete(data,{ 
+            formatItem: function(item) { 
+                return item.text; 
+            } 
+        }).result(function(event,item) { 
+            $("#company_box").html(item.text);
+        });
+    })
+    </script>
 {% endblock %}

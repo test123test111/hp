@@ -50,6 +50,7 @@
                             <td>选择</td>
                             <td>物料编号</td>
                             <td>物料名称</td>
+                            <td>分享</td>
                             <td>属性</td>
                             <td>产品线</td>
                             <td>入库时间</td>
@@ -65,6 +66,7 @@
                             <td><input type="checkbox" name="" value="{{ key }}" data-id="{{ result.materials.id }}" data-storeroom="{{ result.storeroom_id }}" data-stock="{{ result.stockTotals.total }}" /></td>
                             <td>{{ result.materials.code }}</td>
                             <td><a href="/material/view?id={{ result.material_id }}&sid={{ result.material_id }}" class="blue">{{ result.materials.name }}</a></td>
+                            <td><a href="javascript:void(0);" onclick="shareTo({{ result.material_id }},{{ result.storeroom_id }});">分享</a></td>
                             <td>{{ result.materials.getMyPropertyName() }}</td>
                             <td>{{ result.owners.producttwolines.name }}</td>
                             <td>{{ result.created }}</td>
@@ -83,12 +85,21 @@
                 </div>
             </div>
       </div>
+      <script type='text/javascript' src='/js/layer.min.js'></script>
       <script type='text/javascript'>
             $(function(){
                 $(".m_amount").bind('keyup',function(){
                     var cur_qty = parseInt($(this).val());
                     if(!/^[1-9][0-9]*$/.test(cur_qty)){
                         $(this).val("");
+                    }
+                });
+
+                $("#checkall").live("click",function(){
+                    if($(this).attr("checked") != undefined){
+                        $(".share_list dd input").attr("checked","checked");
+                    }else{
+                        $(".share_list dd input").removeAttr("checked");
                     }
                 });
             });
@@ -145,6 +156,44 @@
 
             function hideTip(){
                 $(".cart_success").fadeOut();
+            }
+
+            function shareTo(mid,rid){
+                var safeCode = $('meta[name=csrf-token]');
+                $.ajax({
+                    url : "/material/share",
+                    type : "POST",
+                    dataType : "html",
+                    data : {"material_id":mid,"storeroom_id":rid,"_csrf":safeCode.attr('content')},
+                    success : function(json){
+                        $.layer({
+                            type: 1,
+                            shade: [0.5, '#000'],
+                            area: ['500', '450'],
+                            title: '分享',
+                            btns: 2,
+                            btn: ['确定', '取消'],
+                            border: [5, 0.2, '#000'],
+                            yes: function(){
+                                var userIds = [];
+                                $.each($(".share_list dd input:checked"),function(){
+                                    userIds.push($(this).val());
+                                });
+                                $.ajax({
+                                    url : "/material/updateshare",
+                                    type : "POST",
+                                    dataType : "json",
+                                    data : {"material_id":mid,"storeroom_id":rid,"user_ids":userIds,"_csrf":safeCode.attr('content')},
+                                    success : function(json){
+                                        $("#succShare").show();
+                                        window.setTimeout("$('#succShare').fadeOut()",2000)
+                                    }
+                                });
+                            },
+                            page: {html:json}
+                        });
+                    }
+                });
             }
         </script>
 {% endblock %}

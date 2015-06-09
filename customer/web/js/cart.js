@@ -104,7 +104,19 @@ function deleteCart(cart_id){
 $(function(){
     $("#buy_btn").click(function(){
         if($(".cart_list li span.selected").length > 0){
-            cartSubmit();
+            var first_cart = $(".cart_list li span.selected").eq(0).attr("data-storeroom-id");
+            var issame = true;
+            $.each($(".cart_list li span.selected"),function(){
+                if($(this).attr("data-storeroom-id") != first_cart){
+                    issame = false;
+                    return false;
+                }
+            });
+            if(!issame){
+                alert("库房必须一致！");
+            }else{
+                cartSubmit();
+            }
         }else{
             alert("请选择下订单的物料!");return false;
         }

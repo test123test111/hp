@@ -29,7 +29,7 @@
                 	{% for cart in carts %}
                 		{% set stocks = cart.getStocks() %}
                     <li class="clearfix" data-cart-id="{{ cart.id }}" id="cart_{{ cart.id }}" data-stock="{{ stocks }}" data-storeroom-id="{{ cart.storeroom_id }}" data-materiel-id="{{ cart.material_id }}">
-                        <span class="check" data-cart-id="{{ cart.id }}"></span>
+                        <span class="check" data-storeroom-id="{{ cart.storeroom_id }}" data-cart-id="{{ cart.id }}"></span>
                         <div class="goods">
                             <a href="#" class="pic">
                             	{% for im in cart.material.image %}

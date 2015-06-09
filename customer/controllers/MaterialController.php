@@ -91,7 +91,7 @@ class MaterialController extends \yii\web\Controller {
                 $category_id = $user->category;
                 $users = Owner::find()->where(['category'=>$category_id])->andWhere(['<>','id',$uid])->all();
                 $shares = Share::find()->select('to_customer_id')->where(['material_id'=>$material_id,'owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'status'=>Share::STATUS_IS_NORMAL])->andWhere(['<>','to_customer_id',$uid])->column();
-                return $this->renderPartial('share',['users'=>$users,'shares'=>$shares]);
+                echo $this->renderPartial('share',['users'=>$users,'shares'=>$shares,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id]);
             }
         }
     }
@@ -106,6 +106,7 @@ class MaterialController extends \yii\web\Controller {
             $uid = Yii::$app->user->id;
             $to_uids = Yii::$app->request->post('user_ids');
             Share::updateShareByOwnerId($material_id,$storeroom_id,$uid,$to_uids);
+            echo 1;
         }
     }
     /**

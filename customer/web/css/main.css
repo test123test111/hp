@@ -336,6 +336,11 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 .addr_list li.more{border-top:1px solid #EFEFEF;text-align:center;margin-top:8px;margin-bottom:0;display:none;}
 .addr_list li.more a{display:inline-block;width:120px;height:26px;background: url('../images/order_ico.png') no-repeat 0 -207px;}
 
+.type_tab{border-bottom:1px solid #e9e9e9;}
+.type_tab li{padding:10px 30px;cursor:pointer;float:left;}
+.type_tab li.cur{background:#e9e9e9;}
+.add_content{padding:15px;}
+.add_content p{padding-bottom:10px;}
 /* address dialog */
 .address_popup{text-align:left;padding-top:10px;}
 .address_popup th,.address_popup td{padding:5px 0;vertical-align:top;}
@@ -350,3 +355,8 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 
 .export_btn{float:right;padding:0 20px;height:32px;line-height:32px;color:#fff;font-size:16px;text-align:center;border-radius:5px;background:#0089d4}
 .export_btn:link,.export_btn:visited{color:#fff;}
+
+.share_list{margin:20px;text-align:left;}
+.share_list dt{background:#e9e9e9;padding:10px;}
+.share_list dd{border-bottom:1px solid #e7e7e7;padding:10px;float:left;width:120px;}
+#succShare{color:green;padding:10px 0;}

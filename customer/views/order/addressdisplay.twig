@@ -4,6 +4,12 @@
         <table>
             <tbody>
                 <tr>
+                    <th>单位名称：<em>*</em></th>
+                    <td>
+                        <input type="text" id="addr_company" value="" class="tc-text"><span class="error_tip" id="error_company">单位名称不能为空</span>
+                    </td>
+                </tr>
+                <tr>
                     <th>所在地区：<em>*</em></th>
                     <td>
                         {% if isNew == false %}

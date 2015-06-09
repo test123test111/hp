@@ -1,3 +1,9 @@
-{% for user in users %}
-	<input type="checkBox" {% if user.id in shares %}checked="checked" {% endif %}value="{{ user.id }}">{{ user.english_name }}
-{% endfor %}
+<div class="share_list">
+	<p id="succShare" class="none">设置成功！</p>
+	<dl>
+		<dt><input type="checkbox" name="" id="checkall"> 全选</dt>
+		{% for user in users %}
+		<dd><label><input type="checkBox" {% if user.id in shares %}checked="checked" {% endif %}value="{{ user.id }}"> {{ user.english_name }}</label></dd>
+		{% endfor %}
+	</dl>
+</div>
