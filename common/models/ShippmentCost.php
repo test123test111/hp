@@ -52,4 +52,23 @@ class ShippmentCost extends ActiveRecord
     	}
     	return [true,$price,self::REQUEST_IS_SUCCESS];
     }	
+    /**
+     * [getFenjianFee description]
+     * @param  count is material's category in order
+     * @return [type]        [description]
+     */
+    public static function getFenjianFee($count){
+        $fee = 0;
+        if($count >= 10 && $count <= 19){
+            $fee = 28.00;
+        }elseif($count >=20 && $count <= 29){
+            $fee = 47.00;
+        }elseif($count >=30 && $count <= 39){
+            $fee = 57.00;
+        }elseif($count >= 40){
+            $fee = 76.00;
+        }
+        //5.2 is box fee
+        return $fee + 5.2;
+    }
 }
