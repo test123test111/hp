@@ -89,6 +89,24 @@ class CartController extends CustomerController {
         echo json_encode(['data'=>'','err'=>'添加购物车成功','errno'=>0]);
     }
     /**
+     * [actionAddressinfo description]
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
+    public function actionAddressinfo($id){
+        $address = Address::findOne($id);
+        $str = '';
+        $str .= '<lable>';
+        $str .= '<b>'.$address->name.'</b>';
+        $str .= $address->province.' '.$address->city.' '.$address->area.' '.$address->address;
+        $str .= '<em>'.$addr->phone.'</em>';
+        $str .= '</label>';
+        $str .= '<span class="edit">';
+        $str .= "<a href='javascript:;' class='edit_link apink' data-id={{ address.id }}>编辑</a>";
+        $str .= "</span>";
+        echo $str;
+    }
+    /**
      * check cart goods
      * @return [type] [description]
      */
@@ -97,9 +115,11 @@ class CartController extends CustomerController {
             $items = Yii::$app->request->post('items');
             $result = Cart::getCartsInfo($items);
             $userAddress = Address::getUserAddress(Yii::$app->user->id);
+            $company = Address::getUserCompany(Yii::$app->user->id);
             return $this->render('check', array(
                 'results'=>$result,
                 'address'=>$userAddress,
+                'company'=>$company,
             )); 
         }
     }

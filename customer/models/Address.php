@@ -20,7 +20,7 @@ class Address extends CustomerActiveRecord {
     public function rules()
     {
         return [
-            [['name', 'address'], 'required'],
+            [['name', 'address','company'], 'required'],
             [['phone', 'province', 'city', 'area', 'address', 'zip', 'tel_area_code', 'tel', 'tel_ext'], 'safe'],
         ];
     }
@@ -35,7 +35,21 @@ class Address extends CustomerActiveRecord {
     {
         return static::find()->where(['uid' => $uid])->orderBy(['status' => SORT_DESC])->all();
     }
-
+    /**
+     * get user company json for autocomplete
+     * @param  [type] $uid [description]
+     * @return [type]      [description]
+     */
+    public static function getUserCompany($uid){
+        $results = static::find()->where(['uid' => $uid])->orderBy(['status' => SORT_DESC])->all();
+        $ret = [];
+        foreach($results as $result){
+            $array['text'] = $result->company;
+            $array['url'] = '/cart/addressinfo/'.$result->id;
+            array_push($ret,$array);
+        }
+        return json_encode($ret);
+    }
     /**
      * 获取用户一个地址
      * @param $id int 地址ID
