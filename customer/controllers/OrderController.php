@@ -178,19 +178,28 @@ class OrderController extends CustomerController {
         $model = new Order;
         // collect user input data
         if(Yii::$app->request->isPost){
-            $model->load($_POST);
+            $model->load(Yii::$app->request->post());
             $db = Order::getDb();
             $transaction = $db->beginTransaction();
             try{
-                $address_id = Yii::$app->request->post('address');
-                $address = Address::findOne($address_id);
-                $model->to_province = $address->province;
-                $model->to_city = $address->city;
-                $model->to_district = $address->area;
-                $model->phone = $address->phone;
-                $model->recipients = $address->name;
-                $model->address = $address->address;
-
+                if($model->to_type == Order::TO_TYPE_USER){
+                    $address_id = Yii::$app->request->post('address');
+                    $address = Address::findOne($address_id);
+                    $model->to_province = $address->province;
+                    $model->to_city = $address->city;
+                    $model->to_district = $address->area;
+                    $model->phone = $address->phone;
+                    $model->recipients = $address->name;
+                    $model->contact = $address->address;
+                }
+                if($model->insurance_price == ''){
+                    $model->insurance_price = '0.00';
+                }
+                if($model->arrive_date != ''){
+                    $model->arrive_date = strtotime($model->arrive_date);
+                }else{
+                    $model->arrive_date = 0;
+                }
                 $model->save();
                 $model->viewid = date('Ymd')."-".$model->id;
                 $model->update();
@@ -573,8 +582,9 @@ class OrderController extends CustomerController {
                 $model->status = 1;
             }
             if ($model->validate() && $model->save()) {
-                $userAddress = Address::getUserAddress(Yii::$app->user->id);
-                echo $this->renderPartial('addresslist', ['address' => $userAddress]);
+                // $userAddress = Address::getUserAddress(Yii::$app->user->id);
+                $userAddress = Address::findOne($model->id);
+                echo $this->renderPartial('addresslist', ['addr' => $userAddress]);
             } else {
                 echo 0;
             }

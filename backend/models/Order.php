@@ -45,6 +45,18 @@ class Order extends BackendActiveRecord {
     const ORDER_STATUS_IS_PRE = 0;
     const ORDER_STATUS_IS_NEED_APPROVAL = 1;
     const ORDER_STATUS_IS_APPROVALED = 2;
+
+
+
+    const TO_TYPE_USER = 0;
+    const TO_TYPE_PLATFORM = 1;
+
+    const PASS_OWNER_APPROVAL = 1;
+    const NOT_PASS_OWNER_APPROVAL = 0;
+
+    const ORDER_HAVE_INSURACE = 1;
+    const ORDER_HAVE_NOT_INSURANCE = 0;
+
     /**
      * function_description
      *
@@ -63,10 +75,8 @@ class Order extends BackendActiveRecord {
      */
     public function rules() {
         return [
-            [['info','purpose','insurance','insurance_price','status','to_district','address','contact'],'safe'],
-            [['recipients','to_province','to_city','transport_type','send_date'],'safe'],
-            // ['goods_quantity','integer'],
-            // ['goods_quantity','checkQuantity']
+            [['storeroom_id','transport_type'],'required'],
+            [['info','purpose','insurance','insurance_price','send_date','arrive_date'],'safe'],
             // ['goods_quantity',]/
         ];
     }
@@ -260,52 +270,86 @@ class Order extends BackendActiveRecord {
             return \yii\helpers\Html::input("text","selection[]");
         ';
     }
-    public function createOrderDetail($postData,$uid){
+
+    public function createOrderDetail($postData,$created_uid){
         if(!is_array($postData)){
             return false;
         }
+        $flag = 0;
         foreach($postData as $key=>$value){
-            $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
             $model = new OrderDetail;
             $model->order_id = $this->id;
-            $model->material_id = $cart->material->id;
+            $model->material_id = $value['material_id'];
+            $model->storeroom_id = $value['storeroom_id'];
             $model->quantity = $value['quantity'];
-            $flag = 1;
-            if($cart->material->owner_id != $uid){
-                $model->owner_id = $cart->material->owner_id;
-                $flag ++;
-            }else{
-                $model->owner_id = $uid;
+            $material = Material::findOne($value['material_id']);
+            $model->owner_id = $material->owner_id;
+            if($model->owner_id == $created_uid){
                 $model->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
-                $model->approval_uid = $uid;
+                $model->approval_uid = $created_uid;
                 $model->approval_date = $this->created;
+            }else{
+                $flag ++;
             }
             $model->save();
 
-
-            // $stock = new Stock;
-            // $stock->material_id = $cart->material->id;
-            // $stock->storeroom_id = $cart->storeroom_id;
-            // $stock->owner_id = $this->owner_id;
-            // $stock->actual_quantity = 0 - $value['quantity'];
-            // $stock->stock_time = date('Y-m-d H:i:s');
-            // $stock->created = date('Y-m-d H:i:s');
-            // $stock->increase = Stock::IS_NOT_INCREASE;
-            // $stock->order_id = $this->id;
-            // $stock->save(false);
-
-            // //subtract stock total
-            // StockTotal::updateTotal($stock->storeroom_id,$cart->material->id,(0 - $value['quantity']));
-
-            Cart::deleteAll(['id'=>$cart->id]);
+            //Cart::deleteAll(['id'=>$cart->id]);
         }
-        if($falg > 1){
-            $this->owner_approval = self::OWNER_PASS_APPROVAL;
-            $this->update();
+        if($flag == 0){
+            $this->owner_approval = self::PASS_OWNER_APPROVAL;
+            $this->update(false);
         }
         $this->checkOrderNeedApproval();
         return true;
     }
+
+    // public function createOrderDetail($postData,$uid){
+    //     if(!is_array($postData)){
+    //         return false;
+    //     }
+    //     foreach($postData as $key=>$value){
+    //         $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
+    //         $model = new OrderDetail;
+    //         $model->order_id = $this->id;
+    //         $model->material_id = $cart->material->id;
+    //         $model->storeroom_id = $this->storeroom_id;
+    //         $model->quantity = $value['quantity'];
+    //         $flag = 1;
+    //         if($cart->material->owner_id != $uid){
+    //             $model->owner_id = $cart->material->owner_id;
+    //             $flag ++;
+    //         }else{
+    //             $model->owner_id = $uid;
+    //             $model->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
+    //             $model->approval_uid = $uid;
+    //             $model->approval_date = $this->created;
+    //         }
+    //         $model->save();
+
+
+    //         // $stock = new Stock;
+    //         // $stock->material_id = $cart->material->id;
+    //         // $stock->storeroom_id = $cart->storeroom_id;
+    //         // $stock->owner_id = $this->owner_id;
+    //         // $stock->actual_quantity = 0 - $value['quantity'];
+    //         // $stock->stock_time = date('Y-m-d H:i:s');
+    //         // $stock->created = date('Y-m-d H:i:s');
+    //         // $stock->increase = Stock::IS_NOT_INCREASE;
+    //         // $stock->order_id = $this->id;
+    //         // $stock->save(false);
+
+    //         // //subtract stock total
+    //         // StockTotal::updateTotal($stock->storeroom_id,$cart->material->id,(0 - $value['quantity']));
+
+    //         Cart::deleteAll(['id'=>$cart->id]);
+    //     }
+    //     if($falg > 1){
+    //         $this->owner_approval = self::OWNER_PASS_APPROVAL;
+    //         $this->update();
+    //     }
+    //     $this->checkOrderNeedApproval();
+    //     return true;
+    // }
     /**
      * [checkOrderNeedApproval description]
      * @return [type] [description]
@@ -317,10 +361,10 @@ class Order extends BackendActiveRecord {
         $department = Department::findOne($department_id);
         $storeroom = Storeroom::findOne($this->storeroom_id);
         //商用部门规则
+        $total = BudgetTotal::getPriceTotalByCategory($owner->category);
+        $consume = BudgetConsume::getConsumePriceByCategory($owner->category);
         if($department->id == Department::IS_COMERCIAL){
             //中央库规则
-            $total = BudgetTotal::getPriceTotalByCategory($owner->category);
-            $consume = BudgetConsume::getConsumePriceByCategory($owner->category);
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
                 if($budget_fee > ($total - $consume)){
                     $this->can_formal = self::IS_NOT_FORMAL;
@@ -342,7 +386,7 @@ class Order extends BackendActiveRecord {
                 }
             }
         }
-        if($deparment->id == Department::IS_CONSUMER){
+        if($department->id == Department::IS_CONSUMER){
             if($budget_fee > ($total - $consume)){
                 $this->can_formal = self::IS_NOT_FORMAL;
                 $this->update();

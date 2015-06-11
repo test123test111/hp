@@ -44,9 +44,14 @@ $(function(){
     // buy submit
     $(".buy_btn").click(function(){
         if(!$(this).hasClass("btn_order_undefined")){
-            if($("#address_area li").length != 0){
-             $("#buyForm").submit();
+            if($("#orderType").val() == 0){
+                if($("#address_area li").length != 0){
+                    $("#buyForm").submit();
+                }else{
+                    alert("请输入收件人地址");
+                }
             }
+            
         }
     });
 
@@ -74,8 +79,9 @@ $(function(){
     $(".type_tab li").click(function(){
         $(".type_tab li").removeClass("cur");
         $(this).addClass("cur");
-        $(".add_content").hide();
-        $(".add_content").eq($(this).index()).show();
+        $("#orderType").val($(this).data("type"));
+        $(".add_content").show();
+        $(".add_content").eq($(this).index()).hide();
     });
 
     
@@ -119,6 +125,7 @@ function postAddressData(){
     var addr_city = $("#addr_city").find("option:selected").text();
     var addr_district = $("#addr_district").find("option:selected").text();
     var addr_name = $("#addr_name").val();
+    var addr_company = $("#addr_company").val();
     var addr_zip = $("#addr_zip").val();
     var addr_address = $("#addr_address").val();
     var addr_area = $("#addr_area").val();
@@ -130,7 +137,7 @@ function postAddressData(){
         url:addr_url,
         dataType:"html",
         type:"POST",
-        data:{"id":addr_id,"Address":{"name":addr_name,"phone":addr_phone,"province":addr_province,"city":addr_city,"area":addr_district,"address":addr_address,"zip":addr_zip,"tel":addr_tel,"tel_area_code":addr_area,"addr_ext":addr_ext}},
+        data:{"id":addr_id,"Address":{"name":addr_name,'company':addr_company,"phone":addr_phone,"province":addr_province,"city":addr_city,"area":addr_district,"address":addr_address,"zip":addr_zip,"tel":addr_tel,"tel_area_code":addr_area,"addr_ext":addr_ext}},
         success:function(json){
             if(json != 0){
                 $("#address_area").html(json);
@@ -238,6 +245,15 @@ function verifyAddress(){
     }else{
         $("#error_zip").hide();
         $("#addr_zip").removeClass('error');
+    }
+    // verify company
+    if($.trim($("#addr_company").val()) == ""){
+        $("#error_company").show();
+        $("#addr_company").addClass('error');
+        allow = false;
+    }else{
+        $("#error_address").hide();
+        $("#error_company").removeClass('error');
     }
     // verify address
     if($.trim($("#addr_address").val()) == ""){

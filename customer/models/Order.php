@@ -29,6 +29,12 @@ class Order extends CustomerActiveRecord {
     const TRANSPORT_CAR = 4;
     const TRANSPORT_OTHER = 5;
 
+    const TO_TYPE_USER = 0;
+    const TO_TYPE_PLATFORM = 1;
+
+    const PASS_OWNER_APPROVAL = 1;
+    const NOT_PASS_OWNER_APPROVAL = 0;
+
     public $goods_code;
     public $goods_quantity;
     /**
@@ -49,10 +55,8 @@ class Order extends CustomerActiveRecord {
      */
     public function rules() {
         return [
-            [['owner_id','recipients','recipients_address','recipients_contact'],'required'],
-            [['goods_active','storeroom_id','to_city','info','limitday','status'],'safe'],
-            ['goods_quantity','integer'],
-            ['goods_quantity','checkQuantity']
+            [['storeroom_id','transport_type'],'required'],
+            [['info','purpose','insurance','insurance_price'],'safe'],
             // ['goods_quantity',]/
         ];
     }
@@ -250,34 +254,31 @@ class Order extends CustomerActiveRecord {
             return \yii\helpers\Html::input("text","selection[]");
         ';
     }
-    public function createOrderDetail($postData){
+    public function createOrderDetail($postData,$created_uid){
         if(!is_array($postData)){
             return false;
         }
+        $flag = 0;
         foreach($postData as $key=>$value){
             $model = new OrderDetail;
             $model->order_id = $this->id;
-            $model->goods_code = $value['code'];
-            $model->goods_quantity = $value['count'];
+            $model->material_id = $value['material_id'];
+            $model->storeroom_id = $value['storeroom_id'];
+            $model->quantity = $value['quantity'];
+            $material = Material::findOne($value['material_id']);
+            $model->owner_id = $material->owner_id;
+            if($model->owner_id == $created_uid){
+                $model->is_owner_approval = OrderDetail::OWNER_APPROVAL;
+                $model->approval_uid = $created_uid;
+                $model->approval_date = $this->created;
+            }else{
+                $flag ++;
+            }
             $model->save();
         }
-        //Subtract stock
-        foreach($postData as $key=>$value){
-            $material = Material::find()->where(['code'=>$value['code']])->one();
-            $model = new Stock;
-            $model->material_id = $material->id;
-            $model->storeroom_id = $this->storeroom_id;
-            $model->owner_id = $this->owner_id;
-            $model->project_id = $material->project_id;
-            $model->actual_quantity = 0 - $value['count'];
-            $model->stock_time = date('Y-m-d H:i:s');
-            $model->created = date('Y-m-d H:i:s');
-            $model->increase = Stock::IS_NOT_INCREASE;
-            $model->order_id = $this->id;
-            $model->save(false);
-
-            //subtract stock total
-            StockTotal::updateTotal($model->storeroom_id,$material->id,(0 - $value['count']));
+        if($flag == 0){
+            $this->owner_approval = self::PASS_OWNER_APPROVAL;
+            $this->update(false);
         }
         return true;
     }

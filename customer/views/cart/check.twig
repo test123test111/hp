@@ -11,42 +11,31 @@
                 <div class="buy_list">
                     <div class="dt">1 计划日期</div>
                     <div class="dd">
-                        <input type="text" value="" name="Order[send_date]" class="active_input date_input" />
+                        <input type="text" name="Order[send_date]" class="active_input date_input" />
                     </div>
                     <div class="dt">1 送达日期</div>
                     <div class="dd">
-                        <input type="text" value="" name="Order[send_date]" class="active_input date_input" />
+                        <input type="text" name="Order[arrive_date]" class="active_input date_input" />
                     </div>
                     <input type="hidden" value="{{ results.0.info.storeroom_id }}" name="Order[storeroom_id]" />
                     <div class="dt">2 收货人信息</div>
+                    <input type="hidden" value="0" name="Order[to_type]" id="orderType" />
                     <div class="dd">
                         <ul class="type_tab clearfix">
-                            <li class="cur">平台库</li>
-                            <li>收件人</li>
+                            <li data-type="0" class="cur">收件人</li>
+                            <li data-type="1">平台库</li>
                         </ul>
-                        <div class="add_content">
-                            <select>
-                                <option>请选择平台库</option>
-                                <option>西安平台库</option>
-                                <option>天津平台库</option>
+                        <div class="add_content none">
+                            <select name="storeroom">
+                                {% for storeroom in storerooms %}
+                                <option value="{{ storeroom.id }}">{{ storeroom.name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
-                        <div class="add_content none">
-                            <p>单位名称：<input type="text" value="" id="autocompleteName" name="Order[send_date]" class="active_input" /></p>
-                            <input type="hidden" value="" name="" />
+                        <div class="add_content">
+                            <p>单位名称：<input type="text" value="" id="autocompleteName" class="active_input" /></p>
                             <ul class="addr_list" id="address_area">
-                                {% for addr in address %}
-                                <li class="clearfix selected" id="addr_{{ addr.id }}">
-                                    <label>
-                                        <b>{{ addr.name }}</b>{{ addr.province }} {{ addr.city }} {{ addr.area }} {{ addr.address }}
-                                        <em>{{ addr.phone }}</em>
-                                    </label>
-                                    <span class="edit">
-                                        {% if addr.status == 0 %}<a href="javascript:;" class="del_link apink" data-id="{{ addr.id }}">删除</a>{% endif %}
-                                        <a href="javascript:;" class="edit_link apink" data-id="{{ addr.id }}">编辑</a>
-                                    </span>
-                                </li>
-                                {% endfor %}
+                                
                             </ul>
                             <ul class="addr_list">
                                 <li class="clearfix addnew">
@@ -83,13 +72,13 @@
                     <div class="dd">
                         <ul id="safe_label" class="delivery_time clearfix">
                             <li data-show="1">
-                                <label><input type="radio" class="hookbox" value="1" name="Order[safe]">是</label>
+                                <label><input type="radio" class="hookbox" value="1" name="Order[insurance]">是</label>
                             </li>
                             <li class="selected" data-show="0">
-                                <label><input type="radio" class="hookbox" checked="checked" value="3" name="Order[safe]">否</label>
+                                <label><input type="radio" class="hookbox" checked="checked" value="0" name="Order[insurance]">否</label>
                             </li>
                         </ul>
-                        <input type="text" placeholder="输入保险金额" name="" class="memo_input none" id="safe_price" />
+                        <input type="text" placeholder="输入保险金额" name="Order[insurance_price]" class="memo_input none" id="safe_price" />
                     </div>
                     <div class="dt">4 物料信息</div>
                     <div class="dd">
@@ -100,8 +89,12 @@
                                 <span class="qty">数量</span>
                             </div>
                             <ul>
+                                {% set quantity = 0 %}
                             	{% for result in results %}
+                                {% set quantity = quantity + result.quantity %}
                             	<input type="hidden" name="Carts[{{ result.cart_id }}][id]" value="{{ result.cart_id }}" />
+                                <input type="hidden" name="Carts[{{ result.cart_id }}][material_id]" value="{{ result.info.material_id }}" />
+                                <input type="hidden" name="Carts[{{ result.cart_id }}][storeroom_id]" value="{{ result.info.storeroom_id }}" />
                             	<input type="hidden" name="Carts[{{ result.cart_id }}][quantity]" value="{{ result.quantity }}" />
                                 <li class="clearfix" id="cart_294" data-stock="4" data-storeroom-id="1" data-materiel-id="1">
                                     <div class="goods">
@@ -123,17 +116,16 @@
                                     <span class="qty">×{{ result.quantity }}</span>
                                 </li>
                             	{% endfor %}
-                            	<input type="hidden" name="Order[owner_id]" value="{{ App.user.id }}" />
                             </ul>
                         </div>
 
-                        <input type="text" placeholder="输入用途" name="" class="memo_input" />
+                        <input type="text" placeholder="输入用途" name="Order[purpose]" class="memo_input" />
                         <input type="text" placeholder="输入备注信息" name="Order[info]" class="memo_input" />
                     </div>
 
                     <div class="cart_submit clearfix">
                         <a href="javascript:;" class="buy_btn">确认订单</a>
-                        <div class="amount">共<span class="red" id="selectedCount">2</span> 件商品</div>
+                        <div class="amount">共<span class="red" id="selectedCount">{{ quantity }}</span> 件商品</div>
                     </div>
                     
                 </div>
@@ -154,12 +146,22 @@
     </script>
     <script type="text/javascript">
     $(function(){
-        var data = [{text:'Link A', url:'/page1'}, {text:'Link B', url: '/page2'} ]; 
+        var data = {{ company|raw }}; 
         $("#autocompleteName").autocomplete(data,{ 
             formatItem: function(item) { 
                 return item.text; 
             } 
         }).result(function(event,item) { 
+            $.ajax({
+                url:item.url,
+                dataType:"html",
+                type:"GET",
+                success:function(json){
+                    $("#address_area").html(json);
+                    $(".buy_btn").removeClass("btn_order_undefined");
+                    layer.closeAll();
+                }
+            });
             $("#company_box").html(item.text);
         });
     })

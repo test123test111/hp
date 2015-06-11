@@ -50,24 +50,24 @@ class Budget extends ActiveRecord
         $db = static::getDb();
         $transaction = $db->beginTransaction();
         try{
-    		$model = new static;
-        $model->owner_id = $owner_id;
-    		$model->category = $category_id;
-    		$model->price = $price;
-    		$model->created_type = $created_type;
-    		$model->save();
+            $model = new static;
+            $model->owner_id = $owner_id;
+            $model->category = $category_id;
+            $model->price = $price;
+            $model->created_type = $created_type;
+            $model->save();
 
-    		$budgetTotal = BudgetTotal::find()->where(['owner_id'=>$owner_id])->one();
-    		if(empty($budgetTotal)){
-    			$budgetTotal = new BudgetTotal;
-	    		$budgetTotal->owner_id = $owner_id;
-          $budgetTotal->category = $category_id;
-	    		$budgetTotal->price = $price;
-	    		$budgetTotal->save();
-    		}else{
-    			$budgetTotal->price += $price;
-    			$budgetTotal->update();
-    		}
+            $budgetTotal = BudgetTotal::find()->where(['owner_id'=>$owner_id])->one();
+            if(empty($budgetTotal)){
+              	$budgetTotal = new BudgetTotal;
+              	$budgetTotal->owner_id = $owner_id;
+                $budgetTotal->category = $category_id;
+              	$budgetTotal->price = $price;
+              	$budgetTotal->save();
+            }else{
+              	$budgetTotal->price += $price;
+              	$budgetTotal->update();
+            }
     		
             $transaction->commit();
         }catch (\Exception $e) {

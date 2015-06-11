@@ -9,6 +9,7 @@ use customer\models\Material;
 use customer\components\CustomerController;
 use backend\models\Order;
 use customer\models\Address;
+use customer\models\Storeroom;
 class CartController extends CustomerController {
     public $layout = false;
     public $enableCsrfValidation;
@@ -19,7 +20,7 @@ class CartController extends CustomerController {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['add', 'check','index','delete','batchadd'],
+                        'actions' => ['add', 'check','index','delete','batchadd','addressinfo'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -95,16 +96,7 @@ class CartController extends CustomerController {
      */
     public function actionAddressinfo($id){
         $address = Address::findOne($id);
-        $str = '';
-        $str .= '<lable>';
-        $str .= '<b>'.$address->name.'</b>';
-        $str .= $address->province.' '.$address->city.' '.$address->area.' '.$address->address;
-        $str .= '<em>'.$addr->phone.'</em>';
-        $str .= '</label>';
-        $str .= '<span class="edit">';
-        $str .= "<a href='javascript:;' class='edit_link apink' data-id={{ address.id }}>编辑</a>";
-        $str .= "</span>";
-        echo $str;
+        echo $this->renderPartial('addresslist', ['addr' => $address]);
     }
     /**
      * check cart goods
@@ -116,10 +108,12 @@ class CartController extends CustomerController {
             $result = Cart::getCartsInfo($items);
             $userAddress = Address::getUserAddress(Yii::$app->user->id);
             $company = Address::getUserCompany(Yii::$app->user->id);
+            $storerooms = Storeroom::find()->all();
             return $this->render('check', array(
                 'results'=>$result,
-                'address'=>$userAddress,
+                // 'address'=>$userAddress,
                 'company'=>$company,
+                'storerooms'=>$storerooms,
             )); 
         }
     }

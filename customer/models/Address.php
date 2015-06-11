@@ -20,7 +20,7 @@ class Address extends CustomerActiveRecord {
     public function rules()
     {
         return [
-            [['name', 'address','company'], 'required'],
+            [['name', 'address','company','to_type'], 'required'],
             [['phone', 'province', 'city', 'area', 'address', 'zip', 'tel_area_code', 'tel', 'tel_ext'], 'safe'],
         ];
     }

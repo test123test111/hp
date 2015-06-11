@@ -6,7 +6,7 @@
                 <tr>
                     <th>单位名称：<em>*</em></th>
                     <td>
-                        <input type="text" id="addr_company" value="" class="tc-text"><span class="error_tip" id="error_company">单位名称不能为空</span>
+                        <input type="text" id="addr_company" {% if isNew == false %}value="{{ model.company }}"{% endif %} class="tc-text"><span class="error_tip" id="error_company">单位名称不能为空</span>
                     </td>
                 </tr>
                 <tr>

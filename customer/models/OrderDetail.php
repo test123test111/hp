@@ -9,6 +9,8 @@ use customer\models\Stock;
 use customer\models\OrderChannel;
 
 class OrderDetail extends CustomerActiveRecord {
+    const OWNER_APPROVAL = 1;
+    const OWNER_NOT_APPROVAL = 0;
     /**
      * function_description
      *
