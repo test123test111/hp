@@ -3,7 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
-
+use backend\model\Order;
 class ShippmentCost extends ActiveRecord
 {
 	const REQUEST_IS_SUCCESS = 10000;

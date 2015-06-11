@@ -75,7 +75,7 @@ class Order extends BackendActiveRecord {
      */
     public function rules() {
         return [
-            [['storeroom_id','transport_type'],'required'],
+            [['storeroom_id','transport_type','to_type'],'required'],
             [['info','purpose','insurance','insurance_price','send_date','arrive_date'],'safe'],
             // ['goods_quantity',]/
         ];

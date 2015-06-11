@@ -50,6 +50,8 @@ $(function(){
                 }else{
                     alert("请输入收件人地址");
                 }
+            }else{
+                $("#buyForm").submit();
             }
             
         }

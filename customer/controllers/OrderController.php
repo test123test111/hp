@@ -18,6 +18,7 @@ use customer\models\search\OrderSearch;
 use customer\models\search\OrderStockSearch;
 use customer\components\CustomerController;
 use customer\models\Address;
+use common\models\HpCity;
 
 class OrderController extends CustomerController {
     public $layout = false;
@@ -191,6 +192,22 @@ class OrderController extends CustomerController {
                     $model->phone = $address->phone;
                     $model->recipients = $address->name;
                     $model->contact = $address->address;
+                }else{
+                    $storeroom = Yii::$app->request->post('storeroom');
+                    $record = Storeroom::findOne($storeroom);
+                    $province = HpCity::findOne($record->province);
+                    $model->to_province = $province->name;
+                    $city = HpCity::findOne($record->city);
+                    $model->to_city = $city->name;
+                    $district = HpCity::findOne($record->district);
+                    if(!empty($district)){
+                        $model->to_district = $district->name;
+                    }else{
+                        $model->to_district = "";
+                    }
+                    $model->phone = $record->phone;
+                    $model->recipients = $record->contact;
+                    $model->contact = $record->address;
                 }
                 if($model->insurance_price == ''){
                     $model->insurance_price = '0.00';
