@@ -4,6 +4,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\BaseArrayHelper;
+use common\models\HpCity;
 
 class Storeroom extends ActiveRecord {
     const STOREROOM_LEVEL_IS_CENTER = 1;
@@ -26,8 +27,8 @@ class Storeroom extends ActiveRecord {
      */
     public function rules() {
         return [
-            [['name','level'],'required'],
-            [['address','contact','phone'],'safe'],
+            [['name','level','province','city'],'required'],
+            [['address','contact','phone','district'],'safe'],
         ];
     }
     public function behaviors()
@@ -74,6 +75,32 @@ class Storeroom extends ActiveRecord {
             return false;
         }
     }
+    /**
+     * [getDefaultCategory description]
+     * @return [type] [description]
+     */
+    public function getDefaultCity(){
+        return \yii\helpers\ArrayHelper::map(HpCity::find()->where(['pid' => $this->province])->all(),'id','name');
+    }
+    /**
+     * [getDefaultDistrict description]
+     * @return [type] [description]
+     */
+    public function getDefaultDistrict(){
+        return \yii\helpers\ArrayHelper::map(HpCity::find()->where(['pid' => $this->city])->all(),'id','name');
+    }
+    /**
+     * [getCanChoseProvince description]
+     * @return [type] [description]
+     */
+    public function getCanChoseProvince(){
+        $results = HpCity::find()->where(['pid'=>0])->all();
+        $ret = [];
+        foreach($results as $result){
+            $ret[$result->id] = $result->name;
+        }
+        return $ret;
+    }
     public function attributeLabels(){
         return [
             'name'=>'仓库名',
@@ -81,6 +108,9 @@ class Storeroom extends ActiveRecord {
             'level'=>'仓库等级',
             'contact'=>'联系人',
             'phone'=>'联系电话',
+            'province'=>'所在省份',
+            'city'=>'所在城市',
+            'district'=>'所在区县',
         ];
     }
 }

@@ -6,6 +6,7 @@ use Yii;
 use backend\models\Storeroom;
 use backend\models\search\StoreroomSearch;
 use backend\components\BackendController;
+use common\models\HpCity;
 
 class StoreroomController extends BackendController {
     /**
@@ -80,5 +81,79 @@ class StoreroomController extends BackendController {
         if ($model === null) throw new CHttpException(404, 'The requested page does not exist.');
         
         return $model;
+    }
+    public function actionCity(){
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $cat_id = $parents[0];
+                $param1 = null;
+                $param2 = null;
+                if (!empty($_POST['depdrop_params'])) {
+                    $params = $_POST['depdrop_params'];
+                    $param1 = $params[0]; // get the value of input-type-1
+                    $param2 = $params[1]; // get the value of input-type-2
+                }
+     
+                // $out = self::getSubCatList1($cat_id, $param1, $param2); 
+                // the getSubCatList1 function will query the database based on the
+                // cat_id, param1, param2 and return an array like below:
+                $out = HpCity::getCityByPid($cat_id);
+                // var_dump($out);exit;
+                // var_dump($out);exit;
+                // $out = [
+                //        ['id'=>'20', 'name'=>'a'],
+                //        ['id'=>'21', 'name'=>'b'],
+                //        ['id'=>'22', 'name'=>'c'], 
+                //        ['id'=>'23', 'name'=>'d'],
+                // ];
+                
+                
+                // $selected = self::getDefaultSubCat($cat_id);
+                // the getDefaultSubCat function will query the database
+                // and return the default sub cat for the cat_id
+                echo json_encode(['output'=>$out, 'selected'=>$out[0]['id']]);
+                return;
+            }
+        }
+        echo json_encode(['output'=>'', 'selected'=>'']);
+    }
+    public function actionDistrict(){
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $cat_id = $parents[0];
+                $param1 = null;
+                $param2 = null;
+                if (!empty($_POST['depdrop_params'])) {
+                    $params = $_POST['depdrop_params'];
+                    $param1 = $params[0]; // get the value of input-type-1
+                    $param2 = $params[1]; // get the value of input-type-2
+                }
+     
+                // $out = self::getSubCatList1($cat_id, $param1, $param2); 
+                // the getSubCatList1 function will query the database based on the
+                // cat_id, param1, param2 and return an array like below:
+                $out = HpCity::getDistrictByPid($cat_id);
+                // var_dump($out);exit;
+                // var_dump($out);exit;
+                // $out = [
+                //        ['id'=>'20', 'name'=>'a'],
+                //        ['id'=>'21', 'name'=>'b'],
+                //        ['id'=>'22', 'name'=>'c'], 
+                //        ['id'=>'23', 'name'=>'d'],
+                // ];
+                
+                
+                // $selected = self::getDefaultSubCat($cat_id);
+                // the getDefaultSubCat function will query the database
+                // and return the default sub cat for the cat_id
+                echo json_encode(['output'=>$out, 'selected'=>$out[0]['id']]);
+                return;
+            }
+        }
+        echo json_encode(['output'=>'', 'selected'=>'']);
     }
 }

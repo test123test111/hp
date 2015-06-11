@@ -36,9 +36,9 @@ class Material extends BackendActiveRecord {
      */
     public function rules() {
         return [
-            [['name','property','package','owner_id','pn','datasource'],'required'],
+            [['name','property','package','owner_id','pn','datasource','weight'],'required'],
             // ['code','unique'],
-            [['desc','image','size','weight','stuff','expire','jiliang','code'],'safe']
+            [['desc','image','size','stuff','expire','jiliang','code'],'safe']
         ];
     }
     public function behaviors()

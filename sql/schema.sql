@@ -527,7 +527,29 @@ CREATE TABLE `budget_consume` (
   KEY `consume_owner_id`(`consume_owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `storeroom`;
+CREATE TABLE `storeroom` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `province` varchar(32) NOT NULL,
+  `city` varchar(32) NOT NULL,
+  `district` varchar(32) NOT NULL,
+  `address` varchar(255) NOT NULL DEFAULT '',
+  `level` tinyint(4) NOT NULL DEFAULT '0',
+  `contact` varchar(255) NOT NULL DEFAULT '',
+  `phone` varchar(64) NOT NULL DEFAULT '',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+
+alter table storeroom add column `province` varchar(32) NOT NULL;
+alter table storeroom add column `city` varchar(32) NOT NULL;
+alter table storeroom add column `district` varchar(32) NOT NULL;
 
 
 

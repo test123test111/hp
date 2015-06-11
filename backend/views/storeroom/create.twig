@@ -54,6 +54,45 @@
                      {% set form = activeform.begin({'id':'create-form','layout':'horizontal','fieldConfig':{'horizontalCssClasses':{'wrapper':'col-lg-8'} } }) %}     
                             {{ form.field(model,'name',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'level').dropDownList({1:'中央库',2:'平台库'}).label(null,{'class':'control-label col-lg-2'})|raw }}  
+                            <div class="form-group">
+                              <label class="col-lg-2 control-label">所在省份</label>
+                              <div class="col-lg-5">
+                                {{ 
+                                widget('\\kartik\\widgets\\Select2',{
+                                    'model':model,
+                                    'attribute':'province',
+                                    'data':model.getCanChoseProvince(),
+                                    'options':{'placeholder':'Select a owner ...','id':'pro_id'},
+                                    'pluginOptions':{'allowClear':true},
+                                 })
+                             }}
+                              </div>
+                            </div>
+                           {#  {{ form.field(model,'province').dropDownList(model.getCanChoseProvince(),{'id':'pro_id'}).label(null,{'class':'control-label col-lg-2'})|raw }} #}
+                            {{ form.field(model,'city').widget('\\kartik\\depdrop\\DepDrop',{
+                                      'type':2,
+                                      'data':model.getDefaultCity(),
+                                      'options':{'id':'city_id'},
+                                      'select2Options':{'pluginOptions':{'allowClear':true}},
+                                      'pluginOptions':{
+                                          'depends':{'0':'pro_id'},
+                                          'url':'/storeroom/city',
+                                          'params':{'0':'input-type-1','1':'input-type-2'}
+                                      }
+                                }).label(null,{'class':'control-label col-lg-2'})|raw 
+                              }}
+                              {{ form.field(model,'district').widget('\\kartik\\depdrop\\DepDrop',{
+                                      'type':2,
+                                      'data':model.getDefaultDistrict(),
+                                      'options':{'id':'district_id'},
+                                      'select2Options':{'pluginOptions':{'allowClear':true}},
+                                      'pluginOptions':{
+                                          'depends':{'0':'city_id'},
+                                          'url':'/storeroom/district',
+                                          'params':{'0':'input-type-1','1':'input-type-2'}
+                                      }
+                                }).label(null,{'class':'control-label col-lg-2'})|raw 
+                              }}
                             {{ form.field(model,'address',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'contact',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                             {{ form.field(model,'phone',{inputOptions:{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
