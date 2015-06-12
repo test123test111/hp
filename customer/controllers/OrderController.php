@@ -6,8 +6,8 @@ use Yii;
 use backend\models\Order;
 use backend\models\City;
 use backend\models\OrderSign;
-use customer\models\Stock;
-use customer\models\StockTotal;
+use backend\models\Stock;
+use backend\models\StockTotal;
 use customer\models\OrderPackage;
 use backend\models\OrderDetail;
 use backend\models\Package;
@@ -630,20 +630,54 @@ class OrderController extends CustomerController {
     //物主审批物料(批量审批)
     public function actionApprovalmaterial(){
         if(Yii::$app->request->isPost){
-            $order_id = Yii::$app->request->post('order_id');
+            // $order_id = Yii::$app->request->post('order_id');
             $orderInfo = Order::findOne($order_id);
-            $material_ids = Yii::$app->request->post('material_ids');
-            $details = OrderDetail::find()->where(['order_id'=>$order_id,'material_id'=>$material_ids,'owner_id'=>Yii::$app->user->id])->all();
-            foreach($details as $detail){
-                $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
-                $detail->approval_uid = Yii::$app->user->id;
-                $detail->approval_date = date('Y-m-d H:i:s');
-                $detail->update();
+            // $material_ids = Yii::$app->request->post('material_ids');
+            // $details = OrderDetail::find()->where(['order_id'=>$order_id,'material_id'=>$material_ids,'owner_id'=>Yii::$app->user->id])->all();
+            // foreach($details as $detail){
+            //     $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
+            //     $detail->approval_uid = Yii::$app->user->id;
+            //     $detail->approval_date = date('Y-m-d H:i:s');
+            //     $detail->update();
+            // }
+            // $orders = OrderDetail::find()->where(['order_id'=>$order_id])->all();
+            // $flag = 0;
+            // foreach($orders as $order){
+            //     if($order->is_owner_approval == OrderDetail::IS_OWNER_APPROVAL){
+                    
+            //     }else{
+            //         $flag ++;
+            //     }
+            // }
+            // if($flag == 0){
+            //     Order::updateAll(['owner_approval'=>Order::OWNER_PASS_APPROVAL],['id'=>$order_id]);
+            // }
+            // if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Orde::IS_FORMAL){
+            //     $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
+            //     $orderInfo->update();
+
+            //     $orderInfo->consume();
+            // }
+            $order_id = Yii::$app->request->post('order_id');
+            $approval = Approval::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id])->one();
+            $details = OrderDetail::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id])->all();
+            if(!empty($details)){
+                foreach($details as $detail){
+                    $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
+                    $detail->approval_uid = Yii::$app->user->id;
+                    $detail->approval_date = date('Y-m-d H:i:s');
+                    $detail->update();
+                    //lock stock total
+                    $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                    $stockTotal->lock_num = $detail->quantity;
+                    $stockTotal->update();
+                }
             }
-            $orders = OrderDetail::find()->where(['order_id'=>$order_id])->all();
-            $flag = 0;
-            foreach($orders as $order){
-                if($order->is_owner_approval == OrderDetail::IS_OWNER_APPROVAL){
+            $approval->status = Approval::STATUS_IS_PASS;
+            $approval->modified = date('Y-m-d H:i:s');
+            $approval->update();
+            foreach($details as $detail){
+                if($detail->is_owner_approval == OrderDetail::IS_OWNER_APPROVAL){
                     
                 }else{
                     $flag ++;
@@ -656,7 +690,27 @@ class OrderController extends CustomerController {
                 $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
                 $orderInfo->update();
 
+                //扣除库存
+                foreach($details as $detail){
+                    $stock = new Stock;
+                    $stock->material_id = $detail->material->id;
+                    $stock->storeroom_id = $detail->storeroom_id;
+                    $stock->owner_id = $detail->owner_id;
+                    $stock->actual_quantity = 0 - $detail->quantity;
+                    $stock->stock_time = date('Y-m-d H:i:s');
+                    $stock->created = date('Y-m-d H:i:s');
+                    $stock->increase = Stock::IS_NOT_INCREASE;
+                    $stock->order_id = $detail->order_id;
+                    $stock->save(false);
+
+                    //lock stock total
+                    $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                    $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                    $stockTotal->total = $stockTotal->total - $detail->quantity;
+                    $stockTotal->update();
+                }
                 $orderInfo->consume();
+
             }
         }
     }

@@ -498,11 +498,11 @@ class Order extends BackendActiveRecord {
         if($total != 0){
             if($consume / $total >= 0.5){
                 //send email 
-                Yii::$app->mail->compose('warning',['order'=>$this])
-                         ->setFrom('service@yt-logistics.cn')
-                         ->setTo($owner->email)
-                         ->setSubject("预算报警通知")
-                         ->send();
+                // Yii::$app->mail->compose('warning',['order'=>$this])
+                //          ->setFrom('service@yt-logistics.cn')
+                //          ->setTo($owner->email)
+                //          ->setSubject("预算报警通知")
+                //          ->send();
             }
         }
         
