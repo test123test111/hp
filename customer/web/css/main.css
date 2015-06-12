@@ -318,7 +318,7 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 .gray{color:#888;}
 .order_view{border:1px solid #d1d2d2;background:#ededed;}
 .order_view .mt{text-align:left;font-size:14px;color:#000;line-height:35px;padding:0 10px;}
-.order_view .mc{background:#fff;padding:10px;height:500px;}
+.order_view .mc{background:#fff;padding:10px;min-height:500px;}
 .order_view dl{padding:10px 5px;border-bottom:1px solid #ededed;}
 .order_view dl dt{font-weight:700;padding-bottom:5px;}
 .order_view dl dd p{line-height:20px;}
@@ -360,3 +360,10 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 .share_list dt{background:#e9e9e9;padding:10px;}
 .share_list dd{border-bottom:1px solid #e7e7e7;padding:10px;float:left;width:120px;}
 #succShare{color:green;padding:10px 0;}
+
+
+/* 6.12 css */
+.order_view .shenpi li{padding:10px 20px;text-align:left;border-bottom:1px dotted #e9e9e9;}
+.order_view .shenpi li p{float:left;width:40%;}
+.order_view .shenpi li span{float:left;width:40%;}
+.order_view .shenpi li span a{margin-right:20px;}

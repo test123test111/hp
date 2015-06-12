@@ -31,7 +31,7 @@ class ShippmentCost extends ActiveRecord
      */
     public static function getFeeByProperty($storeroom_id,$to_city,$weight,$transport_type,$to_type){
     	$templete = static::find()->where(['storeroom_id'=>$storeroom_id,'to_city'=>$to_city,'transport_type'=>$transport_type,'to_type'=>$to_type])->one();
-    	if(empty($templete)){
+        if(empty($templete)){
     		return [false,0,self::SHIPPMENT_COST_TEMPLETE_NOTEXIST];
     	}
     	if($templete->fob_price == '0.00' && $templete->increase_price == '0.00'){

@@ -686,32 +686,60 @@ class OrderController extends CustomerController {
             if($flag == 0){
                 Order::updateAll(['owner_approval'=>Order::OWNER_PASS_APPROVAL],['id'=>$order_id]);
             }
-            if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Orde::IS_FORMAL){
-                $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
-                $orderInfo->update();
+            if($orderInfo->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL){
+                if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->can_formal == Orde::IS_FORMAL){
+                    $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
+                    $orderInfo->update();
 
-                //扣除库存
-                foreach($details as $detail){
-                    $stock = new Stock;
-                    $stock->material_id = $detail->material->id;
-                    $stock->storeroom_id = $detail->storeroom_id;
-                    $stock->owner_id = $detail->owner_id;
-                    $stock->actual_quantity = 0 - $detail->quantity;
-                    $stock->stock_time = date('Y-m-d H:i:s');
-                    $stock->created = date('Y-m-d H:i:s');
-                    $stock->increase = Stock::IS_NOT_INCREASE;
-                    $stock->order_id = $detail->order_id;
-                    $stock->save(false);
+                    //扣除库存
+                    foreach($details as $detail){
+                        $stock = new Stock;
+                        $stock->material_id = $detail->material->id;
+                        $stock->storeroom_id = $detail->storeroom_id;
+                        $stock->owner_id = $detail->owner_id;
+                        $stock->actual_quantity = 0 - $detail->quantity;
+                        $stock->stock_time = date('Y-m-d H:i:s');
+                        $stock->created = date('Y-m-d H:i:s');
+                        $stock->increase = Stock::IS_NOT_INCREASE;
+                        $stock->order_id = $detail->order_id;
+                        $stock->save(false);
 
-                    //lock stock total
-                    $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
-                    $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
-                    $stockTotal->total = $stockTotal->total - $detail->quantity;
-                    $stockTotal->update();
+                        //lock stock total
+                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                        $stockTotal->total = $stockTotal->total - $detail->quantity;
+                        $stockTotal->update();
+                    }
+                    $orderInfo->consume();
                 }
-                $orderInfo->consume();
+            }else{
+                if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Orde::IS_FORMAL){
+                    $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
+                    $orderInfo->update();
 
+                    //扣除库存
+                    foreach($details as $detail){
+                        $stock = new Stock;
+                        $stock->material_id = $detail->material->id;
+                        $stock->storeroom_id = $detail->storeroom_id;
+                        $stock->owner_id = $detail->owner_id;
+                        $stock->actual_quantity = 0 - $detail->quantity;
+                        $stock->stock_time = date('Y-m-d H:i:s');
+                        $stock->created = date('Y-m-d H:i:s');
+                        $stock->increase = Stock::IS_NOT_INCREASE;
+                        $stock->order_id = $detail->order_id;
+                        $stock->save(false);
+
+                        //lock stock total
+                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                        $stockTotal->total = $stockTotal->total - $detail->quantity;
+                        $stockTotal->update();
+                    }
+                    $orderInfo->consume();
+                }
             }
+            
         }
     }
     //预算所属人审批预算

@@ -36,6 +36,7 @@ class Order extends BackendActiveRecord {
     const OWNER_NOT_PASS_APPROVAL = 0;
 
     const ORDER_NEED_FEE_APPROVAL = 1;
+    const ORDER_NOT_NEED_FEE_APPROVAL = 0;
 
     const ORDER_PASS_FEE_APPROVAL = 1;
 
@@ -250,23 +251,26 @@ class Order extends BackendActiveRecord {
      * @return [type] [description]
      */
     public function getOrderStatus(){
-        if($this->status == self::NEW_ORDER){
-            return "<font color='red'>未处理<font>";
+        if($this->status == self::ORDER_STATUS_IS_PRE){
+            return "<font color='red'>预订单<font>";
         }
-        if($this->status == self::CONFIRM_ORDER){
-            return "<font color='red'>已确认<font>";
+        if($this->status == self::ORDER_STATUS_IS_NEED_APPROVAL){
+            return "<font color='red'>待审核<font>";
         }
-        if($this->status == self::PACKAGE_ORDER){
-            return "<font color='red'>已包装<font>";
+        if($this->status == self::ORDER_STATUS_IS_APPROVALED){
+            return "<font color='red'>审核通过<font>";
         }
-        if($this->status == self::SHIPPING_ORDER){
+        if($this->status == self::ORDER_STATUS_IS_APPROVAL_FAIL){
+            return "<font color='red'>审核未通过<font>";
+        }
+        if($this->status == self::ORDER_STATUS_IS_TRUCK){
             return "<font color='red'>已发货<font>";
         }
-        if($this->status == self::SIGN_ORDER){
+        if($this->status == self::ORDER_STATUS_IS_SIGN){
             return "<font color='red'>已签收<font>";
         }
-        if($this->status == self::REFUSE_ORDER){
-            return "<font color='red'>已退回<font>";
+        if($this->status == self::ORDER_STATUS_IS_UNSIGN){
+            return "<font color='red'>未成功签收<font>";
         }
     }
     public function getLink(){
@@ -359,7 +363,9 @@ class Order extends BackendActiveRecord {
      * @return [type] [description]
      */
     public function checkOrderNeedApproval(){
-        $budget_fee = Yii::$app->budget->reckon($this->id);
+        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
+        $budget_fee = $ship_fee + $fenjian_fee;
+
         $owner = Owner::findOne($this->created_uid);
         $department_id = $owner->department;
         $department = Department::findOne($department_id);
@@ -395,6 +401,12 @@ class Order extends BackendActiveRecord {
                 $this->can_formal = self::IS_NOT_FORMAL;
                 $this->update();
             }
+        }
+
+        if($this->owner_approval == Order::OWNER_PASS_APPROVAL && $this->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL && $this->can_formal == Order::IS_FORMAL){
+            $this->status = self::ORDER_STATUS_IS_APPROVALED;
+            $this->update();
+            $this->consume();
         }
     }
     public function attributeLabels(){
@@ -436,11 +448,7 @@ class Order extends BackendActiveRecord {
         return $result;
     }
     public function getCreateduser(){
-        if($this->source == self::ORDER_SOURCE_CUSTOMER){
-            return $this->hasOne(Owner::className(), ['id' => 'created_uid']);
-        }else{
-            return $this->hasOne(Manager::className(), ['id' => 'created_uid']);
-        }
+        return $this->hasOne(Owner::className(), ['id' => 'created_uid']);
     }
     public function getModifieduser(){
         if($this->source == self::ORDER_SOURCE_CUSTOMER){
@@ -481,7 +489,7 @@ class Order extends BackendActiveRecord {
      * @return [type] [description]
      */
     public function consume(){
-        list($ship_fee,$fenjian_fee) = Yii::$app->budget->rekon($this->id);
+        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
         $price = $ship_fee + $fenjian_fee;
         $owner = Owner::findOne($this->created_uid);
         $model = new BudgetConsume;
@@ -490,7 +498,7 @@ class Order extends BackendActiveRecord {
         $model->price = $price;
         $model->order_id = $this->id;
         if($model->save()){
-            BudgetTotal::updateBudgetPrice($owner_id,$price);
+            BudgetTotal::updateBudgetPrice($model->owner_id,$price);
         }
         //send warning email
         $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);

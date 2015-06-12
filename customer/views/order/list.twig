@@ -23,11 +23,7 @@
                                     <span class="date">下单日期：{{ result.created }}</span>
                                     <span class="order_no">订单号码：{{ result.viewid }}</span>
                                     <span class="user">下单人：
-                                      {% if result.source == 0 %}
-                                        {{ result.createduser.username }}
-                                      {% else %}
                                         {{ result.createduser.english_name }}
-                                      {% endif %}
                                     </span>
                                     <span class="del"></span>
                                 </td>
@@ -44,10 +40,10 @@
                                         <p class="name"><a class='blue' href="/material/view/{{ d.material.id }}" target="_blank">{{ d.material.name }}</a></p>
                                     </div>
                                 </td>
-                                <td class="price">物料编号：{{ d.goods_code }}</td>
-                                <td class="qty">数量：{{ d.goods_quantity}}</td>
+                                <td class="price">物料编号：{{ d.material.code }}</td>
+                                <td class="qty">数量：{{ d.quantity }}</td>
                                 {% if loop.index == 1 %}
-                                <td rowspan="2" class="edit">交易成功<br/>订单详情</td>
+                                <td rowspan="2" class="edit"><br/><a href="/order/view/{{ d.order_id }}">订单详情</a></td>
                                 <td rowspan="2" class="status">订单状态<br/>{{ result.getOrderStatus()|raw }}</td>
                               {% endif %}
                             </tr>

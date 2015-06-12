@@ -54,13 +54,13 @@ class OwnerController extends BackendController {
             $model->load($_POST);
             if ($model->validate()) {
                 $model->save();
-                if($model->big_owner == Owner::IS_BIG_OWNER){
+                // if($model->big_owner == Owner::IS_BIG_OWNER){
                     //update material share
                     Share::updateMaterial($model->id,$model->category);
-                    // if($model->is_budget == Owner::IS_BUDGET && $model->budget != "0"){
-                    //     Budget::updateOwnerBudget($model->id,$model->category,$model->budget);
-                    // }
-                }
+                    if($model->is_budget == Owner::IS_BUDGET && $model->budget != "0"){
+                        Budget::updateOwnerBudget($model->id,$model->category,$model->budget);
+                    }
+                // }
                 Yii::$app->session->setFlash('success', '新建成功！');
                 $this->redirect("/owner/list");
             }
@@ -96,12 +96,12 @@ class OwnerController extends BackendController {
                 if($model->validate()){
                     $flag2 = $model->big_owner;
                     $model->update();
+                    if($model->is_budget == Owner::IS_BUDGET && $model->budget != "0"){
+                        Budget::updateOwnerBudget($model->id,$model->category,$model->budget);
+                    }
                     if($model->big_owner == Owner::IS_BIG_OWNER){
                         //update material share
                         Share::updateMaterial($model->id,$model->category);
-                        if($model->is_budget == Owner::IS_BUDGET && $model->budget != "0"){
-                            Budget::updateOwnerBudget($model->id,$model->budget);
-                        }
                     }else{
                         if($flag1 != $flag2){
                             Share::recove($model->id);
