@@ -45,6 +45,10 @@ class Order extends BackendActiveRecord {
     const ORDER_STATUS_IS_PRE = 0;
     const ORDER_STATUS_IS_NEED_APPROVAL = 1;
     const ORDER_STATUS_IS_APPROVALED = 2;
+    const ORDER_STATUS_IS_TRUCK = 3;
+    const ORDER_STATUS_IS_SIGN = 4;
+    const ORDER_STATUS_IS_UNSIGN = 5;
+    const ORDER_STATUS_IS_APPROVAL_FAIL = 6;
 
 
 

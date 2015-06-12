@@ -334,4 +334,19 @@ class Owner extends ActiveRecord implements IdentityInterface
     public function getProductTwoLineName(){
         return ProductTwoLine::findOne($this->product_two_line)->name;
     }
+    /**
+     * get big owner by uid
+     * @param  [type] $uid [description]
+     * @return [type]      [description]
+     */
+    public static function getBigOwnerByUid($uid){
+        $owner = static::findOne($uid);
+        $category = $owner->category;
+
+        $user = static::find()->where(['category'=>$category,'big_owner'=>self::IS_BIG_OWNER])->one();
+        if(!empty($user)){
+            return $user;
+        }
+        return false;
+    }   
 }

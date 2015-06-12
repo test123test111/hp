@@ -19,6 +19,7 @@ use customer\models\search\OrderStockSearch;
 use customer\components\CustomerController;
 use customer\models\Address;
 use common\models\HpCity;
+use common\models\Approval;
 
 class OrderController extends CustomerController {
     public $layout = false;
@@ -673,6 +674,34 @@ class OrderController extends CustomerController {
             }
         }
     }
+    /**
+     * 发送费用审批
+     * @return [type] [description]
+     */
+    public function actionSendapprovalfee(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('order_id');
+            $order = Order::findOne($order_id);
+            if($order->need_fee_approval == Order::ORDER_NEED_FEE_APPROVAL){
+                $owner = Owner::getBigOwnerByUid($order->created_uid);
+                if($owner){
+                    $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_FEE])->one();
+                    if(empty($approval)){
+                        $model = new Approval;
+                        $model->order_id = $order_id;
+                        $model->owner_id = $owner->id;
+                        $model->applicant = $order->created_uid;
+                        $model->type = Approval::TYPE_IS_FEE;
+                        $model->created = date('Y-m-d H:i:s');
+                        $model->modified = date('Y-m-d H:i:s');
+                        $model->save();
+                    }
+                }
+                $order->status = Order::ORDER_STATUS_IS_NEED_APPROVAL;
+                $order->update();
+            }
+        }
+    }
     //发送审批
     public function actionSendapproval(){
         if(Yii::$app->request->isPost){
@@ -688,6 +717,21 @@ class OrderController extends CustomerController {
             if($flag == ''){
                 $order->status = Order::ORDER_STATUS_IS_NEED_APPROVAL;
                 $order->update();
+                foreach($orderDetail as $detail){
+                    if($detail->created_uid != $detail->owner_id){
+                        $approval_record = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL,'owner_id'=>$detail->owner_id])->one();
+                        if(empty($approval_record)){
+                            $model = new Approval;
+                            $model->order_id = $order_id;
+                            $model->owner_id = $detail->owner_id;
+                            $model->applicant = $order->created_uid;
+                            $model->type = Approval::TYPE_IS_MATERIAL;
+                            $model->created = date('Y-m-d H:i:s');
+                            $model->modified = date('Y-m-d H:i:s');
+                            $model->save();
+                        }
+                    }
+                }
             }else{
                 echo '由于较长时间没有发送审批,您订单中包含的物料'.$flag."已经库存不足，请您重新下单";
             }
@@ -715,5 +759,101 @@ class OrderController extends CustomerController {
         } else {
             echo 0;
         }
+    }
+    /**
+     * 预订单列表
+     * @return [type] [description]
+     */
+    public function actionPre(){
+        $params = Yii::$app->request->getQueryParams();
+        list($data,$pages,$count) = OrderSearch::getPreData(Yii::$app->request->getQueryParams());
+        $sidebar_name = '预订单';
+        return $this->render('list', [
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+        ]);
+    }
+    /**
+     * 进行中订单列表
+     * @return [type] [description]
+     */
+    public function actionDoing(){
+        $params = Yii::$app->request->getQueryParams();
+        list($data,$pages,$count) = OrderSearch::getDoingData(Yii::$app->request->getQueryParams());
+        $sidebar_name = '进行中的订单';
+        return $this->render('doing', [
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+        ]);
+    }
+    /**
+     * 已完成订单列表
+     * @return [type] [description]
+     */
+    public function actionDone(){
+        $params = Yii::$app->request->getQueryParams();
+        list($data,$pages,$count) = OrderSearch::getDoneData(Yii::$app->request->getQueryParams());
+        $sidebar_name = '已完成的订单';
+        return $this->render('done', [
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+        ]);
+    }
+    /**
+     * 异常订单列表
+     * @return [type] [description]
+     */
+    public function actionExcept(){
+        $params = Yii::$app->request->getQueryParams();
+        list($data,$pages,$count) = OrderSearch::getExcepetData(Yii::$app->request->getQueryParams());
+        $sidebar_name = '异常订单';
+        return $this->render('except', [
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+        ]);
+    }
+    /**
+     * 待别人审核的订单
+     * @return [type] [description]
+     */
+    public function actionNeedapproval(){
+        $params = Yii::$app->request->getQueryParams();
+        list($data,$pages,$count) = OrderSearch::getNeedapprovalData(Yii::$app->request->getQueryParams());
+        $sidebar_name = '进行中的订单';
+        return $this->render('needapproval', [
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+        ]);
+    }
+    /**
+     * 需要我审核的订单
+     * @return [type] [description]
+     */
+    public function actionApproval(){
+        $params = Yii::$app->request->getQueryParams();
+        list($data,$pages,$count) = Approval::getMyData(Yii::$app->request->getQueryParams());
+        $sidebar_name = '待审批订单';
+        return $this->render('approval', [
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+        ]);
     }
 }

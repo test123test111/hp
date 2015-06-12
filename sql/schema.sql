@@ -553,6 +553,21 @@ alter table storeroom add column `city` varchar(32) NOT NULL;
 alter table storeroom add column `district` varchar(32) NOT NULL;
 
 
+DROP TABLE IF EXISTS `approval`;
+CREATE TABLE `approval` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) NOT NULL,
+  `applicant` int(11) NOT NULL COMMENT '申请人',
+  `type` tinyint(11) NOT NULL DEFAULT '0' COMMENT '0:物料申请 1:费用申请',
+  `owner_id` int(11) NOT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:未处理 1:申请通过 2:申请拒绝',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 
 
 
