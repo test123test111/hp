@@ -20,7 +20,7 @@ class BudgetConsume extends ActiveRecord
      * @param  [type] $category_id [description]
      * @return [type]              [description]
      */
-    public static function getConsumePriceByCategory($category_id){
-    	return static::find()->select('price')->where(['category'=>$category_id])->sum('price');
+    public static function getConsumePriceByOwner($owner_id){
+    	return static::find()->select('price')->where(['owner_id'=>$owner_id])->sum('price');
     }
 }

@@ -365,8 +365,8 @@ class Order extends BackendActiveRecord {
         $department = Department::findOne($department_id);
         $storeroom = Storeroom::findOne($this->storeroom_id);
         //商用部门规则
-        $total = BudgetTotal::getPriceTotalByCategory($owner->category);
-        $consume = BudgetConsume::getConsumePriceByCategory($owner->category);
+        $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
+        $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
         if($department->id == Department::IS_COMERCIAL){
             //中央库规则
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
@@ -475,6 +475,37 @@ class Order extends BackendActiveRecord {
     }
     public function getDefaultCity(){
         return \yii\helpers\ArrayHelper::map(City::find()->where(['pid' => $this->to_province])->all(),'id','name');
+    }
+    /**
+     * write record to budget_consume
+     * @return [type] [description]
+     */
+    public function consume(){
+        list($ship_fee,$fenjian_fee) = Yii::$app->budget->rekon($this->id);
+        $price = $ship_fee + $fenjian_fee;
+        $owner = Owner::findOne($this->created_uid);
+        $model = new BudgetConsume;
+        $model->owner_id = $this->created_uid;
+        $model->category = $owner->category;
+        $model->price = $price;
+        $model->order_id = $this->id;
+        if($model->save()){
+            BudgetTotal::updateBudgetPrice($owner_id,$price);
+        }
+        //send warning email
+        $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
+        $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
+        if($total != 0){
+            if($consume / $total >= 0.5){
+                //send email 
+                Yii::$app->mail->compose('warning',['order'=>$this])
+                         ->setFrom('service@yt-logistics.cn')
+                         ->setTo($owner->email)
+                         ->setSubject("预算报警通知")
+                         ->send();
+            }
+        }
+        
     }
 
 }

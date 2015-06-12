@@ -655,6 +655,8 @@ class OrderController extends CustomerController {
             if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Orde::IS_FORMAL){
                 $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
                 $orderInfo->update();
+
+                $orderInfo->consume();
             }
         }
     }
@@ -671,6 +673,8 @@ class OrderController extends CustomerController {
             if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Orde::IS_FORMAL){
                 $order->status = Order::ORDER_STATUS_IS_APPROVALED;
                 $order->update();
+
+                $order->consume();
             }
         }
     }

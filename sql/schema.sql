@@ -522,10 +522,8 @@ CREATE TABLE `budget_consume` (
   `category` int(11) NOT NULL,
   `price` float(10,2) NOT NULL,
   `order_id` int(11) NOT NULL,
-  `consume_owner_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `owner_id`(`owner_id`),
-  KEY `consume_owner_id`(`consume_owner_id`)
+  KEY `owner_id`(`owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `storeroom`;
