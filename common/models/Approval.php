@@ -26,19 +26,22 @@ class Approval extends ActiveRecord
      * table approval and order detail relationship
      * @return [type] [description]
      */
-    public function getDetails(){
-        return $this->hasMany(OrderDetail::className(),['order_id'=>'order_id']);
+    public function getOrders(){
+        return $this->hasMany(Order::className(),['id'=>'order_id']);
     }
     /**
      * get refund data
      * @return [type] [description]
      */
     public static function getMyData($params){
-        $query = Static::find()->with(['details'])->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'owner_id'=>Yii::$app->user->id,'status'=>self::STATUS_IS_UNHANDLE])->orderBy(['id'=>SORT_DESC]);
+        $query = Static::find()->with(['orders'])->where(['owner_id'=>Yii::$app->user->id,'status'=>self::STATUS_IS_UNHANDLE])->orderBy(['id'=>SORT_DESC]);
 
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $order = Order::find()->where(['viewid'=>$params['order_id']])->one;
-            $query->andWhere(['viewid'=>$order->viewid]);
+            $query->andWhere(['order_id'=>$order->viewid]);
+        }
+        if(isset($params['type']) && $params['type'] != ""){
+            $query->andWhere(['type'=>$params['type']]);
         }
         if(isset($params['begin_time']) && $params['begin_time'] != ""){
             if(isset($params['end_time']) && $params['end_time'] != ""){

@@ -95,7 +95,7 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 /* order style */
 .order_search{text-align:left;}
 .order_search .search_input{border:1px solid #b6b2b1;background:#fff;height:36px;line-height:36px;padding:0 10px;width:300px;font-size:14px;}
-.order_search .search_btn{border:1px solid #b6b2b1;background:#b5b6b6;color:#fff;font-size:14px;width:86px;cursor:pointer;height:38px;}
+.order_search .search_btn{border:1px solid #b6b2b1;background:#b5b6b6;color:#fff;font-size:14px;cursor:pointer;height:38px;}
 
 .bought_table{border-spacing:0;border-collapse:collapse;table-layout:fixed;width:100%;}
 .bought_table th{text-align:center;color:#333;height:40px;}

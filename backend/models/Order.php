@@ -563,4 +563,14 @@ class Order extends BackendActiveRecord {
         }
         return false;
     }
+    /**
+     * [getApprovalFeeUid description]
+     * @return [type] [description]
+     */
+    public function getApprovalFeeUid(){
+        $owner = Owner::getBigOwnerByUid($this->created_uid);
+        if(!empty($owner)){
+            return $owner->id;
+        }
+    }
 }

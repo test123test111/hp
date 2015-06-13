@@ -307,6 +307,21 @@ class OrderController extends CustomerController {
             'fenjian_fee'=>$fenjian_fee,
         ]);
     }
+    /**
+     * Displays a single Order model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionViewapproval($id)
+    {   
+        $order = Order::find()->with('details')->where(['id'=>$id])->one();
+        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($order->id);
+        return $this->render('viewapproval', [
+            'order' => $order,
+            'ship_fee'=>$ship_fee,
+            'fenjian_fee'=>$fenjian_fee,
+        ]);
+    }
     public function actionChange(){
         if(isset($_POST['orderid'])){
             $order = Order::findOne($_POST['orderid']);
@@ -625,7 +640,7 @@ class OrderController extends CustomerController {
     //物主审批物料(批量审批)
     public function actionApprovalmaterial(){
         if(Yii::$app->request->isPost){
-            // $order_id = Yii::$app->request->post('order_id');
+            $order_id = Yii::$app->request->post('id');
             $orderInfo = Order::findOne($order_id);
             // $material_ids = Yii::$app->request->post('material_ids');
             // $details = OrderDetail::find()->where(['order_id'=>$order_id,'material_id'=>$material_ids,'owner_id'=>Yii::$app->user->id])->all();
@@ -653,19 +668,16 @@ class OrderController extends CustomerController {
 
             //     $orderInfo->consume();
             // }
-            $order_id = Yii::$app->request->post('order_id');
-            $approval = Approval::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id])->one();
+            $flag = 0;
+            $approval = Approval::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id,'type'=>Approval::TYPE_IS_MATERIAL])->one();
             $details = OrderDetail::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id])->all();
             if(!empty($details)){
                 foreach($details as $detail){
                     $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
                     $detail->approval_uid = Yii::$app->user->id;
-                    $detail->approval_date = date('Y-m-d H:i:s');
+                    $detail->approval_date = time();
                     $detail->update();
-                    //lock stock total
-                    $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
-                    $stockTotal->lock_num = $detail->quantity;
-                    $stockTotal->update();
+
                 }
             }
             $approval->status = Approval::STATUS_IS_PASS;
@@ -734,7 +746,8 @@ class OrderController extends CustomerController {
                     $orderInfo->consume();
                 }
             }
-            
+            echo 0;
+            Yii::$app->end();
         }
     }
     //预算所属人审批预算
@@ -873,7 +886,7 @@ class OrderController extends CustomerController {
         $params = Yii::$app->request->getQueryParams();
         list($data,$pages,$count) = OrderSearch::getDoingData(Yii::$app->request->getQueryParams());
         $sidebar_name = '进行中的订单';
-        return $this->render('doing', [
+        return $this->render('list', [
              'results' => $data,
              'pages' => $pages,
              'count'=>$count,
@@ -889,7 +902,7 @@ class OrderController extends CustomerController {
         $params = Yii::$app->request->getQueryParams();
         list($data,$pages,$count) = OrderSearch::getDoneData(Yii::$app->request->getQueryParams());
         $sidebar_name = '已完成的订单';
-        return $this->render('done', [
+        return $this->render('list', [
              'results' => $data,
              'pages' => $pages,
              'count'=>$count,
@@ -905,7 +918,7 @@ class OrderController extends CustomerController {
         $params = Yii::$app->request->getQueryParams();
         list($data,$pages,$count) = OrderSearch::getExcepetData(Yii::$app->request->getQueryParams());
         $sidebar_name = '异常订单';
-        return $this->render('except', [
+        return $this->render('list', [
              'results' => $data,
              'pages' => $pages,
              'count'=>$count,
@@ -936,7 +949,7 @@ class OrderController extends CustomerController {
     public function actionApproval(){
         $params = Yii::$app->request->getQueryParams();
         list($data,$pages,$count) = Approval::getMyData(Yii::$app->request->getQueryParams());
-        $sidebar_name = '待审批订单';
+        $sidebar_name = '审批订单';
         return $this->render('approval', [
              'results' => $data,
              'pages' => $pages,
