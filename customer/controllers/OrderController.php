@@ -299,7 +299,7 @@ class OrderController extends CustomerController {
      */
     public function actionView($id)
     {   
-        $order = Order::find()->with('details')->where(['id'=>$id,'is_del'=>Order::ORDER_IS_NOT_DEL])->one();
+        $order = Order::find()->with('details')->where(['id'=>$id])->one();
         list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($order->id);
         return $this->render('view', [
             'order' => $order,
@@ -761,7 +761,7 @@ class OrderController extends CustomerController {
      */
     public function actionSendapprovalfee(){
         if(Yii::$app->request->isPost){
-            $order_id = Yii::$app->request->post('order_id');
+            $order_id = Yii::$app->request->post('id');
             $order = Order::findOne($order_id);
             if($order->need_fee_approval == Order::ORDER_NEED_FEE_APPROVAL){
                 $owner = Owner::getBigOwnerByUid($order->created_uid);
@@ -778,15 +778,22 @@ class OrderController extends CustomerController {
                         $model->save();
                     }
                 }
-                $order->status = Order::ORDER_STATUS_IS_NEED_APPROVAL;
-                $order->update();
+                if($order->status != Order::ORDER_STATUS_IS_NEED_APPROVAL){
+                    $order->status = Order::ORDER_STATUS_IS_NEED_APPROVAL;
+                    $order->update();
+                }
+                echo 1;
+            }else{
+                $str = '该订单不需要费用审批';
+                echo json_encode($str);
             }
+            
         }
     }
     //发送审批
     public function actionSendapproval(){
         if(Yii::$app->request->isPost){
-            $order_id = Yii::$app->request->post('order_id');
+            $order_id = Yii::$app->request->post('id');
             $order = Order::findOne($order_id);
             $orderDetail = OrderDetail::find()->with('material')->where(['order_id'=>$order_id])->all();
             $flag = '';
@@ -799,7 +806,7 @@ class OrderController extends CustomerController {
                 $order->status = Order::ORDER_STATUS_IS_NEED_APPROVAL;
                 $order->update();
                 foreach($orderDetail as $detail){
-                    if($detail->created_uid != $detail->owner_id){
+                    if($order->created_uid != $detail->owner_id){
                         $approval_record = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL,'owner_id'=>$detail->owner_id])->one();
                         if(empty($approval_record)){
                             $model = new Approval;
@@ -813,10 +820,11 @@ class OrderController extends CustomerController {
                         }
                     }
                 }
+                echo 1;
             }else{
-                echo '由于较长时间没有发送审批,您订单中包含的物料'.$flag."已经库存不足，请您重新下单";
-            }
-
+                $str = '由于较长时间没有发送审批,您订单中包含的物料'.$flag."已经库存不足，请您重新下单";
+                echo json_encode($str);
+            }    
         }
     }
     /**
@@ -913,7 +921,7 @@ class OrderController extends CustomerController {
         $params = Yii::$app->request->getQueryParams();
         list($data,$pages,$count) = OrderSearch::getNeedapprovalData(Yii::$app->request->getQueryParams());
         $sidebar_name = '进行中的订单';
-        return $this->render('needapproval', [
+        return $this->render('list', [
              'results' => $data,
              'pages' => $pages,
              'count'=>$count,
@@ -952,6 +960,36 @@ class OrderController extends CustomerController {
             if(!empty($templete)){
                 echo 1;
             }else{
+                echo 0;
+            }
+        }
+    }
+    /**
+     * action for cancel order
+     * @return [type] [description]
+     */
+    public function actionCancel(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('id');
+            $order = Order::findOne($order_id);
+            if(empty($order) || $order->status != Order::ORDER_STATUS_IS_PRE){
+                echo 1;
+                Yii::$app->end();
+            }
+            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::STATUS_IS_PASS])->one();
+            if(!empty($approval)){
+                echo 2;
+                Yii::$app->end();
+            }
+            Approval::deleteAll(['order_id'=>$order_id]);
+            foreach($order->details as $value){
+                $stockTotal = StockTotal::find()->where(['material_id'=>$value->material_id,'storeroom_id'=>$value->storeroom_id])->one();
+                $num = 0 - $value->quantity;
+                $stockTotal->updateCounters(['lock_num' => $num]);
+            }
+            $order->is_del = Order::ORDER_IS_DEL;
+            $order->status = Order::ORDER_STATUS_IS_CANCEL;
+            if($order->update(false)){
                 echo 0;
             }
         }

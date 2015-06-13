@@ -12,16 +12,10 @@ use common\models\Department;
 use common\models\Budget;
 use common\models\BudgetConsume;
 use common\models\BudgetTotal;
+use common\models\Approval;
 class Order extends BackendActiveRecord {
 
-    const NEW_ORDER = 0;
-    const PACKAGE_ORDER = 1;
-    const SHIPPING_ORDER = 2;
-    const SIGN_ORDER = 3;
-    const CONFIRM_ORDER = 4;
-    const REFUSE_ORDER = 5;
-    const REVOKE_ORDER = 6;
-    const UNSIGN_ORDER = 7;
+   
     const ORDER_IS_DEL = 1;
     const ORDER_IS_NOT_DEL = 0;
 
@@ -50,6 +44,7 @@ class Order extends BackendActiveRecord {
     const ORDER_STATUS_IS_SIGN = 4;
     const ORDER_STATUS_IS_UNSIGN = 5;
     const ORDER_STATUS_IS_APPROVAL_FAIL = 6;
+    const ORDER_STATUS_IS_CANCEL = 7;
 
 
 
@@ -62,6 +57,13 @@ class Order extends BackendActiveRecord {
     const ORDER_HAVE_INSURACE = 1;
     const ORDER_HAVE_NOT_INSURANCE = 0;
 
+
+    const TRANSPORT_24_HOUR = 1;
+    const TRANSPORT_5_DAYS = 2;
+    const TRANSPORT_3_DAYS = 3;
+    const TRANSPORT_CAR = 4;
+    const TRANSPORT_OTHER = 5;
+
     /**
      * function_description
      *
@@ -71,7 +73,23 @@ class Order extends BackendActiveRecord {
     public static function tableName() {
         return 'order';
     }
-
+    public function getMyTransportType(){
+        if($this->transport_type == self::TRANSPORT_24_HOUR){
+            return "24小时";
+        }
+        if($this->transport_type == self::TRANSPORT_5_DAYS){
+            return "5天门到门";
+        }
+        if($this->transport_type == self::TRANSPORT_3_DAYS){
+            return "3天门到门";
+        }
+        if($this->transport_type == self::TRANSPORT_CAR){
+            return "包车服务";
+        }
+        if($this->transport_type == self::TRANSPORT_OTHER){
+            return "其他";
+        }
+    }
     /**
      * function_description
      *
@@ -272,6 +290,9 @@ class Order extends BackendActiveRecord {
         if($this->status == self::ORDER_STATUS_IS_UNSIGN){
             return "<font color='red'>未成功签收<font>";
         }
+        if($this->status == self::ORDER_STATUS_IS_CANCEL){
+            return "<font color='red'>已取消<font>";
+        }
     }
     public function getLink(){
         return '
@@ -301,6 +322,9 @@ class Order extends BackendActiveRecord {
             }
             $model->save();
 
+            //lock stock 
+            $stockTotal = StockTotal::find()->where(['material_id'=>$value['material_id'],'storeroom_id'=>$value['storeroom_id']])->one();
+            $stockTotal->updateCounters(['lock_num' => $value['quantity']]);
             //Cart::deleteAll(['id'=>$cart->id]);
         }
         if($flag == 0){
@@ -382,10 +406,12 @@ class Order extends BackendActiveRecord {
                 }else{
                     if(($consume / $total) < 0.85 && $budget_fee >= 1000){
                         $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+                        $this->warning_fee_price = 1000;
                         $this->update();
                     }
                     if(($consume / $total) >= 0.85 && $budget_fee >= 500){
                         $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+                        $this->warning_fee_price = 500;
                         $this->update();
                     }
                 }
@@ -515,5 +541,26 @@ class Order extends BackendActiveRecord {
         }
         
     }
-
+    /**
+     * [checkSendFeeApproval description]
+     * @return [type] [description]
+     */
+    public function checkSendFeeApproval(){
+        $result = Approval::find()->where(['order_id'=>$this->id,'type'=>Approval::TYPE_IS_FEE])->one();
+        if(!empty($result)){
+            return true;
+        }
+        return false;
+    }
+    /**
+     * [checkSendMaterialApproval description]
+     * @return [type] [description]
+     */
+    public function checkSendMaterialApproval(){
+        $result = Approval::find()->where(['order_id'=>$this->id,'type'=>Approval::TYPE_IS_MATERIAL])->one();
+        if(!empty($result)){
+            return true;
+        }
+        return false;
+    }
 }

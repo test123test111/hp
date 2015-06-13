@@ -85,4 +85,15 @@ class StockTotal extends BackendActiveRecord {
         }
         return $ret;
     }
+    //check quantity is enough 
+    public static function checkQuantity($material_id,$stororoom_id,$quantity){
+        $stock = static::find()->where(['material_id'=>$material_id,'storeroom_id'=>$stororoom_id])->one();
+        if(empty($stock)){
+            return false;
+        }
+        if(($stock->total - $stock->lock_num) < $quantity){
+            return false;
+        }
+        return true;
+    }
 }

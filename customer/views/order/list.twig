@@ -42,10 +42,10 @@
                                 </td>
                                 <td class="price">物料编号：{{ d.material.code }}</td>
                                 <td class="qty">数量：{{ d.quantity }}</td>
-                                {% if loop.index == 1 %}
-                                <td rowspan="2" class="edit"><br/><a href="/order/view/{{ d.order_id }}">订单详情</a></td>
                                 <td rowspan="2" class="status">订单状态<br/>{{ result.getOrderStatus()|raw }}</td>
-                              {% endif %}
+                                {% if loop.index == 1 %}
+                                <td rowspan="2" class="edit"><br/><a class="blue" href="/order/view/{{ d.order_id }}">订单详情</a></td>
+                                {% endif %}
                             </tr>
                           {% endfor %}
                     </tbody>
