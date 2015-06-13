@@ -10,10 +10,15 @@ $(function(){
         var id = $(this).data('id');
         agreeFee(id);
     });
-    $(".cancel-order").live("click",function(event){
+    $(".disagree-fee").live("click",function(event){
         event.stopPropagation();
         var id = $(this).data('id');
-        cancelOrder(id);
+        disagreeFee(id);
+    });
+    $(".disagree-approval").live("click",function(event){
+        event.stopPropagation();
+        var id = $(this).data('id');
+        disagreeApproval(id);
     });
 });
 function agreeApproval(id){
@@ -81,20 +86,20 @@ function agreeFee(id){
         }
     });
 }
-function cancelOrder(id){
+function disagreeFee(id){
     safeCode = $('meta[name=csrf-token]');
     $.layer({
         shade: [1],
         // area: ['auto','auto'],
         dialog: {
-            msg: '确认取消订单吗？',
+            msg: '确认驳回该订单预算审批吗？',
             btns: 2,                    
             type: 4,
             btn: ['确认','取消'],
             shade: [0.5, '#000'],
             area: ['900', '380'],
             yes: function(){
-                var delete_url = "/order/cancel";
+                var delete_url = "/order/disagreefee";
                 $.ajax({
                     url:delete_url,
                     dataType:"json",
@@ -102,11 +107,37 @@ function cancelOrder(id){
                     data:{"id":id,'_csrf':safeCode.attr('content')},
                     success:function(json){
                         if(json == 0){
-                            window.location.reload();
-                        }else if(json == 1){
-                            alert("当前订单状态不允许取消");
-                        }else if(json == 2){
-                            alert("部分申请人已经通过审批,订单当前不可取消！");
+                            $("#spprovalfeeStatus").html("已驳回预算审批");
+                        }
+                    }
+                });
+                layer.closeAll();
+            }
+        }
+    });
+}
+function disagreeApproval(id){
+    safeCode = $('meta[name=csrf-token]');
+    $.layer({
+        shade: [1],
+        // area: ['auto','auto'],
+        dialog: {
+            msg: '确认驳回该订单物料审批吗？',
+            btns: 2,                    
+            type: 4,
+            btn: ['确认','取消'],
+            shade: [0.5, '#000'],
+            area: ['900', '380'],
+            yes: function(){
+                var delete_url = "/order/disagreeapproval";
+                $.ajax({
+                    url:delete_url,
+                    dataType:"json",
+                    type:"POST",
+                    data:{"id":id,'_csrf':safeCode.attr('content')},
+                    success:function(json){
+                        if(json == 0){
+                            $("#spprovalStatus").html("已驳回物料审批");
                         }
                     }
                 });

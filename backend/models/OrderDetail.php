@@ -12,6 +12,7 @@ class OrderDetail extends BackendActiveRecord {
     //是否通过物主审批
     const IS_OWNER_APPROVAL = 1;
     const IS_NOT_OWNER_APPROVAL = 0;
+    const IS_REJECT_OWNER_APPROVAL = 2;
     /**
      * function_description
      *

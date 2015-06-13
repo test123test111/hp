@@ -998,6 +998,64 @@ class OrderController extends CustomerController {
         }
     }
     /**
+     * [actionDisagreeapproval description]
+     * @return [type] [description]
+     */
+    public function actionDisagreefee(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('id');
+            $order = Order::findOne($order_id);
+            if(!empty($order)){
+                if($order->need_fee_approval == Order::ORDER_NEED_FEE_APPROVAL){
+                    $order->status = Order::ORDER_STATUS_IS_APPROVAL_FAIL;
+                    $order->fee_approval = Order::ORDER_REJECT_FEE_APPROVAL;
+                    $order->fee_approval_uid = Yii::$app->user->id;
+                    $order->update(false);
+
+                    foreach($order->details as $detail){
+                        //lock stock total
+                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                        $stockTotal->total = $stockTotal->total - $detail->quantity;
+                        $stockTotal->update();
+                    }
+                }
+            }
+            echo 0;
+        }
+    }
+    /**
+     * [actionDisagreeapproval description]
+     * @return [type] [description]
+     */
+    public function actionDisagreeapproval(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('id');
+            $order = Order::findOne($order_id);
+            if(!empty($order)){
+                $order->status = Order::ORDER_STATUS_IS_APPROVAL_FAIL;
+                $order->update(false);
+
+                foreach($order->details as $detail){
+                    //只解锁未被拒绝的订单
+                    if($detail->is_owner_approval != OrderDetail::IS_REJECT_OWNER_APPROVAL){
+                        //lock stock total
+                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                        $stockTotal->total = $stockTotal->total - $detail->quantity;
+                        $stockTotal->update();
+
+                        $detail->is_owner_approval = OrderDetail::IS_REJECT_OWNER_APPROVAL;
+                        $detail->update(false);
+
+                    }
+                    
+                }
+            }
+            echo 0;
+        }
+    }
+    /**
      * action for cancel order
      * @return [type] [description]
      */

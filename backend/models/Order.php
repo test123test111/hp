@@ -33,7 +33,7 @@ class Order extends BackendActiveRecord {
     const ORDER_NOT_NEED_FEE_APPROVAL = 0;
 
     const ORDER_PASS_FEE_APPROVAL = 1;
-
+    const ORDER_REJECT_FEE_APPROVAL = 2;
     const IS_FORMAL = 0;
     const IS_NOT_FORMAL = 1;
 
@@ -434,9 +434,9 @@ class Order extends BackendActiveRecord {
             }
         }
 
-        // $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
-        // $this->warning_fee_price = 500;
-        // $this->update();
+        $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+        $this->warning_fee_price = 500;
+        $this->update();
         
         if($this->owner_approval == Order::OWNER_PASS_APPROVAL && $this->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL && $this->can_formal == Order::IS_FORMAL){
             $this->status = self::ORDER_STATUS_IS_APPROVALED;
