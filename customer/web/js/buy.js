@@ -62,15 +62,15 @@ $(function(){
             var a = document.getElementsByName("Order[transport_type]");
             var n;
             for(var i=0;i<a.length;i++) {
-              if(a[i].checked) {n = a[i].value;break;}
+                if(a[i].checked) {n = a[i].value;break;}
             }
             checkShipComplete(storeroom,to_city,orderType,n);
-            if($("#shipResult").val() == 0){
-                alert("目的地不支持您选择的运输方式");
-                return false;
-            }
+            // if($("#shipResult").val() == 0){
+            //     alert("目的地不支持您选择的运输方式");
+            //     return false;
+            // }
         }
-        $("#buyForm").submit();
+        
     });
 
     // edit address
@@ -113,9 +113,10 @@ function checkShipComplete(storeroom,to_city,orderType,transportType){
         data:{"storeroom_id":storeroom,"to_city":to_city,"order_type":orderType,'transport_type':transportType},
         success:function(json){
             if(json == 1){
-                $("#shipResult").val(1);
+                $("#buyForm").submit();
             }else{
-                $("#shipResult").val(0);
+                 alert("目的地不支持您选择的运输方式");
+                 return false;
             }
         }
     });

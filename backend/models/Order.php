@@ -305,6 +305,10 @@ class Order extends BackendActiveRecord {
             return false;
         }
         $flag = 0;
+        $bigOwner = Owner::getBigOwnerByUid($created_uid);
+        if($bigOwner){
+            $big_owner_id = $bigOwner->id;
+        }
         foreach($postData as $key=>$value){
             $model = new OrderDetail;
             $model->order_id = $this->id;
@@ -313,7 +317,8 @@ class Order extends BackendActiveRecord {
             $model->quantity = $value['quantity'];
             $material = Material::findOne($value['material_id']);
             $model->owner_id = $material->owner_id;
-            if($model->owner_id == $created_uid){
+
+            if($model->owner_id == $created_uid || $big_owner_id == $created_uid){
                 $model->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
                 $model->approval_uid = $created_uid;
                 $model->approval_date = $this->created;
@@ -429,6 +434,10 @@ class Order extends BackendActiveRecord {
             }
         }
 
+        // $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+        // $this->warning_fee_price = 500;
+        // $this->update();
+        
         if($this->owner_approval == Order::OWNER_PASS_APPROVAL && $this->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL && $this->can_formal == Order::IS_FORMAL){
             $this->status = self::ORDER_STATUS_IS_APPROVALED;
             $this->update();

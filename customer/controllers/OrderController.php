@@ -462,7 +462,8 @@ class OrderController extends CustomerController {
     }
     public function actionSuccess(){
         $id = Yii::$app->request->get('id');
-        return $this->render('success',['id'=>$id]);
+        $order = Order::find()->where(['viewid'=>$id])->one();
+        return $this->render('success',['id'=>$id,'order'=>$order]);
     }
     /**
      * [createOrder description]
@@ -694,7 +695,7 @@ class OrderController extends CustomerController {
                 Order::updateAll(['owner_approval'=>Order::OWNER_PASS_APPROVAL],['id'=>$order_id]);
             }
             if($orderInfo->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL){
-                if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->can_formal == Orde::IS_FORMAL){
+                if($orderInfo->can_formal == Order::IS_FORMAL){
                     $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
                     $orderInfo->update();
 
@@ -720,7 +721,7 @@ class OrderController extends CustomerController {
                     $orderInfo->consume();
                 }
             }else{
-                if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Orde::IS_FORMAL){
+                if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Order::IS_FORMAL){
                     $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
                     $orderInfo->update();
 
@@ -753,19 +754,38 @@ class OrderController extends CustomerController {
     //预算所属人审批预算
     public function actionApprovalfee(){
         if(Yii::$app->request->isPost){
-            $order_id = Yii::$app->request->post('order_id');
+            $order_id = Yii::$app->request->post('id');
             $order = Order::findOne($order_id);
             if($order->need_fee_approval == Order::ORDER_NEED_FEE_APPROVAL){
                 $order->fee_approval = Order::ORDER_PASS_FEE_APPROVAL;
                 $order->fee_approval_uid = Yii::$app->user->id;
                 $order->update();
             }
-            if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Orde::IS_FORMAL){
+            if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Order::IS_FORMAL){
                 $order->status = Order::ORDER_STATUS_IS_APPROVALED;
                 $order->update();
 
+                foreach($order->details as $detail){
+                    $stock = new Stock;
+                    $stock->material_id = $detail->material->id;
+                    $stock->storeroom_id = $detail->storeroom_id;
+                    $stock->owner_id = $detail->owner_id;
+                    $stock->actual_quantity = 0 - $detail->quantity;
+                    $stock->stock_time = date('Y-m-d H:i:s');
+                    $stock->created = date('Y-m-d H:i:s');
+                    $stock->increase = Stock::IS_NOT_INCREASE;
+                    $stock->order_id = $detail->order_id;
+                    $stock->save(false);
+
+                    //lock stock total
+                    $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                    $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                    $stockTotal->total = $stockTotal->total - $detail->quantity;
+                    $stockTotal->update();
+                }
                 $order->consume();
             }
+            echo 0;
         }
     }
     /**

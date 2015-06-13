@@ -62,41 +62,41 @@ class UserInfo{
         }
     }
     function getUnoptorder(){
-        if(\Yii::$app->user->identity->storeroom_id == Order::BIGEST_STOREROOM_ID){
-            return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'status'=>Order::NEW_ORDER])->count();
-        }
-        return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'status'=>Order::NEW_ORDER,'storeroom_id'=>\Yii::$app->user->identity->storeroom_id])->count();
+        // if(\Yii::$app->user->identity->storeroom_id == Order::BIGEST_STOREROOM_ID){
+        //     return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'status'=>Order::NEW_ORDER])->count();
+        // }
+        // return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'status'=>Order::NEW_ORDER,'storeroom_id'=>\Yii::$app->user->identity->storeroom_id])->count();
     	
     }
     function getTotalorder(){
-        if(\Yii::$app->user->identity->storeroom_id == Order::BIGEST_STOREROOM_ID){
-            return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL])->count();
-        }
-    	return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'storeroom_id'=>\Yii::$app->user->identity->storeroom_id])->count();
+     //    if(\Yii::$app->user->identity->storeroom_id == Order::BIGEST_STOREROOM_ID){
+     //        return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL])->count();
+     //    }
+    	// return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'storeroom_id'=>\Yii::$app->user->identity->storeroom_id])->count();
     }
     function getRefuseorder(){
-    	return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'status'=>Order::REFUSE_ORDER])->count();
+    	//return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'status'=>Order::REFUSE_ORDER])->count();
     }
     function getMyorder(){
-    	return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid])->count();
+    	//return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid])->count();
     }
     function getMyrefuseorder(){
-        return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::REFUSE_ORDER])->count();
+       // return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::REFUSE_ORDER])->count();
     }
     function getMyconfirmorder(){
-        return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::CONFIRM_ORDER])->count();
+        //return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::CONFIRM_ORDER])->count();
     }
     function getMypackageorder(){
-        return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::PACKAGE_ORDER])->count();
+        //return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::PACKAGE_ORDER])->count();
     }
     function getMyshippingorder(){
-        return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::SHIPPING_ORDER])->count();
+        //return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::SHIPPING_ORDER])->count();
     }
     function getMysignorder(){
-        return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::SIGN_ORDER])->count();
+        //return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::SIGN_ORDER])->count();
     }
     function getMyunsignorder(){
-        return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::UNSIGN_ORDER])->count();
+        //return Order::find()->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>$this->_uid,'status'=>Order::UNSIGN_ORDER])->count();
     }
 
 }

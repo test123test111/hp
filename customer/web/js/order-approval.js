@@ -5,10 +5,10 @@ $(function(){
         var id = $(this).data('id');
         agreeApproval(id);
     });
-    $(".send-fee-approval").live("click",function(event){
+    $(".agree-fee").live("click",function(event){
         event.stopPropagation();
         var id = $(this).data('id');
-        sendfeeapproval(id);
+        agreeFee(id);
     });
     $(".cancel-order").live("click",function(event){
         event.stopPropagation();
@@ -49,28 +49,28 @@ function agreeApproval(id){
     });
 }
 
-function sendfeeapproval(id){
+function agreeFee(id){
     safeCode = $('meta[name=csrf-token]');
     $.layer({
         shade: [1],
         // area: ['auto','auto'],
         dialog: {
-            msg: '确认发送审批吗？',
+            msg: '确认通过预算审批吗？',
             btns: 2,                    
             type: 4,
             btn: ['确认','取消'],
             shade: [0.5, '#000'],
             area: ['900', '380'],
             yes: function(){
-                var delete_url = "/order/sendapprovalfee";
+                var delete_url = "/order/approvalfee";
                 $.ajax({
                     url:delete_url,
                     dataType:"json",
                     type:"POST",
                     data:{"id":id,'_csrf':safeCode.attr('content')},
                     success:function(json){
-                        if(json == 1){
-                            $("#spprovalfeeStatus").html("费用审批申请已发送,请等待审批人审批");
+                        if(json == 0){
+                            $("#spprovalfeeStatus").html("预算审批已通过");
                         }else{
                             alert(json);
                         }

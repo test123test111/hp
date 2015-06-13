@@ -26,24 +26,33 @@
                                 {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
                                 <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue disagree-approval">驳回</a>
                                 {% elseif detail.is_owner_approval == 1 %}
-                                已同意
+                                已同意物料审批
                                 {% else %}
-                                已驳回
+                                已驳回物料审批
                                 {% endif %}
                             </span>
                         </li>
                         {% endif %}
                         {% endif %}
                     {% endfor  %}
-                    {% if order.checkSendFeeApproval() and (order.getApprovalFeeUid() == App.user.id) and order.fee_approval == 0 %}
+                    {% if order.checkSendFeeApproval() and (order.getApprovalFeeUid() == App.user.id) %}
+                        {% if order.fee_approval == 0 %}
                         <li class="clearfix">
                             <p>订单预估报价超过{{ order.warning_fee_price }}RMB，需要您审批方可发货</p>
-                            <span>
-                                <a href="javascript:void(0);" class="blue agree-fee">同意</a>
+                            <span id="spprovalfeeStatus">
+                                <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue agree-fee">同意</a>
                                 {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
                                 <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue disagree-fee">驳回</a>
                             </span>
                         </li>
+                        {% else %}
+                        <li class="clearfix">
+                            <p>订单预估报价超过{{ order.warning_fee_price }}RMB，需要您审批方可发货</p>
+                            <span id="spprovalfeeStatus">
+                               已同意预算审批
+                            </span>
+                        </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
             </dd>
