@@ -1,7 +1,7 @@
 <li class="clearfix {% if addr.status == 1 %}selected{% endif %}" id="addr_{{ addr.id }}">
     <input type="radio" name="address" value="{{ addr.id }}" checked="checked" class="hookbox" />
     <label>
-        <b>{{ addr.name }}</b>{{ addr.company }} {{ addr.province }} {{ addr.city }} {{ addr.area }} {{ addr.address }}
+        <b>{{ addr.name }}</b>{{ addr.company }} {{ addr.province }} {{ addr.city }} <span id="addrArea">{{ addr.area }}</span> {{ addr.address }}
         <em>{{ addr.phone }}</em>
     </label>
     <span class="edit">

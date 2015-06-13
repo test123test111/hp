@@ -61,7 +61,7 @@ class Cart extends CustomerActiveRecord {
         return Cart::find()->with(['storeroom','material'])->where(['uid'=>$uid])->all();
     }
     public function getStocks(){
-        return Stock::getStockByUidAndStorageIdAndMaterialId($this->uid,$this->storeroom_id,$this->material_id);
+        return Stock::getStockByUidAndStorageIdAndMaterialId($this->storeroom_id,$this->material_id);
     }
     public static function getCartsInfo($items){
         $ret = [];

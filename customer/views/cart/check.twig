@@ -17,7 +17,7 @@
                     <div class="dd">
                         <input type="text" name="Order[arrive_date]" class="active_input date_input" />
                     </div>
-                    <input type="hidden" value="{{ results.0.info.storeroom_id }}" name="Order[storeroom_id]" />
+                    <input type="hidden" value="{{ results.0.info.storeroom_id }}" id="storeType" name="Order[storeroom_id]" />
                     <div class="dt">2 收货人信息</div>
                     <input type="hidden" value="0" name="Order[to_type]" id="orderType" />
                     <div class="dd">
@@ -118,7 +118,7 @@
                             	{% endfor %}
                             </ul>
                         </div>
-
+                        <input type="hidden" id="shipResult" />
                         <input type="text" placeholder="输入用途" name="Order[purpose]" class="memo_input" />
                         <input type="text" placeholder="输入备注信息" name="Order[info]" class="memo_input" />
                     </div>

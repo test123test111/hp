@@ -267,10 +267,15 @@ class Stock extends CustomerActiveRecord {
      * @param  [type] $material_id  [description]
      * @return [type]               [description]
      */
-    public static function getStockByUidAndStorageIdAndMaterialId($uid,$storeroom_id,$material_id){
-        $result = Stock::find()->select(['total'=>'sum(actual_quantity)'])->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'material_id'=>$material_id])->groupby(['storeroom_id','material_id'])->one();
-        if(!empty($result)){
-            return $result->total;
+    public static function getStockByUidAndStorageIdAndMaterialId($storeroom_id,$material_id){
+        // $result = Stock::find()->select(['total'=>'sum(actual_quantity)'])->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'material_id'=>$material_id])->groupby(['storeroom_id','material_id'])->one();
+        // if(!empty($result)){
+        //     return $result->total;
+        // }
+        // return 0;
+        $total = StockTotal::find()->where(['storeroom_id'=>$storeroom_id,'material_id'=>$material_id])->one();
+        if(!empty($total)){
+            return $total->total;
         }
         return 0;
     }

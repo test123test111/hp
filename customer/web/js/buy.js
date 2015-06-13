@@ -34,7 +34,6 @@ $(function(){
             $("#safe_price").hide();
         }
     });
-
     // select time
     $("#delivery_style li").click(function(){
         $("#delivery_style li").removeClass("selected");
@@ -45,16 +44,33 @@ $(function(){
     $(".buy_btn").click(function(){
         if(!$(this).hasClass("btn_order_undefined")){
             if($("#orderType").val() == 0){
-                if($("#address_area li").length != 0){
-                    $("#buyForm").submit();
-                }else{
+                if($("#address_area li").length == 0){
                     alert("请输入收件人地址");
+                    return false;
                 }
-            }else{
-                $("#buyForm").submit();
             }
-            
+            // else{
+            //     $("#buyForm").submit();
+            // }
+            var storeroom = $("#storeType").val();
+            var orderType = $("#orderType").val();
+            if(storeroom != 1 && orderType == 1){
+                alert("只能从中央库调配物资到平台库");
+                return false;
+            }
+            var to_city = $("#addrArea").html();
+            var a = document.getElementsByName("Order[transport_type]");
+            var n;
+            for(var i=0;i<a.length;i++) {
+              if(a[i].checked) {n = a[i].value;break;}
+            }
+            checkShipComplete(storeroom,to_city,orderType,n);
+            if($("#shipResult").val() == 0){
+                alert("目的地不支持您选择的运输方式");
+                return false;
+            }
         }
+        $("#buyForm").submit();
     });
 
     // edit address
@@ -88,7 +104,23 @@ $(function(){
 
     
 });
-
+function checkShipComplete(storeroom,to_city,orderType,transportType){
+    var check_url = '/order/checkshipmethod';
+    $.ajax({
+        url:check_url,
+        dataType:"json",
+        type:"POST",
+        data:{"storeroom_id":storeroom,"to_city":to_city,"order_type":orderType,'transport_type':transportType},
+        success:function(json){
+            if(json == 1){
+                $("#shipResult").val(1);
+            }else{
+                $("#shipResult").val(0);
+            }
+        }
+    });
+    
+}
 // edit address
 function editAddress(id){
     var addr_url = "/order/addressdisplay";

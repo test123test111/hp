@@ -20,6 +20,7 @@ use customer\components\CustomerController;
 use customer\models\Address;
 use common\models\HpCity;
 use common\models\Approval;
+use common\models\ShippmentCost;
 
 class OrderController extends CustomerController {
     public $layout = false;
@@ -187,6 +188,7 @@ class OrderController extends CustomerController {
                 if($model->to_type == Order::TO_TYPE_USER){
                     $address_id = Yii::$app->request->post('address');
                     $address = Address::findOne($address_id);
+                    $model->to_company = $address->company;
                     $model->to_province = $address->province;
                     $model->to_city = $address->city;
                     $model->to_district = $address->area;
@@ -297,19 +299,12 @@ class OrderController extends CustomerController {
      */
     public function actionView($id)
     {   
-        $order = Order::find()->where(['id'=>$id,'is_del'=>Order::ORDER_IS_NOT_DEL])->one();
-        $order_package = OrderPackage::find()->where(['order_id'=>$id])->one();
-        $detail = OrderDetail::find()->where(['order_id'=>$id])->all();
-        $package = [];
-        $sign = OrderSign::findOne($id);
-        if(!empty($order_package)){
-            $package = Package::find()->where(['id'=>$order_package->package_id])->one();
-        }
+        $order = Order::find()->with('details')->where(['id'=>$id,'is_del'=>Order::ORDER_IS_NOT_DEL])->one();
+        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($order->id);
         return $this->render('view', [
             'order' => $order,
-            'package' => $package,
-            'detail' =>$detail,
-            'sign' => $sign,
+            'ship_fee'=>$ship_fee,
+            'fenjian_fee'=>$fenjian_fee,
         ]);
     }
     public function actionChange(){
@@ -941,5 +936,24 @@ class OrderController extends CustomerController {
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
         ]);
+    }
+    /**
+     * check shippment method is exist 
+     * @return [type] [description]
+     */
+    public function actionCheckshipmethod(){
+        $this->enableCsrfValidation = false;
+        if(Yii::$app->request->isPost){
+            $storeroom_id = Yii::$app->request->post('storeroom_id');
+            $to_city = Yii::$app->request->post('to_city');
+            $transport_type = Yii::$app->request->post('transport_type');
+            $order_type = Yii::$app->request->post('order_type');
+            $templete = ShippmentCost::find()->where(['storeroom_id'=>$storeroom_id,'transport_type'=>$transport_type,'to_type'=>$order_type,'to_city'=>$to_city])->one();
+            if(!empty($templete)){
+                echo 1;
+            }else{
+                echo 0;
+            }
+        }
     }
 }
