@@ -583,6 +583,40 @@ CREATE TABLE `hhg` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+CREATE TABLE `hhg_cart` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL DEFAULT '0',
+  `material_id` int(11) NOT NULL DEFAULT '0',
+  `storeroom_id` int(11) NOT NULL DEFAULT '0',
+  `quantity` int(11) NOT NULL DEFAULT '1',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `uid` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `hhg_address` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `uid` int(10) NOT NULL COMMENT '用户id',
+  `name` varchar(60) NOT NULL COMMENT '姓名',
+  `phone` varchar(60) NOT NULL COMMENT '电话',
+  `province` varchar(60) NOT NULL COMMENT '省',
+  `city` varchar(60) NOT NULL COMMENT '市',
+  `area` varchar(60) NOT NULL COMMENT '区',
+  `address` varchar(255) NOT NULL COMMENT '地址',
+  `zip` varchar(12) NOT NULL COMMENT '邮编',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态 1 默认',
+  `created` datetime DEFAULT NULL COMMENT '添加时间',
+  `tel` varchar(12) NOT NULL DEFAULT '',
+  `tel_area_code` varchar(12) NOT NULL DEFAULT '',
+  `tel_ext` varchar(12) NOT NULL DEFAULT '',
+  `company` varchar(64) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `uid` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 

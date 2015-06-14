@@ -70,7 +70,7 @@ return [
             'class'=>'common\components\Budget',
         ],
         'shoppingCart' => [
-            'class' => 'common\components\ShoppingCart',
+            'class' => 'hhg\components\ShoppingCart',
         ],
         'user' => [
             'class' => hhg\components\ManagerUser::className(),

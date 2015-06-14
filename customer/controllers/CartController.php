@@ -40,10 +40,10 @@ class CartController extends CustomerController {
             $quantity = Yii::$app->request->post('quantity');
 
             $material = Material::findOne($material_id);
-            if(empty($material) || $material->owner_id != $uid){
-            	echo json_encode(['data'=>'','err'=>'物主身份不符合','errno'=>10000]);
-            	Yii::$app->end();
-            }
+            // if(empty($material) || $material->owner_id != $uid){
+            // 	echo json_encode(['data'=>'','err'=>'物主身份不符合','errno'=>10000]);
+            // 	Yii::$app->end();
+            // }
             $total = Stock::getStockByUidAndStorageIdAndMaterialId($uid,$storeroom_id,$material_id);
             if($total == 0){
             	echo json_encode(['data'=>'','err'=>'所选物料库存不够','errno'=>10001]);

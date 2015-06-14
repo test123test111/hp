@@ -18,9 +18,8 @@
                 <ul class="shenpi">
                     {% for detail in order.details %}
                         {% if order.checkSendMaterialApproval() %}
-                        {% if detail.owner_id == App.user.id %}
                         <li class="clearfix">
-                            <p>订单发放物料中含有您的物料<b>{{ detail.material.name }}</b>,需要您的审批</p>
+                            <p>订单发放物料中含有物料<b>{{ detail.material.name }}</b>,需要您的审批</p>
                             <span id="spprovalStatus">
                                 {% if detail.is_owner_approval == 0 %}
                                 <a href="javascript:void(0);" data-id="{{ order.id }}"  class="blue agree-approval">同意</a>
@@ -34,15 +33,13 @@
                             </span>
                         </li>
                         {% endif %}
-                        {% endif %}
                     {% endfor  %}
-                    {% if order.checkSendFeeApproval() and (order.getApprovalFeeUid() == App.user.id) %}
+                    {# {% if order.checkSendFeeApproval() and (order.getApprovalFeeUid() == App.user.id) %}
                         {% if order.fee_approval == 0 %}
                         <li class="clearfix">
                             <p>订单预估报价超过{{ order.warning_fee_price }}RMB，需要您审批方可发货</p>
                             <span id="spprovalfeeStatus">
                                 <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue agree-fee">同意</a>
-                                {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
                                 <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue disagree-fee">驳回</a>
                             </span>
                         </li>
@@ -54,7 +51,7 @@
                             </span>
                         </li>
                         {% endif %}
-                    {% endif %}
+                    {% endif %} #}
                 </ul>
             </dd>
         </dl>

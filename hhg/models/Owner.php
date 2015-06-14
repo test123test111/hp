@@ -26,5 +26,14 @@ class Owner extends ActiveRecord
     public static function tableName(){
         return "owner";
     }
-    
-}
+    public static function getCreateUsers(){
+    	$results = static::find()->all();
+        $ret = [];
+        foreach($results as $result){
+            $array['text'] = $result->english_name;
+            $array['id'] = $result->id;
+            array_push($ret,$array);
+        }
+        return json_encode($ret);
+    }
+}	

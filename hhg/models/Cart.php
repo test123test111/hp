@@ -1,5 +1,5 @@
 <?php
-namespace customer\models;
+namespace hhg\models;
 use Yii;
 use customer\components\CustomerActiveRecord;
 use yii\helpers\BaseArrayHelper;
@@ -12,7 +12,7 @@ class Cart extends CustomerActiveRecord {
      * @return
      */
     public static function tableName() {
-        return 'cart';
+        return 'hhg_cart';
     }
     public function behaviors()
     {
@@ -58,7 +58,7 @@ class Cart extends CustomerActiveRecord {
      * @return [type]      [description]
      */
     public static function getCartsByUid($uid){
-        return Cart::find()->with(['storeroom','material'])->where(['uid'=>$uid])->all();
+        return static::find()->with(['storeroom','material'])->where(['uid'=>$uid])->all();
     }
     public function getStocks(){
         return Stock::getStockByUidAndStorageIdAndMaterialId($this->storeroom_id,$this->material_id);
@@ -67,7 +67,7 @@ class Cart extends CustomerActiveRecord {
         $ret = [];
         if(!empty($items)){
             foreach($items as $key=>$item){
-                $ret[$key]['info'] = Cart::find()->with(['storeroom','material'])->where(['id'=>$item['cart_id']])->one();
+                $ret[$key]['info'] = static::find()->with(['storeroom','material'])->where(['id'=>$item['cart_id']])->one();
                 $ret[$key]['quantity'] = $item['quantity'];
                 $ret[$key]['cart_id'] = $item['cart_id'];
             }

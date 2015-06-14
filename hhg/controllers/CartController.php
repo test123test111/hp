@@ -1,16 +1,17 @@
 <?php
 
-namespace customer\controllers;
+namespace hhg\controllers;
 
 use Yii;
-use customer\models\Cart;
-use customer\models\Stock;
-use customer\models\Material;
-use customer\components\CustomerController;
+use hhg\models\Cart;
+use hhg\models\Stock;
+use hhg\models\Material;
+use hhg\components\CustomerController;
 use backend\models\Order;
-use customer\models\Address;
-use customer\models\Storeroom;
-class CartController extends CustomerController {
+use hhg\models\Address;
+use hhg\models\Storeroom;
+use hhg\models\Owner;
+class CartController extends \yii\web\Controller {
     public $layout = false;
     public $enableCsrfValidation;
     public function behaviors()
@@ -40,11 +41,11 @@ class CartController extends CustomerController {
             $quantity = Yii::$app->request->post('quantity');
 
             $material = Material::findOne($material_id);
-            if(empty($material) || $material->owner_id != $uid){
-            	echo json_encode(['data'=>'','err'=>'物主身份不符合','errno'=>10000]);
-            	Yii::$app->end();
-            }
-            $total = Stock::getStockByUidAndStorageIdAndMaterialId($uid,$storeroom_id,$material_id);
+            // if(empty($material) || $material->owner_id != $uid){
+            // 	echo json_encode(['data'=>'','err'=>'物主身份不符合','errno'=>10000]);
+            // 	Yii::$app->end();
+            // }
+            $total = Stock::getStockByUidAndStorageIdAndMaterialId($storeroom_id,$material_id);
             if($total == 0){
             	echo json_encode(['data'=>'','err'=>'所选物料库存不够','errno'=>10001]);
             	Yii::$app->end();
@@ -113,6 +114,7 @@ class CartController extends CustomerController {
                 'results'=>$result,
                 // 'address'=>$userAddress,
                 'company'=>$company,
+                'createusers'=>Owner::getCreateUsers(),
                 'storerooms'=>$storerooms,
             )); 
         }

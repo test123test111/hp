@@ -58,4 +58,33 @@ class Approval extends ActiveRecord
         $data = $query->all();
         return [$data,$pages,$count];
     }
+    /**
+     * get refund data
+     * @return [type] [description]
+     */
+    public static function getHhgData($params){
+        $query = Static::find()->with(['orders'])->where(['status'=>self::STATUS_IS_UNHANDLE])->orderBy(['id'=>SORT_DESC]);
+
+        if(isset($params['order_id']) && $params['order_id'] != ""){
+            $order = Order::find()->where(['viewid'=>$params['order_id']])->one;
+            $query->andWhere(['order_id'=>$order->viewid]);
+        }
+        if(isset($params['type']) && $params['type'] != ""){
+            $query->andWhere(['type'=>$params['type']]);
+        }
+        if(isset($params['begin_time']) && $params['begin_time'] != ""){
+            if(isset($params['end_time']) && $params['end_time'] != ""){
+                $begin_time = $params['begin_time']." 00:00:00";
+                $end_time = $params['end_time']." 23:59:59";
+                $query->andWhere('created >= :begin_time AND created <= :end_time',[':begin_time'=>$begin_time,":end_time"=>$end_time]);
+            }
+        }
+        $count = $query->count();
+        $pages = new \yii\data\Pagination(['totalCount' => $count]);
+        $ret = [];
+        $query->offset($pages->offset)->limit(20);
+
+        $data = $query->all();
+        return [$data,$pages,$count];
+    }
 }

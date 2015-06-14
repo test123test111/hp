@@ -1,6 +1,6 @@
 <?php
 
-namespace customer\controllers;
+namespace hhg\controllers;
 
 use Yii;
 use backend\models\Order;
@@ -8,21 +8,20 @@ use backend\models\City;
 use backend\models\OrderSign;
 use backend\models\Stock;
 use backend\models\StockTotal;
-use customer\models\OrderPackage;
+use hhg\models\OrderPackage;
 use backend\models\OrderDetail;
 use backend\models\Package;
 use backend\models\Owner;
 use backend\models\Storeroom;
 use backend\models\Material;
-use customer\models\search\OrderSearch;
-use customer\models\search\OrderStockSearch;
-use customer\components\CustomerController;
-use customer\models\Address;
+use hhg\models\search\OrderSearch;
+use hhg\models\search\OrderStockSearch;
+use hhg\models\Address;
 use common\models\HpCity;
 use common\models\Approval;
 use common\models\ShippmentCost;
 
-class OrderController extends CustomerController {
+class OrderController extends \yii\web\Controller {
     public $layout = false;
     public $enableCsrfValidation;
     /**
@@ -220,6 +219,9 @@ class OrderController extends CustomerController {
                 }else{
                     $model->arrive_date = 0;
                 }
+                $model->detachBehavior('attributeStamp');
+                $model->modified_uid = $model->created_uid;
+                $model->hhg_uid = Yii::$app->user->id;
                 $model->save();
                 $model->viewid = date('Ymd')."-".$model->id;
                 $model->update();
@@ -670,12 +672,13 @@ class OrderController extends CustomerController {
             //     $orderInfo->consume();
             // }
             $flag = 0;
-            $approval = Approval::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id,'type'=>Approval::TYPE_IS_MATERIAL])->one();
-            $details = OrderDetail::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id])->all();
+            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL])->one();
+            $details = OrderDetail::find()->where(['order_id'=>$order_id])->all();
             if(!empty($details)){
                 foreach($details as $detail){
                     $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
                     $detail->approval_uid = Yii::$app->user->id;
+                    $detail->approval_uid_type = OrderDetail::APPROVAL_USER_TYPE_IS_HHG;
                     $detail->approval_date = time();
                     $detail->update();
 
@@ -968,7 +971,7 @@ class OrderController extends CustomerController {
      */
     public function actionApproval(){
         $params = Yii::$app->request->getQueryParams();
-        list($data,$pages,$count) = Approval::getMyData(Yii::$app->request->getQueryParams());
+        list($data,$pages,$count) = Approval::getHhgData(Yii::$app->request->getQueryParams());
         $sidebar_name = '审批订单';
         return $this->render('approval', [
              'results' => $data,

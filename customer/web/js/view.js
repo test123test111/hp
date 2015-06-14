@@ -64,8 +64,12 @@ function buyCart(){
         type:"POST",
         data:cart_data,
         success:function(json){
-            $(".cart_tip").fadeIn();
-            window.setTimeout(hideTip,3000);
+            if(json.errno == 0){
+                $(".cart_tip").fadeIn();
+                window.setTimeout(hideTip,3000);
+            }else{
+                alert(json.err);
+            }
         }
     });
 }

@@ -58,6 +58,11 @@ $(function(){
                 alert("只能从中央库调配物资到平台库");
                 return false;
             }
+            var created_uid = $("#createUsert").val();
+            if(created_uid == "" || created_uid == 0){
+                alert("请选择正确的下单人");
+                return false;
+            }
             var to_city = $("#addrArea").html();
             var a = document.getElementsByName("Order[transport_type]");
             var n;
@@ -134,7 +139,7 @@ function editAddress(id){
             $.layer({
                 type: 1,
                 shade: [0.5, '#000'],
-                area: ['900', '380'],
+                area: ['900', '430'],
                 title: '地址',
                 btns: 2,
                 btn: ['确定', '取消'],

@@ -79,7 +79,7 @@
                                             <i id="mall_stock">
                                                   {% for st in storerooms%}
                                                   {% if sid == st.storeroom_id %}
-                                                    {{ st.total }}
+                                                    {{ st.total - st.lock_num }}
                                                     {% endif %}
                                                   {% endfor %}  
                                             </i></span>

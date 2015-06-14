@@ -99,7 +99,7 @@ class Order extends BackendActiveRecord {
     public function rules() {
         return [
             [['storeroom_id','transport_type','to_type'],'required'],
-            [['info','purpose','insurance','insurance_price','send_date','arrive_date'],'safe'],
+            [['info','purpose','insurance','insurance_price','send_date','arrive_date','created_uid','modified_uid'],'safe'],
             // ['goods_quantity',]/
         ];
     }
@@ -321,7 +321,7 @@ class Order extends BackendActiveRecord {
             if($model->owner_id == $created_uid || $big_owner_id == $created_uid){
                 $model->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
                 $model->approval_uid = $created_uid;
-                $model->approval_date = $this->created;
+                $model->approval_date = strtotime($this->created);
             }else{
                 $flag ++;
             }
@@ -333,6 +333,15 @@ class Order extends BackendActiveRecord {
             //Cart::deleteAll(['id'=>$cart->id]);
         }
         if($flag == 0){
+            $this->owner_approval = self::PASS_OWNER_APPROVAL;
+            $this->update(false);
+        }
+        if($this->hhg_uid != 0){
+            OrderDetail::updateAll(['is_owner_approval'=>OrderDetail::IS_OWNER_APPROVAL,
+                                    'approval_uid'=>$this->hhg_uid,
+                                    'approval_date'=>strtotime($this->created),
+                                    'approval_uid_type'=>OrderDetail::APPROVAL_USER_TYPE_IS_HHG],
+                                    ['order_id'=>$this->id]);
             $this->owner_approval = self::PASS_OWNER_APPROVAL;
             $this->update(false);
         }
@@ -434,9 +443,9 @@ class Order extends BackendActiveRecord {
             }
         }
 
-        $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
-        $this->warning_fee_price = 500;
-        $this->update();
+        // $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+        // $this->warning_fee_price = 500;
+        // $this->update();
         
         if($this->owner_approval == Order::OWNER_PASS_APPROVAL && $this->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL && $this->can_formal == Order::IS_FORMAL){
             $this->status = self::ORDER_STATUS_IS_APPROVALED;
