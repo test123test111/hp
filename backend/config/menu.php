@@ -100,7 +100,22 @@ return [
                 ],
             ],
         ],
-
+        'hhg' => [
+            'name' => 'HH用户',
+            'route' => 'hhg/list',
+            'icon'=>'globe',
+            'style'=>'',
+            'subs' => [
+                [
+                    'name' => '用户列表',
+                    'route' => 'hhg/list',
+                ],
+                [
+                    'name' => '添加用户',
+                    'route' => 'hhg/create',
+                ],
+            ],
+        ],
         'material'=>[
             'name'=>'物料',
             'route'=>'',

@@ -1,0 +1,72 @@
+{% set sidebar_name = "专属物料" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block body_class %}
+{% endblock%}
+{% block content %}
+	<div class="view_wrap">
+        <div class="o_box">
+
+            {% if carts is empty %}
+                <div class="empty_box">
+                <p>
+                    <strong>您的购物车还是空的~</strong>
+                    <span></span>
+                </p>
+            </div>
+            {% else %}
+            <div class="cart_list">
+                <div class="cart_tt clearfix">
+                    <span class="check"></span>
+                    <span class="goods">物料</span>
+                    <span class="room">库房</span>
+                    <span class="qty">数量</span>
+                    <span class="edit">操作</span>
+                </div>
+                {% set form = activeform.begin({'id':'cartForm','action':'/cart/check','method':'post'}) %} 
+                    
+                {{ void(form.end()) }}
+                <ul>
+                	{% for cart in carts %}
+                		{% set stocks = cart.getStocks() %}
+                    <li class="clearfix" data-cart-id="{{ cart.id }}" id="cart_{{ cart.id }}" data-stock="{{ cart.getStocks() }}" data-storeroom-id="{{ cart.storeroom_id }}" data-materiel-id="{{ cart.material_id }}">
+                        <span class="check" data-storeroom-id="{{ cart.storeroom_id }}" data-cart-id="{{ cart.id }}"></span>
+                        <div class="goods">
+                            <a href="#" class="pic">
+                            	{% for im in cart.material.image %}
+		                            {% if loop.index == 1 %}
+		                            <img src="{{ im }}">
+		                            {% endif %}
+		                        {% endfor %}
+                            </a>
+                            <div class="name">
+                                <p><a href="/material/view/{{ cart.material_id }}">{{ cart.material.name }}</a></p>
+                                <div class="property">
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="room" data-storeroom="{{ cart.storeroom.id }}">{{ cart.storeroom.name }}</span>
+                        <div class="qty">
+                            <div class="widget">
+                                <span class="increase" data-cart-id="{{ cart.id }}"></span>
+                                <input data-cart-id="{{ cart.id }}" class="amount_input" value="{{ cart.quantity }}" type="text">
+                                <span class="decrease" data-cart-id="{{ cart.id }}"></span>
+                            </div>
+                            <p class="error_stock none">最多只可购买{{ stocks }}件</p>
+                        </div>
+                        <span class="edit"><a href="javascript:;" onclick="deleteCart({{ cart.id }});">删除</a></span>
+                    </li>
+                	{% endfor %}
+                </ul>
+            </div>
+
+            <div class="cart_submit clearfix">
+                <a href="javascript:;" class="buy_btn" id="buy_btn">去下单</a>
+                <div class="amount">共<span class="red" id="selectedCount">{{ carts|count }}</span> 件商品</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <script type='text/javascript' src='/js/layer.min.js'></script>
+<script type='text/javascript' src='/js/cart.js'></script>
+{% endblock %}

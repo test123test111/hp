@@ -1,0 +1,122 @@
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+{% set sidebar_name = "审批订单" %}
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+<div class="main">
+  <div class="order_view">
+    <div class="mt">订单信息</div>
+    <div class="mc">
+        <dl>
+            <dt>预定单号：{{ order.viewid }}</dt>
+            <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
+            <dt>订单预估报价：{{ ship_fee + fenjian_fee }}RMB</dt>
+            <dt>订单状态：{{ order.getOrderStatus()|raw }}</dt>
+        </dl>
+        <dl>
+            <dt>物料审批/费用审批</dt>
+            <dd>
+                <ul class="shenpi">
+                    {% for detail in order.details %}
+                        {% if order.checkSendMaterialApproval() %}
+                        {% if detail.owner_id == App.user.id %}
+                        <li class="clearfix">
+                            <p>订单发放物料中含有您的物料<b>{{ detail.material.name }}</b>,需要您的审批</p>
+                            <span id="spprovalStatus">
+                                {% if detail.is_owner_approval == 0 %}
+                                <a href="javascript:void(0);" data-id="{{ order.id }}"  class="blue agree-approval">同意</a>
+                                {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
+                                <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue disagree-approval">驳回</a>
+                                {% elseif detail.is_owner_approval == 1 %}
+                                已同意物料审批
+                                {% else %}
+                                已驳回物料审批
+                                {% endif %}
+                            </span>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                    {% endfor  %}
+                    {% if order.checkSendFeeApproval() and (order.getApprovalFeeUid() == App.user.id) %}
+                        {% if order.fee_approval == 0 %}
+                        <li class="clearfix">
+                            <p>订单预估报价超过{{ order.warning_fee_price }}RMB，需要您审批方可发货</p>
+                            <span id="spprovalfeeStatus">
+                                <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue agree-fee">同意</a>
+                                {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
+                                <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue disagree-fee">驳回</a>
+                            </span>
+                        </li>
+                        {% else %}
+                        <li class="clearfix">
+                            <p>订单预估报价超过{{ order.warning_fee_price }}RMB，需要您审批方可发货</p>
+                            <span id="spprovalfeeStatus">
+                               已同意预算审批
+                            </span>
+                        </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </dd>
+        </dl>
+        <dl>
+            <dt>物料清单</dt>
+            <dd>
+                <table class="materiel_table">
+                    <thead>
+                        <tr>
+                            <td>序号</td>
+                            <td>物料编号</td>
+                            <td>物料名称</td>
+                            <td>所属人</td>
+                            <td>计划数量</td>
+                            {# <td></td> #}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in order.details %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ detail.material.code }}</td>
+                            <td><a href="/material/view/11" class="blue">{{ detail.material.name }}</a></td>
+                            <td>{{ detail.material.owners.english_name }}</td>
+                            <td>{{ detail.quantity }}</td>
+                            {# <td><a href="#" class="blue">删除</a></td> #}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>   
+            </dd>
+        </dl>
+        <dl>
+            <dt>发货人信息</dt>
+            <dd>
+                <p>收货单位：{{ order.to_company }}</p>
+                <p>收 货 人：{{ order.recipients}}</p>
+                <p>地    址：{{ order.to_province }} {{ order.to_city }} {{ order.to_district }} {{ order.address }}</p>
+                <p>手机号码：{{ order.phone }}</p>
+                <p>运输时效：{{ order.getMyTransportType() }}</p>
+                <p>保险：{% if order.insurance == 1 %}有{% else %}无{% endif %}</p>
+                {# <p>借用：</p>
+                <p>归还时间：</p> #}
+                <p>保险价格：{{ order.insurance_price }}
+                <p>用途：{{ order.purpose }}</p>
+                <p>备注：{{ order.info }}</p>
+            </dd>
+        </dl>
+        <dl>
+            <dt>配送信息</dt>
+            <dd>
+                <p>要求送货日期：{{ order.send_date }}</p>
+                <p>要求送达日期：{{ order.arrive_date|date('Y-m-d') }}</p>
+            </dd>
+        </dl>
+        
+    </div>
+  </div>
+  </div>
+<script type='text/javascript' src='/js/layer.min.js'></script>
+<script type='text/javascript' src='/js/order-approval.js'></script>
+{% endblock %}
+
+
+

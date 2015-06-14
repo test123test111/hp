@@ -6,6 +6,7 @@ use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
+use common\models\Budget;
 /**
  * Class User
  * @package common\models
@@ -276,6 +277,9 @@ class Owner extends ActiveRecord implements IdentityInterface
     }
     public function getProducttwolines(){
         return $this->hasOne(ProductTwoLine::className(),['id'=>'product_two_line']);
+    }
+    public function getBudgets(){
+        return $this->hasOne(Budget::className(),['owner_id'=>'id'])->orderBy(['id'=>SORT_DESC]);
     }
     // public function 
     public function deleteUser(){

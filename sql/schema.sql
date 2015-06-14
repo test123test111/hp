@@ -565,6 +565,25 @@ CREATE TABLE `approval` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE `hhg` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `phone` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tell` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `auth_key` varchar(64) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `password_hash` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `password_reset_token` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `role` smallint(6) NOT NULL DEFAULT '10',
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL DEFAULT '1',
+  `modified_uid` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
 
 
 

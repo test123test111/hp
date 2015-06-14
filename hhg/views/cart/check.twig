@@ -1,0 +1,169 @@
+{% set sidebar_name = "专属物料" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block body_class %}
+{% endblock%}
+{% block content %}
+    <link rel="stylesheet" href="/css/autocomplete.css">
+	<div class="view_wrap">
+        <div class="o_box">
+        	{% set form = activeform.begin({'action':'/order/buy','id':'buyForm'}) %}
+            {# <form enctype="multipart/form-data" method="post" action="success.html" id="buyForm"> #}
+                <div class="buy_list">
+                    <div class="dt">1 计划日期</div>
+                    <div class="dd">
+                        <input type="text" name="Order[send_date]" class="active_input date_input" />
+                    </div>
+                    <div class="dt">1 送达日期</div>
+                    <div class="dd">
+                        <input type="text" name="Order[arrive_date]" class="active_input date_input" />
+                    </div>
+                    <input type="hidden" value="{{ results.0.info.storeroom_id }}" id="storeType" name="Order[storeroom_id]" />
+                    <div class="dt">2 收货人信息</div>
+                    <input type="hidden" value="0" name="Order[to_type]" id="orderType" />
+                    <div class="dd">
+                        <ul class="type_tab clearfix">
+                            <li data-type="0" class="cur">收件人</li>
+                            <li data-type="1">平台库</li>
+                        </ul>
+                        <div class="add_content none">
+                            <select name="storeroom">
+                                {% for storeroom in storerooms %}
+                                <option value="{{ storeroom.id }}">{{ storeroom.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="add_content">
+                            <p>单位名称：<input type="text" value="" id="autocompleteName" class="active_input" /></p>
+                            <ul class="addr_list" id="address_area">
+                                
+                            </ul>
+                            <ul class="addr_list">
+                                <li class="clearfix addnew">
+                                    <a href="javascript:;">+新收货地址</a>
+                                </li>
+                            </ul>
+                        </div>
+                      
+                    </div>
+                    <div class="dt">3 到货需求</div>
+                    <div class="dd">
+                        <ul id="delivery_time" class="delivery_time clearfix">
+                            <li class="selected">
+                                <label><input type="radio" class="hookbox" checked="checked" value="1" name="Order[transport_type]">24小时</label>
+                            </li>
+                            <li>
+                                <label><input type="radio" class="hookbox" value="3" name="Order[transport_type]">3天门到门</label>
+                            </li>
+                            <li>
+                                <label><input type="radio" class="hookbox" value="2" name="Order[transport_type]">5天门到门</label>
+                            </li>
+                            {# <li>
+                                <label><input type="radio" class="hookbox" value="6" name="Order[transport_type]">4小时</label>
+                            </li> #}
+                             <li>
+                                <label><input type="radio" class="hookbox" value="4" name="Order[transport_type]">包车服务</label>
+                            </li>
+                            <li>
+                                <label><input type="radio" class="hookbox" value="5" name="Order[transport_type]">其他</label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dt">3 是否保险</div>
+                    <div class="dd">
+                        <ul id="safe_label" class="delivery_time clearfix">
+                            <li data-show="1">
+                                <label><input type="radio" class="hookbox" value="1" name="Order[insurance]">是</label>
+                            </li>
+                            <li class="selected" data-show="0">
+                                <label><input type="radio" class="hookbox" checked="checked" value="0" name="Order[insurance]">否</label>
+                            </li>
+                        </ul>
+                        <input type="text" placeholder="输入保险金额" name="Order[insurance_price]" class="memo_input none" id="safe_price" />
+                    </div>
+                    <div class="dt">4 物料信息</div>
+                    <div class="dd">
+                        <div class="buy_goods">
+                            <div class="cart_tt clearfix">
+                                <span class="goods">物料</span>
+                                <span class="room">库房</span>
+                                <span class="qty">数量</span>
+                            </div>
+                            <ul>
+                                {% set quantity = 0 %}
+                            	{% for result in results %}
+                                {% set quantity = quantity + result.quantity %}
+                            	<input type="hidden" name="Carts[{{ result.cart_id }}][id]" value="{{ result.cart_id }}" />
+                                <input type="hidden" name="Carts[{{ result.cart_id }}][material_id]" value="{{ result.info.material_id }}" />
+                                <input type="hidden" name="Carts[{{ result.cart_id }}][storeroom_id]" value="{{ result.info.storeroom_id }}" />
+                            	<input type="hidden" name="Carts[{{ result.cart_id }}][quantity]" value="{{ result.quantity }}" />
+                                <li class="clearfix" id="cart_294" data-stock="4" data-storeroom-id="1" data-materiel-id="1">
+                                    <div class="goods">
+                                        <a href="#" class="pic">
+                                        	{% for im in result.info.material.image %}
+					                            {% if loop.index == 1 %}
+					                            <img src="{{ im }}">
+					                            {% endif %}
+					                        {% endfor %}
+                                        </a>
+                                        <div class="name">
+                                            <p><a href="#">{{ result.info.material.name }}</a></p>
+                                            <div class="property">
+                                                <span>{{ result.info.material.getMyPropertyName() }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="room">{{ result.info.storeroom.name }}</span>
+                                    <span class="qty">×{{ result.quantity }}</span>
+                                </li>
+                            	{% endfor %}
+                            </ul>
+                        </div>
+                        <input type="hidden" id="shipResult" />
+                        <input type="text" placeholder="输入用途" name="Order[purpose]" class="memo_input" />
+                        <input type="text" placeholder="输入备注信息" name="Order[info]" class="memo_input" />
+                    </div>
+
+                    <div class="cart_submit clearfix">
+                        <a href="javascript:;" class="buy_btn">确认订单</a>
+                        <div class="amount">共<span class="red" id="selectedCount">{{ quantity }}</span> 件商品</div>
+                    </div>
+                    
+                </div>
+            {{ void(form.end()) }}
+        </div>
+    </div>
+    <script type='text/javascript' src='/js/layer.min.js'></script>
+    <script type='text/javascript' src='/js/autocomplete.js'></script>
+    <script type='text/javascript' src='/js/buy.js'></script>
+    <script type='text/javascript' src='/js/province.js'></script>
+    <script type='text/javascript' src='/js/city.js'></script>
+    <script type='text/javascript' src="/js/district.js"></script>
+    <script type='text/javascript' src='/js/date_input.js'></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.date_input').date_input();
+        })
+    </script>
+    <script type="text/javascript">
+    $(function(){
+        var data = {{ company|raw }}; 
+        $("#autocompleteName").autocomplete(data,{ 
+            formatItem: function(item) { 
+                return item.text; 
+            } 
+        }).result(function(event,item) { 
+            $.ajax({
+                url:item.url,
+                dataType:"html",
+                type:"GET",
+                success:function(json){
+                    $("#address_area").html(json);
+                    $(".buy_btn").removeClass("btn_order_undefined");
+                    layer.closeAll();
+                }
+            });
+            $("#company_box").html(item.text);
+        });
+    })
+    </script>
+{% endblock %}

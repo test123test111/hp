@@ -47,6 +47,9 @@ class StockTotal extends BackendActiveRecord {
     public function getStoreroom(){
         return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']);
     }
+    public function getOwner(){
+        return $this->hasOne(Owner::className(),['id'=>'owner_id']);
+    }
     public function getLink(){
     	return '
             return \yii\helpers\Html::a("查看明细","/stock/list?StockSearch[material_id]=$model->material_id&StockSearch[storeroom_id]=$model->storeroom_id");
