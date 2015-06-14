@@ -5,7 +5,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\BaseArrayHelper;
 use backend\components\BackendActiveRecord;
-
+use common\models\ProductLine;
 class Material extends BackendActiveRecord {
     public $upload;
 
@@ -38,8 +38,21 @@ class Material extends BackendActiveRecord {
         return [
             [['name','property','package','owner_id','pn','datasource','weight'],'required'],
             // ['code','unique'],
-            [['desc','image','size','stuff','expire','jiliang','code'],'safe']
+            [['desc','image','size','stuff','expire','jiliang','code'],'safe'],
+            ['owner_id','checkOwnerProductLine']
         ];
+    }
+    /**
+     * Validates the password.
+     * This method serves as the inline validation for password.
+     */
+    public function checkOwnerProductLine()
+    {
+        $owner = Owner::findOne($this->owner_id);
+        $product_line = ProductLine::findOne($owner->product_line);
+        if(empty($product_line)){
+            $this->addError('property', '当前物主未设置产品线,系统不能生成物料编码,请先为物主设置产品线');
+        }
     }
     public function behaviors()
     {

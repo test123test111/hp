@@ -70,8 +70,6 @@ class MaterialController extends BackendController {
                 $model->update();
                 Yii::$app->session->setFlash('success', '新建成功！');
                 $this->redirect("/material/list");
-            }else{
-                print_r($model->getErrors());exit;
             }
         }
         return $this->render('create', array(

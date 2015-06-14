@@ -47,6 +47,21 @@ class Share extends ActiveRecord
         return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']);
     }
     public static function updateShare($owner_id,$to_customer_id,$material_id,$storeroom_id){
+        $bigOwner = Owner::getBigOwnerByUid($owner_id);
+        if($bigOwner){
+            $big_uid = $bigOwner->id;
+            $big_result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$big_uid,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
+            if(empty($result)){
+                $model = new Static;
+                $model->owner_id = $owner_id;
+                $model->to_customer_id = $big_uid;
+                $model->material_id = $material_id;
+                $model->storeroom_id = $storeroom_id;
+                $model->status = self::STATUS_IS_NORMAL;
+                $model->created_uid = Yii::$app->user->id;
+                $model->save(false);
+            }
+        }
         $result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$to_customer_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
         if(empty($result)){
             $model = new Static;
@@ -60,6 +75,7 @@ class Share extends ActiveRecord
                 return true;
             }
         }
+
         
     }
     public static function updateMaterial($uid,$category){
@@ -86,6 +102,11 @@ class Share extends ActiveRecord
      * @return [type] [description]
      */
     public static function updateShareByOwnerId($material_id,$storeroom_id,$owner_id,$to_uids){
+        $bigOwner = Owner::getBigOwnerByUid($owner_id);
+        if(!empty($bigOwner)){
+            $big_owner_uid = $bigOwner->id;
+            unset($to_uids['big_owner_uid']);
+        }
         if(empty($to_uids)){
             return static::removeShare($material_id,$storeroom_id,$owner_id,$to_uids);
         }
