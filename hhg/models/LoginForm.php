@@ -67,7 +67,7 @@ class LoginForm extends Model
     private function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = Owner::findByEmail($this->email);
+            $this->_user = Hhg::findByEmail($this->email);
         }
         return $this->_user;
     }

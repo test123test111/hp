@@ -134,7 +134,7 @@ function editAddress(id){
             $.layer({
                 type: 1,
                 shade: [0.5, '#000'],
-                area: ['900', '380'],
+                area: ['900', '430'],
                 title: '地址',
                 btns: 2,
                 btn: ['确定', '取消'],

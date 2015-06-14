@@ -60,4 +60,20 @@ class Address extends CustomerActiveRecord {
     {
         return static::find()->where(['id' => $id, 'uid' => $uid])->one();
     }
+    /**
+     * [getAddressByUid description]
+     * @param  [type] $uid [description]
+     * @return [type]      [description]
+     */
+    public static function getAddressByUid($uid){
+        $query = static::find()->where(['uid' => $uid])->orderBy(['id'=>SORT_DESC]);
+        
+        $count = $query->count();
+        $pages = new \yii\data\Pagination(['totalCount' => $count]);
+        $ret = [];
+        $query->offset($pages->offset)->limit(20);
+
+        $data = $query->all();
+        return [$data,$pages,$count];
+    }
 }

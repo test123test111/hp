@@ -1,0 +1,58 @@
+{% set sidebar_name = "地址管理" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+<div class="main">
+<div class="materiel_box">
+<ul class="addr_list">
+    <li class="clearfix">
+        <a href="javascript:;" class="addnew">+新收货地址</a>
+    </li>
+</ul>
+        <table id="material_list" class="materiel_table">
+            <thead>
+                <tr>
+                    <td>收件人</td>
+                    <td>单位名称</td>
+                    <td>收件地址</td>
+                    <td>联系电话</td>
+                    <td>邮政编码</td>
+                    <td>添加时间</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key,result in results %}
+                <tr>
+                    <td>{{ result.name }}</td>
+                    <td>{{ result.company }}</td>
+                    <td>{{ result.province }}{{ result.city }}{{ result.area }}{{ result.address }}</td>
+                    <td>{{ result.phone }}</td>
+                    <td>{{ result.zip }}</td>
+                    <td>{{ result.created|date('Y-m-d H:i') }}</td>
+                    <td>
+                        <a href="javascript:;" data-id="{{ result.id }}" class="blue edit_link">修改</a>&nbsp;&nbsp;
+                        <a href="javascript:;" data-id="{{ result.id }}" class="blue del_link">删除</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>      
+    </div>
+    <div class="pages clearfix">
+        <div class="fr">
+            {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
+        </div>
+    </div>
+</div>
+<script type='text/javascript' src='/js/layer.min.js'></script>
+<script type='text/javascript' src='/js/address.js'></script>
+<script type='text/javascript' src='/js/province.js'></script>
+<script type='text/javascript' src='/js/city.js'></script>
+<script type='text/javascript' src="/js/district.js"></script>
+<script type='text/javascript'>
+</script>
+{% endblock %}
+
+
+
