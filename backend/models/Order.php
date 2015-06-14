@@ -270,28 +270,28 @@ class Order extends BackendActiveRecord {
      */
     public function getOrderStatus(){
         if($this->status == self::ORDER_STATUS_IS_PRE){
-            return "<font color='red'>预订单<font>";
+            return "<font color='red'>预订单</font>";
         }
         if($this->status == self::ORDER_STATUS_IS_NEED_APPROVAL){
-            return "<font color='red'>待审核<font>";
+            return "<font color='red'>待审核</font>";
         }
         if($this->status == self::ORDER_STATUS_IS_APPROVALED){
-            return "<font color='red'>审核通过<font>";
+            return "<font color='red'>审核通过</font>";
         }
         if($this->status == self::ORDER_STATUS_IS_APPROVAL_FAIL){
-            return "<font color='red'>审核未通过<font>";
+            return "<font color='red'>审核未通过</font>";
         }
         if($this->status == self::ORDER_STATUS_IS_TRUCK){
-            return "<font color='red'>已发货<font>";
+            return "<font color='red'>已发货</font>";
         }
         if($this->status == self::ORDER_STATUS_IS_SIGN){
-            return "<font color='red'>已签收<font>";
+            return "<font color='red'>已签收</font>";
         }
         if($this->status == self::ORDER_STATUS_IS_UNSIGN){
-            return "<font color='red'>未成功签收<font>";
+            return "<font color='red'>未成功签收</font>";
         }
         if($this->status == self::ORDER_STATUS_IS_CANCEL){
-            return "<font color='red'>已取消<font>";
+            return "<font color='red'>已取消</font>";
         }
     }
     public function getLink(){

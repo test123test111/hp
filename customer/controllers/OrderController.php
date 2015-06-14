@@ -953,7 +953,7 @@ class OrderController extends CustomerController {
     public function actionNeedapproval(){
         $params = Yii::$app->request->getQueryParams();
         list($data,$pages,$count) = OrderSearch::getNeedapprovalData(Yii::$app->request->getQueryParams());
-        $sidebar_name = '进行中的订单';
+        $sidebar_name = '待审批订单';
         return $this->render('list', [
              'results' => $data,
              'pages' => $pages,

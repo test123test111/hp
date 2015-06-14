@@ -3,7 +3,7 @@
 {% if order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_PRE") %}
 {% set sidebar_name = "预订单" %}
 {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_NEED_APPROVAL") %}
-{% set sidebar_name = "待审批的订单" %}
+{% set sidebar_name = "待审批订单" %}
 {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_APPROVALED") %}
 {% set sidebar_name = "进行中的订单" %}
 {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_TRUCK") %}
@@ -26,6 +26,7 @@
             <dt>预定单号：{{ order.viewid }}</dt>
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
             <dt>订单预估报价：{{ ship_fee + fenjian_fee }}RMB</dt>
+            <dt>订单状态：{{ order.getOrderStatus()|raw }}</dt>
         </dl>
         <dl>
             <dt>物料审批/费用审批</dt>
@@ -162,7 +163,7 @@
         <dl>
             <dt>配送信息</dt>
             <dd>
-                <p>要求送货日期：{{ order.send_date }}</p>
+                <p>要求送货日期：{{ order.send_date|date('Y-m-d') }}</p>
                 <p>要求送达日期：{{ order.arrive_date|date('Y-m-d') }}</p>
             </dd>
         </dl>
