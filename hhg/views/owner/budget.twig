@@ -1,0 +1,14 @@
+<!-- address dialog -->
+    <div class="address_popup">
+        <table>
+            <tbody>
+                <tr>
+                    <th>预算金额：<em>*</em></th>
+                    <td>
+                        <input type="text" {% if model is not empty %}value="{{ model.price }}"{% endif %} id="budgetPrice" class="tc-text"><span class="error_tip" id="error_company">单位名称不能为空</span>
+                        <input type="hidden" value="{{ id }}" id="budgetId" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>

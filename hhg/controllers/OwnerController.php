@@ -41,13 +41,22 @@ class OwnerController extends \yii\web\Controller {
              'params'=>Yii::$app->request->getQueryParams(),
         ]);
     }
+    public function actionBudget(){
+        if (!Yii::$app->request->isPost) {
+            throw new HttpException(404, 'The requested page does not exist.');
+        }
+        if (Yii::$app->request->post('id')) {
+            $model = Budget::find()->where(['owner_id'=>Yii::$app->request->post('id')])->orderBy(['id'=>SORT_DESC])->one();
+            echo $this->renderPartial('budget', ['model' => $model,'id'=>Yii::$app->request->post('id')]);
+        }
+    }
     /**
      * [actionUpdatebudget description]
      * @return [type] [description]
      */
     public function actionUpdatebudget(){
         if(Yii::$app->request->isPost){
-            $owner_id = Yii::$app->request->post('owner_id');
+            $owner_id = Yii::$app->request->post('id');
             $owner = Owner::findOne($owner_id);
             $price = Yii::$app->request->post('price');
             Budget::updateOwnerBudget($owner_id,$owner->category,$price);

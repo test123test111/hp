@@ -1,113 +1,76 @@
 {% set sidebar_name = "全部用户" %}
 {% extends "@app/views/layouts/main.twig" %}
 {% block content %}
-  {% include '@app/views/layouts/base_with_sidebar.twig' %}
-  <div class="main">
-        <div class="order_search">
-          <form>
-            <ul class="clearfix">
-                <li>
-                    <label>用 户：</label>
-                    <input type="text" name="username" value="{% if params.username is defined %}{{ params.username }}{% endif %}" class="search_input" placeholder="" />
-                </li>
-                <li>
-                    <label>部 门：</label>
-                    <input type="text" name="department" value="{% if params.department is defined %}{{ params.department }}{% endif %}" class="search_input" placeholder="" />
-                </li>
-                <li>
-                    <label>组 别：</label>
-                    <input type="text" name="category" value="{% if params.category is defined %}{{ params.category }}{% endif %}" class="search_input" placeholder="" />
-                </li>
-                <li>
-                    <label>产品线：</label>
-                    <input type="text" name="product_line" value="{% if params.product_line is defined %}{{ params.product_line }}{% endif %}" class="search_input" placeholder="" />
-                </li>
-            </ul>
-            
-            <input type="submit" value="搜索" class="search_btn" />
-          </form>
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+<div class="main">
+<div class="order_search">
+  <form>
+    <ul class="clearfix">
+        <li>
+            <label>用 户：</label>
+            <input type="text" name="username" value="{% if params.username is defined %}{{ params.username }}{% endif %}" class="search_input" placeholder="" />
+        </li>
+        <li>
+            <label>部 门：</label>
+            <input type="text" name="department" value="{% if params.department is defined %}{{ params.department }}{% endif %}" class="search_input" placeholder="" />
+        </li>
+        <li>
+            <label>组 别：</label>
+            <input type="text" name="category" value="{% if params.category is defined %}{{ params.category }}{% endif %}" class="search_input" placeholder="" />
+        </li>
+        <li>
+            <label>产品线：</label>
+            <input type="text" name="product_line" value="{% if params.product_line is defined %}{{ params.product_line }}{% endif %}" class="search_input" placeholder="" />
+        </li>
+    </ul>
+    
+    <input type="submit" value="搜索" class="search_btn" />
+  </form>
+</div>
+<div class="materiel_box">
+        <table id="material_list" class="materiel_table">
+            <thead>
+                <tr>
+                    <td>用户名</td>
+                    <td>email</td>
+                    {# <td>分享</td> #}
+                    <td>部门</td>
+                    <td>组别</td>
+                    <td>一级产品线</td>
+                    <td>二级产品</td>
+                    <td>当前预算</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key,result in results %}
+                <tr>
+                    <td>{{ result.english_name }}</td>
+                    <td>{{ result.email }}</td>
+                    <td>{{ result.departments.name }}</td>
+                    <td>{{ result.categorys.name }}</td>
+                    <td>{% if result.productlines is defined %}{{ result.productlines.name }}{% endif %}</td>
+                    <td>{% if result.producttwolines is defined %}{{ result.producttwolines.name }}{% endif %}</td>
+                    <td>{% if result.budgets is defined %}{{ result.budgets.price }}
+                        {% else %}
+                        0
+                        {% endif %}
+                    </td>
+                    <td><a href="javascript:;" data-id="{{ result.id }}" class="blue edit_link">修改预算</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>      
+    </div>
+    <div class="pages clearfix">
+        <div class="fr">
+            {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
         </div>
-        <div class="materiel_box">
-                <table id="material_list" class="materiel_table">
-                    <thead>
-                        <tr>
-                            <td>用户名</td>
-                            <td>email</td>
-                            {# <td>分享</td> #}
-                            <td>部门</td>
-                            <td>组别</td>
-                            <td>一级产品线</td>
-                            <td>二级产品</td>
-                            <td>当前预算</td>
-                            <td>操作</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for key,result in results %}
-                        <tr>
-                            <td>{{ result.english_name }}</td>
-                            <td>{{ result.email }}</td>
-                            <td>{{ result.departments.name }}</td>
-                            <td>{{ result.categorys.name }}</td>
-                            <td>{% if result.productlines is defined %}{{ result.productlines.name }}{% endif %}</td>
-                            <td>{% if result.producttwolines is defined %}{{ result.producttwolines.name }}{% endif %}</td>
-                            <td>{% if result.budgets is defined %}{{ result.budgets.price }}
-                                {% else %}
-                                0
-                                {% endif %}
-                            </td>
-                            <td><a href="javascript:;" class="blue modify-budget">修改预算</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>      
-            </div>
-            <div class="pages clearfix">
-                <div class="fr">
-                    {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
-                </div>
-            </div>
-      </div>
-      <script type='text/javascript' src='/js/layer.min.js'></script>
-      <script type='text/javascript'>
-            function shareTo(mid,rid){
-                var safeCode = $('meta[name=csrf-token]');
-                $.ajax({
-                    url : "/material/share",
-                    type : "POST",
-                    dataType : "html",
-                    data : {"material_id":mid,"storeroom_id":rid,"_csrf":safeCode.attr('content')},
-                    success : function(json){
-                        $.layer({
-                            type: 1,
-                            shade: [0.5, '#000'],
-                            area: ['500', '450'],
-                            title: '分享',
-                            btns: 2,
-                            btn: ['确定', '取消'],
-                            border: [5, 0.2, '#000'],
-                            yes: function(){
-                                var userIds = [];
-                                $.each($(".share_list dd input:checked"),function(){
-                                    userIds.push($(this).val());
-                                });
-                                $.ajax({
-                                    url : "/material/updateshare",
-                                    type : "POST",
-                                    dataType : "json",
-                                    data : {"material_id":mid,"storeroom_id":rid,"user_ids":userIds,"_csrf":safeCode.attr('content')},
-                                    success : function(json){
-                                        $("#succShare").show();
-                                        window.setTimeout("$('#succShare').fadeOut()",2000)
-                                    }
-                                });
-                            },
-                            page: {html:json}
-                        });
-                    }
-                });
-            }
-        </script>
+    </div>
+</div>
+<script type='text/javascript' src='/js/layer.min.js'></script>
+<script type='text/javascript' src='/js/owner-budget.js'></script>
+      
 {% endblock %}
 
 
