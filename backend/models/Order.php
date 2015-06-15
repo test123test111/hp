@@ -403,7 +403,7 @@ class Order extends BackendActiveRecord {
      */
     public function checkOrderNeedApproval(){
         list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
-        $budget_fee = rand(($ship_fee + $fenjian_fee) * self::BUDGET_RATIO);
+        $budget_fee = $ship_fee + $fenjian_fee;
 
         $owner = Owner::findOne($this->created_uid);
         $department_id = $owner->department;
@@ -538,7 +538,7 @@ class Order extends BackendActiveRecord {
      */
     public function consume(){
         list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
-        $price = rand(($ship_fee + $fenjian_fee) * self::BUDGET_RATIO);
+        $price = $ship_fee + $fenjian_fee;
         $owner = Owner::findOne($this->created_uid);
         $model = new BudgetConsume;
         $model->owner_id = $this->created_uid;
