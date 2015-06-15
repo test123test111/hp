@@ -230,9 +230,9 @@ class Stock extends CustomerActiveRecord {
             }
         }
         $count = $query->count();
-        $pages = new \yii\data\Pagination(['totalCount' => $count]);
+        $pages = new \yii\data\Pagination(['defaultPageSize'=>2,'totalCount' => $count]);
         $ret = [];
-        $query->offset($pages->offset)->limit(20);
+        $query->offset($pages->offset)->limit(2);
 
         $data = $query->all();
         return [$data,$pages,$count];

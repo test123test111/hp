@@ -23,7 +23,7 @@ class SendApprovalEmailController extends Controller{
                 if(!empty($owner)){
                     Yii::$app->mail->compose('@customer/views/mail/approval',['record'=>$task,'order'=>$order])
                          ->setFrom('service@yt-logistics.cn')
-                         ->setTo('liuwanglei2001@163.com')
+                         ->setTo($owner->email)
                          ->setSubject("订单审批申请")
                          ->send();
                     $task->send_email = Approval::SEND_EMAIL;
