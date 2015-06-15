@@ -30,7 +30,7 @@ class Budget extends yii\base\Component{
 			$materialWeight = $detail->quantity * $material->weight;
 			$weight += $materialWeight;
 		}
-		$weight = ceil($weight * 1.05);
+		$weight = ceil($weight * self::WEIGHT_RATIO);
 		$kg = ceil($weight / 1000);
 		list($result,$fee,$return_code) = ShippmentCost::getFeeByProperty($storeroom_id,$order->to_district,$kg,$order->transport_type,$order->to_type);
 		$count_detail = count($orderDetail);
