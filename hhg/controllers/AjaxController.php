@@ -20,4 +20,12 @@ class AjaxController extends CustomerController {
         echo $this->renderPartial('material',['material'=>$material]);
         // echo yii\helpers\ArrayHelper::toArray($material);
     }
+    /**
+     * action for new order need approval 
+     * icon flash
+     * @return [type] [description]
+     */
+    public function actionNeworder(){
+        echo Approval::getNewArroval();
+    }
 }

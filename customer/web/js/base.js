@@ -8,6 +8,7 @@ $(function(){
         $(".user span").removeClass("open");
         $(".user .sub").hide();
     });
+    setInterval("getNeedApproval();", 5000); 
 });
 
 $(document).ready(function(){
@@ -31,5 +32,19 @@ $(document).ready(function(){
 
 function gotop(){
     $('body,html').animate({scrollTop:0},200);
+}
+
+function getNeedApproval(){
+    var request_url = '/ajax/neworder';
+    $.ajax({
+        url:request_url,
+        dataType:"json",
+        type:"GET",
+        success:function(json){
+            if(json > 0){
+
+            }
+        }
+    });
 }
 
