@@ -74,7 +74,7 @@ class Package extends BackendActiveRecord {
             $orderPackage->save();
 
             $as = Order::findOne($order);
-            $as->status = Order::PACKAGE_ORDER;
+            $as->status = Order::ORDER_STATUS_IS_PACKAGE;
             $as->save(false);
         }
     }

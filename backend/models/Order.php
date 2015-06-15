@@ -41,11 +41,12 @@ class Order extends BackendActiveRecord {
     const ORDER_STATUS_IS_PRE = 0;
     const ORDER_STATUS_IS_NEED_APPROVAL = 1;
     const ORDER_STATUS_IS_APPROVALED = 2;
-    const ORDER_STATUS_IS_TRUCK = 3;
-    const ORDER_STATUS_IS_SIGN = 4;
-    const ORDER_STATUS_IS_UNSIGN = 5;
-    const ORDER_STATUS_IS_APPROVAL_FAIL = 6;
-    const ORDER_STATUS_IS_CANCEL = 7;
+    const ORDER_STATUS_IS_PACKAGE = 3;
+    const ORDER_STATUS_IS_TRUCK = 4;
+    const ORDER_STATUS_IS_SIGN = 5;
+    const ORDER_STATUS_IS_UNSIGN = 6;
+    const ORDER_STATUS_IS_APPROVAL_FAIL = 7;
+    const ORDER_STATUS_IS_CANCEL = 8;
 
 
 
@@ -230,11 +231,11 @@ class Order extends BackendActiveRecord {
     }
     public function getOptLink(){
         return '
-            if($model->status == 0 || $model->status == 4){
+            if($model->status == 2){
                 return \yii\helpers\Html::a("包装","/package/operate?id=$model->id");
-            }elseif($model->status == 1){
+            }elseif($model->status == 3){
                 return \yii\helpers\Html::a("标记发货","#",["onclick"=>"markshipping($model->id)"]);
-            }elseif($model->status == 2){
+            }elseif($model->status == 4){
                 return \yii\helpers\Html::a("标记签收<br />","#",["onclick"=>"marksign($model->id)"]).\yii\helpers\Html::a("标记未签收","#",["onclick"=>"markunsign($model->id)"]);
             }else{
                 return "";

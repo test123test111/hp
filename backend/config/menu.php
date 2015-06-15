@@ -44,30 +44,7 @@ return [
                 ],
             ],
         ],
-        // 'supplier'=>[
-        //     'name'=>'供应商',
-        //     'route'=>'',
-        //     'icon'=>'group',
-        //     'style'=>'',
-        //     'subs' => [
-        //         [
-        //             'name' => '干线列表',
-        //             'route' => 'trunk/list',
-        //         ],
-        //         [
-        //             'name' => '添加干线',
-        //             'route' => 'trunk/create',
-        //         ],
-        //         [
-        //             'name' => '派送公司列表',
-        //             'route' => 'delivery/list',
-        //         ],
-        //         [
-        //             'name' => '添加派送公司',
-        //             'route' => 'delivery/create',
-        //         ],
-        //     ],
-        // ],
+        
         // 'project'=>[
         //     'name'=>'项目',
         //     'route'=>'',
@@ -127,6 +104,30 @@ return [
                 ],
             ],
         ],
+        'supplier'=>[
+            'name'=>'供应商',
+            'route'=>'',
+            'icon'=>'group',
+            'style'=>'',
+            'subs' => [
+                [
+                    'name' => '干线列表',
+                    'route' => 'trunk/list',
+                ],
+                [
+                    'name' => '添加干线',
+                    'route' => 'trunk/create',
+                ],
+                [
+                    'name' => '派送公司列表',
+                    'route' => 'delivery/list',
+                ],
+                [
+                    'name' => '添加派送公司',
+                    'route' => 'delivery/create',
+                ],
+            ],
+        ],
         'material'=>[
             'name'=>'物料',
             'route'=>'',
@@ -181,19 +182,19 @@ return [
                 ],
                 [
                     'name' => '已包装订单',
-                    'route' => 'order/list?OrderSearch[status]=1',
-                ],
-                [
-                    'name' => '已发货订单',
-                    'route' => 'order/list?OrderSearch[status]=2',
-                ],
-                [
-                    'name' => '已签收订单',
                     'route' => 'order/list?OrderSearch[status]=3',
                 ],
                 [
-                    'name' => '未签收订单',
-                    'route' => 'order/list?OrderSearch[status]=7',
+                    'name' => '已发货订单',
+                    'route' => 'order/list?OrderSearch[status]=4',
+                ],
+                [
+                    'name' => '已签收订单',
+                    'route' => 'order/list?OrderSearch[status]=5',
+                ],
+                [
+                    'name' => '异常订单',
+                    'route' => 'order/list?OrderSearch[status]=6',
                 ],
             ],
         ],

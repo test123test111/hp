@@ -6,7 +6,7 @@
     <td width="13%" height="220" bgcolor="#FFFFFF"><div align="center">物料</div></td>
     <td bgcolor="#FFFFFF">
       {% for de in detail %}
-      物料编码:{{ de.goods_code }}&nbsp;&nbsp;&nbsp;&nbsp;物料名称:{{ de.material.name }}&nbsp;&nbsp;&nbsp;&nbsp;发货数量:{{ de.goods_quantity }}</br>
+      物料编码:{{ de.material.code }}&nbsp;&nbsp;&nbsp;&nbsp;物料名称:{{ de.material.name }}&nbsp;&nbsp;&nbsp;&nbsp;发货数量:{{ de.quantity }}</br>
       {% endfor %}
     </td>
   </tr>
@@ -16,11 +16,11 @@
   </tr>
   <tr>
     <td height="40" bgcolor="#FFFFFF"><div align="center">收货地址</div></td>
-    <td bgcolor="#FFFFFF">{{ order.recipients_address }}</td>
+    <td bgcolor="#FFFFFF">{{ order.to_province }} {{ order.to_city }} {{ order.to_district }} {{ order.contact }}</td>
   </tr>
   <tr>
     <td height="40" bgcolor="#FFFFFF"><div align="center">联系方式</div></td>
-    <td bgcolor="#FFFFFF">{{ order.recipients_contact }}</td>
+    <td bgcolor="#FFFFFF">{{ order.phone }}</td>
   </tr>
   <tr>
     <td height="40" bgcolor="#FFFFFF"><div align="center">发货城市</div></td>
@@ -28,11 +28,11 @@
   </tr>
   <tr>
     <td height="40" bgcolor="#FFFFFF"><div align="center">运输需求</div></td>
-    <td bgcolor="#FFFFFF">{{ order.limitday }}</td>
+    <td bgcolor="#FFFFFF">{{ order.getMyTransportType() }}</td>
   </tr>
   <tr>
-    <td height="40" bgcolor="#FFFFFF"><div align="center">活动</div></td>
-    <td width="87%" bgcolor="#FFFFFF">{{ order.goods_active }}</td>
+    <td height="40" bgcolor="#FFFFFF"><div align="center">用途</div></td>
+    <td width="87%" bgcolor="#FFFFFF">{{ order.purpose }}</td>
   </tr>
   <tr>
     <td height="189" bgcolor="#FFFFFF"><div align="center">备注</div></td>
