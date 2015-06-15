@@ -268,13 +268,8 @@ class OrderController extends BackendController {
      */
     public function actionMarksign($id){
         $order = $this->loadModel($id);
-        if($order->status != Order::SHIPPING_ORDER){
+        if($order->status != Order::ORDER_STATUS_IS_TRUCK){
             throw new CHttpException(404, '数据错误，请检查一下订单是否是发货状态，不是发货状态的订单不能标记为签收');
-        }
-        if(Yii::$app->user->identity->storeroom_id != Order::BIGEST_STOREROOM_ID){
-            if($order->storeroom_id != Yii::$app->user->identity->storeroom_id){
-                throw new \Exception("Error Processing Request", 404);
-            }
         }
         $model = new OrderSign;
         $model->order_viewid = $order->viewid;
@@ -283,12 +278,12 @@ class OrderController extends BackendController {
             $model->sign_date = $_POST['sign_date-ordersign-sign_date'];
             if($model->validate()){
                 if($model->save()){
-                    $order->status = Order::SIGN_ORDER;
+                    $order->status = Order::ORDER_STATUS_IS_SIGN;
                     $order->save(false);
                     //create queue to send email
                     //Yii::$app->gqueue->createJob('send_email','gcommon\components\gqueue\workers\SendEmail',["type"=>Order::SIGN_ORDER,'id'=>$order->id]);
                 }
-                return $this->redirect("/order/list?OrderSearch[status]=3");
+                return $this->redirect("/order/list?OrderSearch[status]=5");
             }
         }
         return $this->render('marksign',['id'=>$id,'order'=>$order,'model'=>$model]);

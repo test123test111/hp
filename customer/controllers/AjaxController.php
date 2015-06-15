@@ -5,7 +5,7 @@ namespace customer\controllers;
 use Yii;
 use backend\models\Material;
 use customer\components\CustomerController;
-
+use common\models\Approval;
 class AjaxController extends CustomerController {
     public $enableCsrfValidation;
     /**
@@ -19,5 +19,13 @@ class AjaxController extends CustomerController {
         $material = Material::findOne($id);
         echo $this->renderPartial('material',['material'=>$material]);
         // echo yii\helpers\ArrayHelper::toArray($material);
+    }
+    /**
+     * action for new order need approval 
+     * icon flash
+     * @return [type] [description]
+     */
+    public function actionNeworder(){
+        echo Approval::getNewArroval(Yii::$app->user->id);
     }
 }

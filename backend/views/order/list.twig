@@ -62,6 +62,10 @@
                   'class':'\\yii\\grid\\CheckboxColumn',
                 },
                 1:'viewid',
+                2:{
+                  'attribute':'to_type',
+                  'value':'if($model->to_type == 0){return "收件人";}else{return "平台库";}'|value_callback,
+                },
                 6:{
                   'attribute':'recipients',
                 },
@@ -88,7 +92,7 @@
                 }
         }})
     }}
-{% if status != 2 and status != 3 and status != 7 %}
+{% if status != 4 %}
 {{ void(form.end()) }}
 {% endif %}
                     <div class="widget-foot">

@@ -463,10 +463,11 @@ class Order extends BackendActiveRecord {
             'to_city'=>'收货城市',
             'to_province'=>'收货省份',
             'recipients'=>'收货人',
-            'recipients_address'=>'收货地址',
-            'recipients_contact'=>'收货人联系方式',
+            'address'=>'收货地址',
+            'contact'=>'收货人联系方式',
             'info'=>'备注',
-            'limitday'=>'到货需求',
+            'transport_type'=>'到货需求',
+            'purpost'=>'用途',
             'status'=>'订单状态',
             'created'=>'下单时间',
             'created_uid'=>'下单人',
@@ -594,5 +595,12 @@ class Order extends BackendActiveRecord {
         if(!empty($owner)){
             return $owner->id;
         }
+    }
+    /**
+     * get new order count for alert
+     * @return [type] [description]
+     */
+    public static function getNewOrdersCount(){
+        return static::find()->where(['status'=>self::ORDER_STATUS_IS_APPROVALED,'is_del'=>self::ORDER_IS_NOT_DEL])->count();
     }
 }

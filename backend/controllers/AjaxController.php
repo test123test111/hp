@@ -20,10 +20,10 @@ class AjaxController extends BackendController {
         $id = $_POST['id'];
         $order = Order::find()->where(['id'=>$id,'is_del'=>Order::ORDER_IS_NOT_DEL])->one();
             //order shipping must package before
-        if($order->status != Order::PACKAGE_ORDER){
+        if($order->status != Order::ORDER_STATUS_IS_PACKAGE){
             echo 1;
         }else{
-            $order->status = Order::SHIPPING_ORDER;
+            $order->status = Order::ORDER_STATUS_IS_TRUCK;
             $order->save(false);
             echo 2;
         }
@@ -34,10 +34,17 @@ class AjaxController extends BackendController {
         $id = $_POST['id'];
         $order = Order::find()->where(['id'=>$id,'is_del'=>Order::ORDER_IS_NOT_DEL])->one();
         //order shipping must package before
-        if($order->status != Order::SHIPPING_ORDER){
+        if($order->status != Order::ORDER_STATUS_IS_TRUCK){
             echo 1;
         }else{
             echo 2;
         }
+    }
+    /**
+     * [actionNeworder description]
+     * @return [type] [description]
+     */
+    public function actionNeworder(){
+        echo Order::getNewOrdersCount();
     }
 }
