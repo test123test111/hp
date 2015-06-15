@@ -27,6 +27,11 @@
                                     <span class="user">下单人：
                                         {{ result.createduser.english_name }}
                                     </span>
+                                    {% if result.hhg_uid != 0 %}
+                                    <span class="user">操作人：
+                                        {{ result.hhguser.name }}
+                                    </span>
+                                    {% endif %}
                                     {# <span class="del"></span> #}
                                 </td>
                             </tr>

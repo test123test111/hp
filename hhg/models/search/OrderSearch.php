@@ -54,7 +54,7 @@ class OrderSearch extends Order
     public static function getMyData($params){
         $query = Order::find()->with(['details'=>function($query){
                                     return $query->with('material');
-                                }])->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'hhg_uid'=>Yii::$app->user->id])->orderBy(['id'=>SORT_DESC]);
+                                }])->where(['is_del'=>Order::ORDER_IS_NOT_DEL])->orderBy(['id'=>SORT_DESC]);
 
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $query->andWhere(['viewid'=>$params['order_id']]);
@@ -87,7 +87,7 @@ class OrderSearch extends Order
     public static function getPreData($params){
         $query = Order::find()->with(['details'=>function($query){
                                     return $query->with('material');
-                                }])->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'hhg_uid'=>Yii::$app->user->id,'status'=>self::ORDER_STATUS_IS_PRE])->orderBy(['id'=>SORT_DESC]);
+                                }])->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'status'=>self::ORDER_STATUS_IS_PRE])->orderBy(['id'=>SORT_DESC]);
 
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $query->andWhere(['viewid'=>$params['order_id']]);
@@ -113,7 +113,7 @@ class OrderSearch extends Order
      */
     public static function getDoingData($params){
         $query = Order::find()->with(['details'])
-                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'hhg_uid'=>Yii::$app->user->id])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL])
                               ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_APPROVALED,':c_status'=>self::ORDER_STATUS_IS_TRUCK])
                               ->orderBy(['id'=>SORT_DESC]);
 
@@ -141,7 +141,7 @@ class OrderSearch extends Order
      */
     public static function getDoneData($params){
         $query = Order::find()->with(['details'])
-                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'hhg_uid'=>Yii::$app->user->id])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                               ->orderBy(['id'=>SORT_DESC]);
 
@@ -169,7 +169,7 @@ class OrderSearch extends Order
      */
     public static function getExcepetData($params){
         $query = Order::find()->with(['details'])
-                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'hhg_uid'=>Yii::$app->user->id])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL])
                               ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_UNSIGN,':c_status'=>self::ORDER_STATUS_IS_APPROVAL_FAIL])
                               ->orderBy(['id'=>SORT_DESC]);
 
@@ -196,7 +196,7 @@ class OrderSearch extends Order
      * @return [type] [description]
      */
     public static function getNeedapprovalData($params){
-        $query = Order::find()->with(['details'])->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'hhg_uid'=>Yii::$app->user->id,'status'=>self::ORDER_STATUS_IS_NEED_APPROVAL])->orderBy(['id'=>SORT_DESC]);
+        $query = Order::find()->with(['details'])->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'status'=>self::ORDER_STATUS_IS_NEED_APPROVAL])->orderBy(['id'=>SORT_DESC]);
 
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $query->andWhere(['viewid'=>$params['order_id']]);

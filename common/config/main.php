@@ -14,14 +14,14 @@ return [
         ],
       'mail' => [
           'class' => 'yii\swiftmailer\Mailer',
-          'viewPath' => '@customer/mail',
+          'htmlLayout'=>false,
           'transport' => [
               'class' => 'Swift_SmtpTransport',
               'host' => 'smtp.exmail.qq.com',
               'username' => 'service@yt-logistics.cn',
-              'password' => 'yltd12345',
-              // 'port' => '587',
-              // 'encryption' => 'tls',
+              'password' => 'yltd54321',
+              'port' => '587',
+              'encryption' => 'tls',
             ],
       ],
 	  ],

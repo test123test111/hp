@@ -87,4 +87,16 @@ class Approval extends ActiveRecord
         $data = $query->all();
         return [$data,$pages,$count];
     }
+    /**
+     * get new approval 
+     * @param  string $owner_id [description]
+     * @return [type]           [description]
+     */
+    public static function getNewArroval($owner_id = ""){
+        $query = static::find()->where(['status'=>self::STATUS_IS_UNHANDLE]);
+        if($owner_id){
+            $query->andWhere(['owner_id'=>$owner_id]);
+        }
+        return $query->count();
+    }
 }

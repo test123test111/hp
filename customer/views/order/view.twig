@@ -25,7 +25,7 @@
         <dl>
             <dt>预定单号：{{ order.viewid }}</dt>
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
-            <dt>订单预估报价：{{ ship_fee + fenjian_fee }}RMB</dt>
+            <dt>订单预估报价：{{ (ship_fee + fenjian_fee) * 1.05 }}RMB</dt>
             <dt>订单状态：{{ order.getOrderStatus()|raw }}</dt>
         </dl>
         <dl>

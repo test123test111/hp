@@ -84,6 +84,17 @@ return [
         //         ],
         //     ],
         // ],
+        'department'=>[
+            'name'=>'部门',
+            'route'=>'',
+            'icon'=>'bold',
+            'subs' => [
+                [
+                    'name' => '部门列表',
+                    'route' => 'department/list',
+                ],
+            ],
+        ],
         'owner' => [
             'name' => '物主',
             'route' => 'owner/list',
@@ -103,7 +114,7 @@ return [
         'hhg' => [
             'name' => 'HH用户',
             'route' => 'hhg/list',
-            'icon'=>'globe',
+            'icon'=>'group',
             'style'=>'',
             'subs' => [
                 [

@@ -13,9 +13,10 @@ use common\models\Budget;
 use common\models\BudgetConsume;
 use common\models\BudgetTotal;
 use common\models\Approval;
+use hhg\models\Hhg;
 class Order extends BackendActiveRecord {
 
-   
+    const BUDGET_RATIO = 1.05;
     const ORDER_IS_DEL = 1;
     const ORDER_IS_NOT_DEL = 0;
 
@@ -336,15 +337,15 @@ class Order extends BackendActiveRecord {
             $this->owner_approval = self::PASS_OWNER_APPROVAL;
             $this->update(false);
         }
-        if($this->hhg_uid != 0){
-            OrderDetail::updateAll(['is_owner_approval'=>OrderDetail::IS_OWNER_APPROVAL,
-                                    'approval_uid'=>$this->hhg_uid,
-                                    'approval_date'=>strtotime($this->created),
-                                    'approval_uid_type'=>OrderDetail::APPROVAL_USER_TYPE_IS_HHG],
-                                    ['order_id'=>$this->id]);
-            $this->owner_approval = self::PASS_OWNER_APPROVAL;
-            $this->update(false);
-        }
+        // if($this->hhg_uid != 0){
+        //     OrderDetail::updateAll(['is_owner_approval'=>OrderDetail::IS_OWNER_APPROVAL,
+        //                             'approval_uid'=>$this->hhg_uid,
+        //                             'approval_date'=>strtotime($this->created),
+        //                             'approval_uid_type'=>OrderDetail::APPROVAL_USER_TYPE_IS_HHG],
+        //                             ['order_id'=>$this->id]);
+        //     $this->owner_approval = self::PASS_OWNER_APPROVAL;
+        //     $this->update(false);
+        // }
         $this->checkOrderNeedApproval();
         return true;
     }
@@ -402,7 +403,7 @@ class Order extends BackendActiveRecord {
      */
     public function checkOrderNeedApproval(){
         list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
-        $budget_fee = $ship_fee + $fenjian_fee;
+        $budget_fee = rand(($ship_fee + $fenjian_fee) * self::BUDGET_RATIO);
 
         $owner = Owner::findOne($this->created_uid);
         $department_id = $owner->department;
@@ -504,6 +505,9 @@ class Order extends BackendActiveRecord {
     public function getDetails(){
         return $this->hasMany(OrderDetail::className(),['order_id'=>'id']);
     }
+    public function getHhguser(){
+        return $this->hasOne(Hhg::className(),['id'=>'hhg_uid']);
+    }
     public function getRevokLink(){
         return '
             if($model->status == 5){
@@ -534,7 +538,7 @@ class Order extends BackendActiveRecord {
      */
     public function consume(){
         list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
-        $price = $ship_fee + $fenjian_fee;
+        $price = rand(($ship_fee + $fenjian_fee) * self::BUDGET_RATIO);
         $owner = Owner::findOne($this->created_uid);
         $model = new BudgetConsume;
         $model->owner_id = $this->created_uid;
@@ -549,12 +553,11 @@ class Order extends BackendActiveRecord {
         $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
         if($total != 0){
             if($consume / $total >= 0.5){
-                //send email 
-                // Yii::$app->mail->compose('warning',['order'=>$this])
-                //          ->setFrom('service@yt-logistics.cn')
-                //          ->setTo($owner->email)
-                //          ->setSubject("预算报警通知")
-                //          ->send();
+                Yii::$app->mail->compose('@app/views/mail/warning',['order'=>$this])
+                         ->setFrom('service@yt-logistics.cn')
+                         ->setTo($owner->email)
+                         ->setSubject("预算报警通知")
+                         ->send();
             }
         }
         
