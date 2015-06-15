@@ -554,13 +554,23 @@ class Order extends BackendActiveRecord {
         $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
         $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
         if($total != 0){
-            if($consume / $total >= 0.5){
-                Yii::$app->mail->compose('@app/views/mail/warning',['order'=>$this])
+            if($consume / $total >= 0.5 && $consume / $total < 0.85){
+                $price = '50%';
+                Yii::$app->mail->compose('@app/views/mail/warning',['price'=>$price])
                          ->setFrom('service@yt-logistics.cn')
                          ->setTo($owner->email)
                          ->setSubject("预算报警通知")
                          ->send();
             }
+            if($consume / $total >= 0.85){
+                $price = '85%';
+                Yii::$app->mail->compose('@app/views/mail/warning',['price'=>$price])
+                         ->setFrom('service@yt-logistics.cn')
+                         ->setTo($owner->email)
+                         ->setSubject("预算报警通知")
+                         ->send();
+            }
+            
         }
         
     }

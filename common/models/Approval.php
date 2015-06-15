@@ -13,6 +13,9 @@ class Approval extends ActiveRecord
     const STATUS_IS_UNHANDLE = 0;
     const STATUS_IS_PASS = 1;
     const STATUS_IS_REJECT = 2;
+
+    const SEND_EMAIL = 1;
+    const NOT_SEND_EMAIL = 0;
     /**
      * function_description
      *
@@ -98,5 +101,12 @@ class Approval extends ActiveRecord
             $query->andWhere(['owner_id'=>$owner_id]);
         }
         return $query->count();
+    }
+    /**
+     * [getNeedSendEmail description]
+     * @return [type] [description]
+     */
+    public static function getNeedSendEmail(){
+        return static::find()->where(['status'=>self::STATUS_IS_UNHANDLE,'send_email'=>self::NOT_SEND_EMAIL])->one();
     }
 }

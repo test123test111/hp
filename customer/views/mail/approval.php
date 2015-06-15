@@ -1,12 +1,18 @@
 <?php
-$url = "http://customer.yltd.com/order/list";
+$id = $record->order_id;
+$url = "http://customer.yltd.com/order/viewapproval/{$id}";
+if($record->type == 0){
+	$type = '物料';
+}else{
+	$type = '费用';
+}
 ?>
 <html>
 	<body>
-		<p>您的预算已经超过<?php echo $price; ?>
+		<p>订单<b><?php echo $order->viewid; ?></b>中包含需要您审批的<?php echo $type; ?>
 		<br><br>
 		您可以<a href="$url">
-			点击查看订单情况<br />
+			点击查看订单详情进行审批<br />
 		</a>
 		如果上面的链接无法点击，请复制下面网址到您浏览器地址栏
 		<?php echo $url; ?>
