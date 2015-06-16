@@ -21,6 +21,7 @@ use customer\models\Address;
 use common\models\HpCity;
 use common\models\Approval;
 use common\models\ShippmentCost;
+use common\models\SendEmail;
 
 class OrderController extends CustomerController {
     public $layout = false;
@@ -766,6 +767,22 @@ class OrderController extends CustomerController {
                         $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
                         $stockTotal->total = $stockTotal->total - $detail->quantity;
                         $stockTotal->update();
+
+                        if($stockTotal->total < $stockTotal->warning_quantity){
+                            //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
+                            $ret = [
+                                'code'=>$detail->material->code,
+                                'name'=>$detail->material->name,
+                                'email'=>$detail->owner->email,
+                                'total'=>$stockTotal->total,
+                                'type'=>'物料',
+                            ];
+                            $sendEmail = new SendEmail;
+                            $sendEmail->template = 'stock';
+                            $sendEmail->content = json_encode($ret);
+                            $sendEmail->created = date('Y-m-d H:i:s');
+                            $sendEmail->save();
+                        }
                     }
                     $orderInfo->consume();
                 }
@@ -792,6 +809,22 @@ class OrderController extends CustomerController {
                         $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
                         $stockTotal->total = $stockTotal->total - $detail->quantity;
                         $stockTotal->update();
+
+                        if($stockTotal->total < $stockTotal->warning_quantity){
+                            //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
+                            $ret = [
+                                'code'=>$detail->material->code,
+                                'name'=>$detail->material->name,
+                                'email'=>$detail->owner->email,
+                                'total'=>$stockTotal->total,
+                                'type'=>'物料',
+                            ];
+                            $sendEmail = new SendEmail;
+                            $sendEmail->template = 'stock';
+                            $sendEmail->content = json_encode($ret);
+                            $sendEmail->created = date('Y-m-d H:i:s');
+                            $sendEmail->save();
+                        }
                     }
                     $orderInfo->consume();
                 }
@@ -831,6 +864,22 @@ class OrderController extends CustomerController {
                     $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
                     $stockTotal->total = $stockTotal->total - $detail->quantity;
                     $stockTotal->update();
+
+                    if($stockTotal->total < $stockTotal->warning_quantity){
+                        //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
+                        $ret = [
+                            'code'=>$detail->material->code,
+                            'name'=>$detail->material->name,
+                            'email'=>$detail->owner->email,
+                            'type'=>'物料',
+                        ];
+                        $sendEmail = new SendEmail;
+                        $sendEmail->template = 'stock';
+                        $sendEmail->content = json_encode($ret);
+                        $sendEmail->created = date('Y-m-d H:i:s');
+                        $sendEmail->save();
+                    }
+
                 }
                 $order->consume();
             }

@@ -618,6 +618,20 @@ CREATE TABLE `hhg_address` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE `send_email` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否发送 0:未发送 1:已发送',
+  `template` varchar(16) NOT NULL,
+  `content` text NOT NULL,
+  `created` datetime NOT NULL COMMENT '添加时间',
+  `sendtime` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
 
 
 

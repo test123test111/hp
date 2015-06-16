@@ -11,7 +11,7 @@ use backend\models\search\OwnerSearch;
 use backend\components\BackendController;
 use backend\models\Share;
 use common\models\Budget;
-
+use common\models\SendEmail;
 class OwnerController extends BackendController {
     /**
      * This is the default 'index' action that is invoked
@@ -61,6 +61,16 @@ class OwnerController extends BackendController {
                         Budget::updateOwnerBudget($model->id,$model->category,$model->budget);
                     }
                 // }
+                $ret = [
+                    'email'=>$model->email,
+                    'password'=>$_POST['Owner']['password'],
+                ];
+                $sendEmail = new SendEmail;
+                $sendEmail->template = 'createuser';
+                $sendEmail->content = json_encode($ret);
+                $sendEmail->created = date('Y-m-d H:i:s');
+                $sendEmail->save();
+
                 Yii::$app->session->setFlash('success', '新建成功！');
                 $this->redirect("/owner/list");
             }

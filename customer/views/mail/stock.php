@@ -5,7 +5,7 @@ $url = "http://customer.yltd.com/order/list";
 	<body>
 		<p>尊敬的<b><?php echo $record['email']; ?></b>:</p>
 		<br><br>
-		您的费用使用已达<?php echo $record['price']; ?>，请您知悉。谢谢。
+		您的物料<?php echo $record['code']; ?>&nbsp;<?php echo $record['name']; ?>剩余库存为<?php echo $record['total']; ?>，已达预警值，请您知悉，谢谢。
 		<br><br>
 		Thanks!
 		<br><br>

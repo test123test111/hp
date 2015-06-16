@@ -9,7 +9,9 @@ if($record->type == 0){
 ?>
 <html>
 	<body>
-		<p>订单<b><?php echo $order->viewid; ?></b>中包含需要您审批的<?php echo $type; ?>
+		<p>尊敬的<b><?php echo $email; ?></b>:</p>
+		<br />
+		<?php echo $username; ?>在物流仓储系统中申请使用您的<?php echo $type; ?>,预订单号为：<?php echo $order->viewid; ?>，烦请您登录系统批复意见。
 		<br><br>
 		您可以<a href="$url">
 			点击查看订单详情进行审批<br />
@@ -17,18 +19,16 @@ if($record->type == 0){
 		如果上面的链接无法点击，请复制下面网址到您浏览器地址栏
 		<?php echo $url; ?>
 		<br><br>
-		Thanks!
+		感谢您的合作！
 		<br><br>
 		-HHG
-		<br><a href="#">www.yltd.com</a>
+		<br>
 		<br>
 		&nbsp;
 		</p>
 		<hr>
 		<br>
-		这是一封由系统自动发送的邮件，请勿回复!
-
-		 
+		此邮件为系统自动发送，请不要直接回复。
 
 		<style type="text/css">
 		body{font-size:14px;font-family:arial,verdana,sans-serif;line-height:1.666;padding:0;margin:0;overflow:auto;white-space:normal;word-wrap:break-word;min-height:100px}

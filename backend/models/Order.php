@@ -14,6 +14,7 @@ use common\models\BudgetConsume;
 use common\models\BudgetTotal;
 use common\models\Approval;
 use hhg\models\Hhg;
+use common\models\SendEmail;
 class Order extends BackendActiveRecord {
 
     const BUDGET_RATIO = 1.05;
@@ -446,6 +447,12 @@ class Order extends BackendActiveRecord {
                 if($budget_fee > ($total - $consume)){
                     $this->can_formal = self::IS_NOT_FORMAL;
                     $this->update();
+                    foreach($this->details as $detail){
+                        //lock stock total
+                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                        $stockTotal->update();
+                    }
                 }else{
                     if(($consume / $total) < 0.85 && $budget_fee >= 1000){
                         $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
@@ -462,6 +469,12 @@ class Order extends BackendActiveRecord {
                 if($budget_fee > ($total - $consume)){
                     $this->can_formal = self::IS_NOT_FORMAL;
                     $this->update();
+                    foreach($this->details as $detail){
+                        //lock stock total
+                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                        $stockTotal->update();
+                    }
                 }
             }
         }
@@ -469,6 +482,12 @@ class Order extends BackendActiveRecord {
             if($budget_fee > ($total - $consume)){
                 $this->can_formal = self::IS_NOT_FORMAL;
                 $this->update();
+                foreach($this->details as $detail){
+                    //lock stock total
+                    $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                    $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                    $stockTotal->update();
+                }
             }
         }
 
@@ -480,6 +499,40 @@ class Order extends BackendActiveRecord {
             $this->status = self::ORDER_STATUS_IS_APPROVALED;
             $this->update();
             $this->consume();
+            foreach($this->details as $detail){
+                $stock = new Stock;
+                $stock->material_id = $detail->material->id;
+                $stock->storeroom_id = $detail->storeroom_id;
+                $stock->owner_id = $detail->owner_id;
+                $stock->actual_quantity = 0 - $detail->quantity;
+                $stock->stock_time = date('Y-m-d H:i:s');
+                $stock->created = date('Y-m-d H:i:s');
+                $stock->increase = Stock::IS_NOT_INCREASE;
+                $stock->order_id = $detail->order_id;
+                $stock->save(false);
+
+                //lock stock total
+                $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                $stockTotal->total = $stockTotal->total - $detail->quantity;
+                $stockTotal->update();
+
+                if($stockTotal->total < $stockTotal->warning_quantity){
+                    //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
+                    $ret = [
+                        'code'=>$detail->material->code,
+                        'name'=>$detail->material->name,
+                        'email'=>$detail->owner->email,
+                        'total'=>$stockTotal->total,
+                        'type'=>'物料',
+                    ];
+                    $sendEmail = new SendEmail;
+                    $sendEmail->template = 'stock';
+                    $sendEmail->content = json_encode($ret);
+                    $sendEmail->created = date('Y-m-d H:i:s');
+                    $sendEmail->save();
+                }
+            }
         }
     }
     public function attributeLabels(){
@@ -582,20 +635,30 @@ class Order extends BackendActiveRecord {
         $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
         if($total != 0){
             if($consume / $total >= 0.5 && $consume / $total < 0.85){
-                $price = '50%';
-                Yii::$app->mail->compose('@app/views/mail/warning',['price'=>$price])
-                         ->setFrom('service@yt-logistics.cn')
-                         ->setTo($owner->email)
-                         ->setSubject("预算报警通知")
-                         ->send();
+                $warning_price = '50%';
+                $ret = [
+                    'price'=>$warning_price,
+                    'email'=>$owner->email,
+                    'type'=>'费用',
+                ];
+                $sendEmail = new SendEmail;
+                $sendEmail->template = 'warning';
+                $sendEmail->content = json_encode($ret);
+                $sendEmail->created = date('Y-m-d H:i:s');
+                $sendEmail->save();
             }
             if($consume / $total >= 0.85){
-                $price = '85%';
-                Yii::$app->mail->compose('@app/views/mail/warning',['price'=>$price])
-                         ->setFrom('service@yt-logistics.cn')
-                         ->setTo($owner->email)
-                         ->setSubject("预算报警通知")
-                         ->send();
+                $warning_price = '85%';
+                $ret = [
+                    'price'=>$warning_price,
+                    'email'=>$owner->email,
+                    'type'=>'费用',
+                ];
+                $sendEmail = new SendEmail;
+                $sendEmail->template = 'warning';
+                $sendEmail->content = json_encode($ret);
+                $sendEmail->created = date('Y-m-d H:i:s');
+                $sendEmail->save();
             }
             
         }

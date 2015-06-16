@@ -1,20 +1,24 @@
 {% extends "@app/views/layouts/main.twig" %}
 {% block content %}
-{% if order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_PRE") %}
-{% set sidebar_name = "预订单" %}
-{% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_NEED_APPROVAL") %}
-{% set sidebar_name = "待审批订单" %}
-{% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_APPROVALED") %}
-{% set sidebar_name = "进行中的订单" %}
-{% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_TRUCK") %}
-{% set sidebar_name = "进行中的订单" %}
-{% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_SIGN") %}
-{% set sidebar_name = "已完成的订单" %}
-{% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_UNSIGN") %}
-{% set sidebar_name = "异常订单" %}
-{% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_APPROVAL_FAIL") %}
-{% set sidebar_name = "异常订单" %}
-{% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_CANCEL") %}
+{% if order.can_formal == constant("\\backend\\models\\Order::IS_FORMAL") %}
+    {% if order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_PRE") %}
+    {% set sidebar_name = "预订单" %}
+    {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_NEED_APPROVAL") %}
+    {% set sidebar_name = "待审批订单" %}
+    {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_APPROVALED") %}
+    {% set sidebar_name = "进行中的订单" %}
+    {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_TRUCK") %}
+    {% set sidebar_name = "进行中的订单" %}
+    {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_SIGN") %}
+    {% set sidebar_name = "已完成的订单" %}
+    {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_UNSIGN") %}
+    {% set sidebar_name = "异常订单" %}
+    {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_APPROVAL_FAIL") %}
+    {% set sidebar_name = "异常订单" %}
+    {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_CANCEL") %}
+    {% set sidebar_name = "异常订单" %}
+    {% endif %}
+{% else %}
 {% set sidebar_name = "异常订单" %}
 {% endif %}
 {% set menu_name = 'order' %}
@@ -27,10 +31,11 @@
             <dt>预定单号：{{ order.viewid }}</dt>
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
             <dt>订单预估报价：{{ ship_fee + fenjian_fee }}RMB</dt>
-            <dt>订单状态：{{ order.getOrderStatus()|raw }}</dt>
+            <dt>订单状态：{% if order.can_formal == constant("\\backend\\models\\Order::IS_FORMAL") %}{{ order.getOrderStatus()|raw }}{% else %}由于超出费用未能生成正式订单{% endif %}</dt>
         </dl>
         <dl>
             <dt>物料审批/费用审批</dt>
+            {% if order.can_formal == constant("\\backend\\models\\Order::IS_FORMAL") %}
             <dd>
                 <ul class="shenpi">
                     {% if order.is_del == constant('\\backend\\models\\Order::ORDER_IS_NOT_DEL') %}
@@ -115,6 +120,7 @@
                     {% endif %}
                 </ul>
             </dd>
+            {% endif %}
         </dl>
         <dl>
             <dt>物料清单</dt>
