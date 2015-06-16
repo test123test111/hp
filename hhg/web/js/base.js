@@ -8,7 +8,11 @@ $(function(){
         $(".user span").removeClass("open");
         $(".user .sub").hide();
     });
-    setInterval("getNeedApproval();", 5000); 
+    setInterval("getNeedApproval();", 5000);
+
+    $(".left_box dt.havesub").click(function(){
+        $(this).parent().find("dd").toggle();
+    });
 });
 
 $(document).ready(function(){

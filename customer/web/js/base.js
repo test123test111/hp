@@ -2,6 +2,7 @@ $(function(){
     $(".user span").click(function(e){
         e.stopPropagation();
         $(this).toggleClass("open");
+        alert("111");
         $(".user .sub").toggle();
     });
     $(document).click(function(){
@@ -9,6 +10,10 @@ $(function(){
         $(".user .sub").hide();
     });
     setInterval("getNeedApproval();", 5000); 
+
+    $(".left_box dt.havesub").click(function(){
+        $(this).parent().find("dd").toggle();
+    });
 });
 
 $(document).ready(function(){

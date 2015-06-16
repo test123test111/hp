@@ -1,23 +1,31 @@
 <div class="wrap">
     	<div class="left_box">
     		<dl>
-    			<dt>我的物料</dt>
-    			<dd {% if sidebar_name == '专属物料' %}class="cur"{% endif %}><a href="/material/list">专属物料</a></dd>
+    			<dt class="havesub">我的物料</dt>
+    			<dd {% if sidebar_name == '专属物料' %}class="cur"{% endif %} {% if menu_name != 'material'%} style="display:none;"{% endif %}><a href="/material/list">专属物料</a></dd>
+            </dl>
+            <dl>
     			{# <dd><a href="#">其他可订物料</a></dd> #}
-    			<dt>我的订单</dt>
-    			<dd {% if sidebar_name == '预订单' %}class="cur"{% endif %}><a href="/order/pre">预订单</a></dd>
-                <dd {% if sidebar_name == '审批订单' %}class="cur"{% endif %}><a href="/order/approval">审批订单</a></dd>
-                <dd {% if sidebar_name == '待审批订单' %}class="cur"{% endif %}><a href="/order/needapproval">待审批订单</a></dd>
-    			<dd {% if sidebar_name == '进行中的订单' %}class="cur"{% endif %}><a href="/order/doing">进行中的订单</a></dd>
-                <dd {% if sidebar_name == '已完成的订单' %}class="cur"{% endif %}><a href="/order/done">已完成的订单</a></dd>
-                <dd {% if sidebar_name == '异常订单' %}class="cur"{% endif %}><a href="/order/except">异常订单</a></dd>
-    			<dt>我的报告</dt>
-    			<dd {% if sidebar_name == '库存报告' %}class="cur"{% endif %}><a href="/stock/list">库存报告</a></dd>
-    			<dd {% if sidebar_name == '物料进出' %}class="cur"{% endif %}><a href="/stock/inout">物料进出</a></dd>
-    			<dd {% if sidebar_name == '订单报告' %}class="cur"{% endif %}><a href="/order/report">订单报告</a></dd>
+    			<dt class="havesub">我的订单</dt>
+    			<dd {% if sidebar_name == '预订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/pre">预订单</a></dd>
+                <dd {% if sidebar_name == '审批订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/approval">审批订单</a></dd>
+                <dd {% if sidebar_name == '待审批订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/needapproval">待审批订单</a></dd>
+    			<dd {% if sidebar_name == '进行中的订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/doing">进行中的订单</a></dd>
+                <dd {% if sidebar_name == '已完成的订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/done">已完成的订单</a></dd>
+                <dd {% if sidebar_name == '异常订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/except">异常订单</a></dd>
+            </dl>
+            <dl>
+    			<dt class="havesub">我的报告</dt>
+    			<dd {% if sidebar_name == '库存报告' %}class="cur"{% endif %} {% if menu_name != 'report'%} style="display:none;"{% endif %}><a href="/stock/list">库存报告</a></dd>
+    			<dd {% if sidebar_name == '物料进出' %}class="cur"{% endif %} {% if menu_name != 'report'%} style="display:none;"{% endif %}><a href="/stock/inout">物料进出</a></dd>
+    			<dd {% if sidebar_name == '订单报告' %}class="cur"{% endif %} {% if menu_name != 'report'%} style="display:none;"{% endif %}><a href="/order/report">订单报告</a></dd>
     			<dd><a href="#">费用报告</a></dd>
-                <dd {% if sidebar_name == '地址管理' %}class="cur"{% endif %}><a href="/address/list">地址管理</a></dd>
+                
     		</dl>
+            <dl>
+                <dt class="havesub">地址管理</dt>
+                <dd {% if sidebar_name == '地址列表' %}class="cur"{% endif %} {% if menu_name != 'address'%} style="display:none;"{% endif %}><a href="/address/list">地址列表</a></dd>
+            </dl>
     	</div>
     	
     </div>
