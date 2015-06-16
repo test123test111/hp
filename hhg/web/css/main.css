@@ -27,13 +27,13 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 .fr{float:right;display:inline;}
 
 .header{background:url(../images/ban_bg.png) repeat-x bottom;height:196px;}
-.header .mtop{background:url(../images/head_bg.png) repeat-x;height:68px;}
+.header .mtop{background:url(../images/head_bg.png) repeat-x;height:68px;position:fixed;width:100%;z-index:100}
 .header .mtop .logo{float:left;background:url(../images/m_logo.png) no-repeat;width:45px;height:44px;margin-left:58px;margin-top:13px;}
 .header .mtop .info{float:right;padding-right:35px;}
 .header .mtop .search{float:left;padding-top:18px;}
 .header .mtop .search_input{border:0 none;background:url(../images/search_bg.png) no-repeat;height:35px;line-height:35px;width:243px;padding:0 10px;font-size:14px;}
 .header .mtop .search_btn{border:0 none;background:url(../images/search_btn.png);width:31px;height:35px;cursor:pointer;margin-left:10px;}
-.header .mtop .feedback{color:#fff;font-size:14px;margin:0 30px;float:left;line-height:68px;}
+.header .mtop .feedback{color:#fff;font-size:14px;margin:0 10px;float:left;line-height:68px;}
 .header .mtop .unlogin{color:#fff;font-size:14px;margin:0 20px;float:left;line-height:68px;text-decoration:underline;}
 .header .mtop .cart{color:#fff;font-size:14px;margin:0 20px;float:left;line-height:68px;text-decoration:underline;}
 .header .mtop .avatar{float:left;margin-top:13px;}
@@ -42,10 +42,11 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 .header .mtop .user span.open{color:#727171;background:url(../images/arrow1.png) no-repeat 73px center;}
 .header .mtop .user .sub{position:absolute;left:0;top:0;background:#f6f7f7;border:1px solid #e6e7e7;padding:24px 8px 8px;width:70px;z-index:4;display:none;}
 .header .mtop .user .sub a{display:block;line-height:24px;}
-.header .mban{background:url(../images/ban.jpg) no-repeat center;height:128px;}
+.header .mban{background:url(../images/ban.jpg) no-repeat center bottom;height:128px;padding-top:68px;}
 .header .mban .title{text-align:left;padding-top:42px;padding-left:60px;}
-.footer{position:fixed;width:100%;bottom:0;left:0;background:#f2f2f2;padding:20px 0;}
+.footer{position:fixed;width:100%;bottom:0;left:0;background:#f2f2f2;padding:20px 0;z-index:20}
 .footer p{text-align:left;padding:0px 30px;color:#898989;}
+/*.header .mtop .notice{color:#fff;font-size:14px;float:left;line-height:68px;background:url(../images/mail_ico.gif) no-repeat left center;padding-left:20px;}*/
 .header .mtop .notice{color:#fff;font-size:14px;float:left;line-height:68px;background:url(../images/mail1.png) no-repeat left center;padding-left:20px;}
 .header .mtop .notice_active{color:#fff;font-size:14px;float:left;line-height:68px;background:url(../images/mail2.gif) no-repeat left center;padding-left:20px;}
 
