@@ -17,6 +17,7 @@
 {% elseif order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_CANCEL") %}
 {% set sidebar_name = "异常订单" %}
 {% endif %}
+{% set menu_name = 'order' %}
 {% include '@app/views/layouts/base_with_sidebar.twig' %}
 <div class="main">
   <div class="order_view">
