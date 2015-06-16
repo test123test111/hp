@@ -376,6 +376,9 @@ class OrderController extends CustomerController {
             //     ['1','wanglei','beijing office','13800138000','beijing','2014 word cup','北京中央库','GSDGSG99990SGA','alisa','5','4小时','must be'],
             //     ['2','lisi','beijing office','13800138000','beijing','2014 word cup','北京中央库','JIHFSN899011','alisa','40','4小时','must be'],
             // ];
+            $datas = [
+                ['序号','下单人','计划日期','发货仓库','运输时效','到达日期','是否保险','保险金额','收件类型','用途','收件单位','收件人','省份','城市','区县','地址','备注']
+            ];
             foreach($datas as $key=>$data){
                 if($key == 0){
                     continue;
