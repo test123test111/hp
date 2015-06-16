@@ -132,21 +132,21 @@ class Hhg extends ActiveRecord implements IdentityInterface
         ];
     }
 
-    public function scenarios()
-    {
-        return [
-            'signup' => ['name', 'email', 'password','phone','tell', '!status', '!role'],
-            'update'=>['status'],
-            'resetPassword' => ['username', 'email', 'password'],
-            'resetPassword' => ['password'],
-            'requestPasswordResetToken' => ['email'],
-        ];
-    }
+    // public function scenarios()
+    // {
+    //     return [
+    //         'signup' => ['name', 'email', 'password','phone','tell', '!status', '!role'],
+    //         'update'=>['status'],
+    //         'resetPassword' => ['username', 'email', 'password'],
+    //         'resetPassword' => ['password'],
+    //         'requestPasswordResetToken' => ['email'],
+    //     ];
+    // }
 
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if (($this->isNewRecord || $this->getScenario() === 'resetPassword') && !empty($this->password)) {
+            if (!empty($this->password)) {
                 $this->password_hash = \Yii::$app->getSecurity()->generatePasswordHash($this->password);
             }
             if ($this->isNewRecord) {

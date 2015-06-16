@@ -6,6 +6,7 @@ use backend\models\Owner;
 use backend\models\search\OwnerSearch;
 use backend\components\BackendController;
 use common\models\Budget;
+use hhg\models\Hhg;
 class OwnerController extends \yii\web\Controller {
 
     public $layout = false;
@@ -18,6 +19,9 @@ class OwnerController extends \yii\web\Controller {
         // using the default layout 'protected/views/layouts/main.php'
         $this->render('index');
     }
+    public function actionDisplaypassword(){
+        return $this->render('resetpassword');
+    }
     /**
      * This is the action to handle external exceptions.
      */
@@ -25,6 +29,20 @@ class OwnerController extends \yii\web\Controller {
         if ($error = Yii::app()->errorHandler->error) {
             if (Yii::app()->request->isAjaxRequest) echo $error['message'];
             else $this->render('404');
+        }
+    }
+    /**
+     * Displays the create page
+     */
+    public function actionUpdate() {
+        if(Yii::$app->request->isPost){
+            $model = Hhg::findOne(Yii::$app->user->id);
+            $model->load(Yii::$app->request->post());
+            if ($model->save()) {
+                echo 0;
+            }else{
+                echo 1;
+            }
         }
     }
     /**

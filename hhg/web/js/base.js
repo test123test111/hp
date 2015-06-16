@@ -13,8 +13,61 @@ $(function(){
     $(".left_box dt.havesub").click(function(){
         $(this).parent().find("dd").toggle();
     });
+    // add new address
+    $(".updatePw").live("click",function(){
+        editPw();
+    });
 });
+// edit address
+function editPw(){
+    var addr_url = "/owner/displaypassword";
+    safeCode = $('meta[name=csrf-token]');
+    $.ajax({
+        url:addr_url,
+        dataType:"html",
+        type:"POST",
+        data:{"_csrf":safeCode.attr('content')},
+        success:function(json){
+            $.layer({
+                type: 1,
+                shade: [0.5, '#000'],
+                area: ['380', '150'],
+                title: '地址',
+                btns: 2,
+                btn: ['确定', '取消'],
+                border: [5, 0.2, '#000'],
+                yes: function(){
+                    postPw();
+                },
+                page: {html:json}
+            });
+        }
 
+    });
+}
+function postPw(){
+    var addr_url = '/owner/update';
+    safeCode = $('meta[name=csrf-token]');
+    var password = $("#password_owner").val();
+    if(password == ""){
+        alert("请输入要设置的新密码!");return false;
+    }
+    if(password.length < 6){
+        alert("密码长度最少6位!");return false;
+    }
+    $.ajax({
+        url:addr_url,
+        dataType:"html",
+        type:"POST",
+        data:{"Hhg[password]":password,'_csrf':safeCode.attr('content')},
+        success:function(json){
+            if(json == 0){
+                alert('设置成功');
+                window.location.reload();
+            }
+        }
+    });
+}
 $(document).ready(function(){
     $(".materiel_table tr td").mouseover(function(){
         $(this).parent().find("td").css("background-color","#f7f7f7");
