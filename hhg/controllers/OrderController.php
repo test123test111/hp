@@ -899,6 +899,7 @@ class OrderController extends \yii\web\Controller {
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
+             'menu_name'=>'order',
         ]);
     }
     /**
@@ -915,6 +916,7 @@ class OrderController extends \yii\web\Controller {
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
+             'menu_name'=>'order',
         ]);
     }
     /**
@@ -931,6 +933,7 @@ class OrderController extends \yii\web\Controller {
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
+             'menu_name'=>'order',
         ]);
     }
     /**
@@ -947,6 +950,7 @@ class OrderController extends \yii\web\Controller {
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
+             'menu_name'=>'order',
         ]);
     }
     /**
@@ -963,6 +967,7 @@ class OrderController extends \yii\web\Controller {
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
+             'menu_name'=>'order',
         ]);
     }
     /**
@@ -979,6 +984,7 @@ class OrderController extends \yii\web\Controller {
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
+             'menu_name'=>'order',
         ]);
     }
     /**

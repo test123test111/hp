@@ -140,6 +140,7 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 /* pages style */
 .pages{background:url(../images/page_bg.png) top;border:1px solid #dbdcdc;padding:6px 10px;margin-top:20px;}
 .pages li{float:left;height:28px;line-height:28px;padding:0 10px;margin-left:5px;font-size:14px;display:inline;border:1px solid #DFDFDF;border-radius:5px;background:#fff;}
+.pages li.active a{background-color:#6faed9;border-color:#6faed9;color:#fff;}
 .pages span.cur{color:#FF5656;font-weight:700;}
 .pages .prev{background:url(../images/view_prev_ico.png) no-repeat 4px center #fff;border:1px solid #DFDFDF;padding:0px 10px 0px 15px;border-radius:5px;}
 .pages .next{background:url(../images/view_next_ico.png) no-repeat 56px center #fff;border:1px solid #DFDFDF;padding:0px 15px 0px 10px;border-radius:5px;}
