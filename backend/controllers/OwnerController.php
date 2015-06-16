@@ -54,13 +54,13 @@ class OwnerController extends BackendController {
             $model->load($_POST);
             if ($model->validate()) {
                 $model->save();
-                // if($model->big_owner == Owner::IS_BIG_OWNER){
+                if($model->big_owner == Owner::IS_BIG_OWNER){
                     //update material share
                     Share::updateMaterial($model->id,$model->category);
                     if($model->is_budget == Owner::IS_BUDGET && $model->budget != "0"){
                         Budget::updateOwnerBudget($model->id,$model->category,$model->budget);
                     }
-                // }
+                }
                 $ret = [
                     'email'=>$model->email,
                     'password'=>$_POST['Owner']['password'],

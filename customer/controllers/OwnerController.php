@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\controllers;
+namespace customer\controllers;
 
 use Yii;
 use backend\models\Owner;
@@ -8,6 +8,7 @@ use backend\models\search\OwnerSearch;
 use backend\components\BackendController;
 
 class OwnerController extends BackendController {
+    public $layout = false;
     /**
      * This is the default 'index' action that is invoked
      * when an action is not explicitly requested by users.
@@ -16,6 +17,9 @@ class OwnerController extends BackendController {
         // renders the view file 'protected/views/site/index.php'
         // using the default layout 'protected/views/layouts/main.php'
         $this->render('index');
+    }
+    public function actionDisplaypassword(){
+        return $this->render('resetpassword');
     }
     /**
      * This is the action to handle external exceptions.
@@ -60,19 +64,32 @@ class OwnerController extends BackendController {
     /**
      * Displays the create page
      */
-    public function actionUpdate($id) {
+    public function actionUpdate() {
         $model = new Owner;
-        $id = $_GET['id'];
-        if($id){
-            $model = $this->loadModel($id);
-            if (!empty($_POST)) {
-                if ($model->updateAttrs($_POST['Owner'])) {
-                    Yii::$app->session->setFlash('success', '修改成功!');
-                    return $this->redirect(Yii::$app->request->getReferrer());
-                }
+        if(Yii::$app->request->isPost){
+            $model = $this->loadModel(Yii::$app->user->id);
+            if ($model->updateAttrs($_POST['Owner'])) {
+                echo 0;
+            }else{
+                echo 1;
             }
         }
-        return $this->render('create',['model'=>$model]);
+    }
+    /**
+     * action for user reset password
+     */
+    public function actionResetPassword(){
+        $uid = Yii::$app->user->id;
+        $model = $this->loadModel($uid);
+        if(Yii::$app->request->isPost){
+            $model->setScenario('resetPassword');
+            $model->password = Yii::$app->request->post('password');
+            if($model->save()){
+                echo 0;
+            }else{
+                echo 1;
+            }
+        }
     }
     public function actionDelete(){
         $model = new Owner();

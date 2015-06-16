@@ -44,6 +44,7 @@ class ManagerController extends BackendController{
         $id = $_GET['id'];
         if($id){
             $model = $this->loadModel($id);
+            $model->setScenario('signup');
             if (!empty($_POST)) {
                 if ($model->updateAttrs($_POST['Manager'])) {
                     return $this->redirect(Yii::$app->request->getReferrer());

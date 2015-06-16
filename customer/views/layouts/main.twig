@@ -1,5 +1,6 @@
 {% extends '@app/views/layouts/base.twig' %}
 {% block body %}
+<script type='text/javascript' src='/js/layer.min.js'></script>
 	<div class="header">
     	<!-- top -->
         <div class="mtop clearfix">
@@ -16,7 +17,7 @@
         		<div class="user">
         			<span>{{ App.user.identity.english_name }}</span>
         			<div class="sub">
-        				{# <a href="#">账号管理</a> #}
+        				<a href="javascript:;" class="updatePw">修改密码</a>
         				<a href="/site/logout">退出登录</a>
         			</div>
         		</div>

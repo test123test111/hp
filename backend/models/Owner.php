@@ -139,6 +139,7 @@ class Owner extends ActiveRecord implements IdentityInterface
 
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
+            ['email', 'unique'],
             ['email', 'email'],
             [['department','category','phone','tell','product_line','product_two_line','big_owner','is_budget','budget'],'safe'],
             ['email', 'unique', 'message' => 'This email address has already been taken.', 'on' => 'signup,update'],
@@ -183,7 +184,7 @@ class Owner extends ActiveRecord implements IdentityInterface
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if (($this->isNewRecord || $this->getScenario() === 'resetPassword') && !empty($this->password)) {
+            if (!empty($this->password)) {
                 $this->password_hash = \Yii::$app->getSecurity()->generatePasswordHash($this->password);
             }
             if ($this->isNewRecord) {
@@ -259,7 +260,7 @@ class Owner extends ActiveRecord implements IdentityInterface
             $attrs[] = 'budget';
             $this->budget = $attributes['budget'];
         }
-        $this->setScenario('resetPassword');
+        // $this->setScenario('resetPassword');
         if ($this->validate($attrs)) {
             return $this->update(false);
         } else {
