@@ -45,7 +45,9 @@ function getNeedApproval(){
         type:"GET",
         success:function(json){
             if(json > 0){
-
+                $("#noticeCenter").removeClass("notice").addClass("notice_active");  
+            }else{
+                $("#noticeCenter").removeClass("notice_active").addClass("notice");  
             }
         }
     });

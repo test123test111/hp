@@ -27,5 +27,6 @@ class AjaxController extends CustomerController {
      */
     public function actionNeworder(){
         echo Approval::getNewArroval(Yii::$app->user->id);
+        // echo 1;
     }
 }

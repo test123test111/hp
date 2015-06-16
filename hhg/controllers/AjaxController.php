@@ -1,10 +1,10 @@
 <?php
 
-namespace customer\controllers;
-
+namespace hhg\controllers;
 use Yii;
 use backend\models\Material;
 use customer\components\CustomerController;
+use common\models\Approval;
 
 class AjaxController extends CustomerController {
     public $enableCsrfValidation;

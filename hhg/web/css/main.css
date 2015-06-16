@@ -46,6 +46,9 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 .header .mban .title{text-align:left;padding-top:42px;padding-left:60px;}
 .footer{position:fixed;width:100%;bottom:0;left:0;background:#f2f2f2;padding:20px 0;}
 .footer p{text-align:left;padding:0px 30px;color:#898989;}
+.header .mtop .notice{color:#fff;font-size:14px;float:left;line-height:68px;background:url(../images/mail1.png) no-repeat left center;padding-left:20px;}
+.header .mtop .notice_active{color:#fff;font-size:14px;float:left;line-height:68px;background:url(../images/mail2.gif) no-repeat left center;padding-left:20px;}
+
 
 .quick_box{position:fixed;width:43px;height:113px;bottom:80px;right:20px;background:url(../images/nav_bar.png);}
 .quick_box a{display:block;}
