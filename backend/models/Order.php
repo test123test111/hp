@@ -66,6 +66,9 @@ class Order extends BackendActiveRecord {
     const TRANSPORT_CAR = 4;
     const TRANSPORT_OTHER = 5;
 
+    const ORDER_TYPE_NORMAL = 0;
+    const ORDER_TYPE_BATCH = 1;
+
     /**
      * function_description
      *
@@ -91,6 +94,30 @@ class Order extends BackendActiveRecord {
         if($this->transport_type == self::TRANSPORT_OTHER){
             return "其他";
         }
+    }
+    /**
+     * [checkTransportType description]
+     * @param  [type] $type [description]
+     * @return [type]       [description]
+     */
+    public function checkTransportType($type){
+        if($type == '24小时'){
+            return self::TRANSPORT_24_HOUR;
+        }
+        if($type == '5天门到门'){
+            return self::TRANSPORT_5_DAYS;
+        }
+        if($type == '3天门到门'){
+            return self::TRANSPORT_3_DAYS;
+        }
+        if($type == '包车服务'){
+            return self::TRANSPORT_CAR;
+        }
+        if($type == '其他'){
+            return self::TRANSPORT_OTHER;
+        }
+        return "";
+
     }
     /**
      * function_description
