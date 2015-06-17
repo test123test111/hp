@@ -9,7 +9,7 @@ use common\models\Share;
 use common\models\ProductLine;
 use common\models\ProductTwoLine;
 use backend\models\Order;
-use backend\models\Owner;
+// use backend\models\Owner;
 class Stock extends CustomerActiveRecord {
     const IS_NOT_INCREASE = 1;
     const IS_INCREASE = 0;
@@ -303,7 +303,13 @@ class Stock extends CustomerActiveRecord {
                 $data[$i]['stock_time'] = date('Y-m-d H:i',strtotime($result->created));
                 $data[$i]['storeroom'] = $result->storerooms->name;
                 $data[$i]['total'] = $result->stockTotals->total - $result->stockTotals->lock_num;
-                $data[$i]['share'] = "";
+                $countshare = Share::find()->where(['owner_id'=>$result->materials->owner_id,'status'=>Share::STATUS_IS_NORMAL])->count();
+                if($countshare > 1){
+                    $data[$i]['share'] = "已分享";
+                }else{
+                    $data[$i]['share'] = "未分享";
+                }
+                
                 $data[$i]['package'] = $result->materials->package;
                 $data[$i]['info'] = $result->materials->desc;
                 $str .= $data[$i]['id'].",".$data[$i]['code'].",".$data[$i]['name'].",".$data[$i]['owner'].",".$data[$i]['department'].",".$data[$i]['category'].",".$data[$i]['productline'].",".$data[$i]['producttwoline'].",".$data[$i]['materialcategory'].",".$data[$i]['stock_time'].",".$data[$i]['storeroom'].",".$data[$i]['total'].",".$data[$i]['share'].",".$data[$i]['package'].",".$data[$i]['info']."\r\n"; //用引文逗号分开

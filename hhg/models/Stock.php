@@ -304,6 +304,12 @@ class Stock extends CustomerActiveRecord {
                 $data[$i]['stock_time'] = date('Y-m-d H:i',strtotime($result->created));
                 $data[$i]['storeroom'] = $result->storeroom->name;
                 $data[$i]['total'] = $result->total - $result->lock_num;
+                $countshare = Share::find()->where(['owner_id'=>$result->material->owner_id,'status'=>Share::STATUS_IS_NORMAL])->count();
+                if($countshare > 1){
+                    $data[$i]['share'] = "已分享";
+                }else{
+                    $data[$i]['share'] = "未分享";
+                }
                 $data[$i]['share'] = "";
                 $data[$i]['package'] = $result->material->package;
                 $data[$i]['info'] = $result->material->desc;

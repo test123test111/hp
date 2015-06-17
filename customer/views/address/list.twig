@@ -4,10 +4,11 @@
 {% block content %}
 {% include '@app/views/layouts/base_with_sidebar.twig' %}
 <div class="main">
-    <div class="material_cart clearfix">
-        <a href="/address/import" class="buy_btn" style="width:150px;font-size:1rem;">导出地址报表</a>
-    </div>
+    
     <div class="materiel_box">
+        <div class="material_cart clearfix">
+            <a href="/address/import" class="export_btn">导出地址报表</a>
+        </div>
         <ul class="addr_list">
             <li class="clearfix">
                 <a href="javascript:;" class="addnew">+新收货地址</a>
