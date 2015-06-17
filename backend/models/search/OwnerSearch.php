@@ -10,6 +10,7 @@ use common\models\Department;
 use common\models\Category;
 use common\models\ProductLine;
 use common\models\ProductTwoLine;
+use common\models\Share;
 
 /**
  * PostSearch represents the model behind the search form about `backend\models\Post`.
@@ -156,7 +157,17 @@ class OwnerSearch extends Owner
             }
             foreach($results as $key =>$result){
                 $data[$i]['id'] = $i;
-                $data[$i]['type'] = "";
+                if($result->big_owner == self::IS_BIG_OWNER){
+                    $data[$i]['type'] = "管理员";
+                }else{
+                    $share = Share::find()->where(['owner_id'=>$result->id])->one();
+                    if(!empty($share)){
+                        $data[$i]['type'] = "所属人";
+                    }else{
+                        $data[$i]['type'] = "申请人";
+                    }
+                }
+                
                 $data[$i]['name'] = $result->english_name;
                 $data[$i]['email'] = $result->email;
                 $data[$i]['phone'] = $result->phone;
