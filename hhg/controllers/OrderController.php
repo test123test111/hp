@@ -985,6 +985,21 @@ class OrderController extends \yii\web\Controller {
              'menu_name'=>'order',
         ]);
     }
+     /**
+     * 已完成订单列表
+     * @return [type] [description]
+     */
+    public function actionExportdone(){
+        $result = OrderSearch::getExportDoneData(Yii::$app->request->getQueryParams());
+        $filename = '订单报表.csv';
+        header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
+    }
     /**
      * 异常订单列表
      * @return [type] [description]

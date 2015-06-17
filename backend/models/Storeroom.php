@@ -47,6 +47,9 @@ class Storeroom extends ActiveRecord {
            ]
         );
     }
+    public function getCitydata(){
+        return $this->hasOne(HpCity::className(),['id'=>'city']);
+    }
     public function updateAttrs($attributes){
         $attrs = array();
         if (!empty($attributes['name']) && $attributes['name'] != $this->name) {

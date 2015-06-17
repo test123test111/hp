@@ -27,6 +27,11 @@
                     </ul>
                 </form>
             </div>
+        {% if sidebar_name == '已完成的订单' %}
+        <div class="material_cart clearfix">
+            <a href="javascript:;" class="export_btn">导出订单</a>
+        </div>
+        {% endif %}
         <div class="order_box">
           <table class="bought_table">
             <!-- 单个商品 -->
@@ -79,6 +84,10 @@
     <script type="text/javascript">
         $(function(){
             $('.date_input').date_input();
-        })
+        });
+        $(function(){
+            var url = window.location.search;
+            $(".export_btn").attr("href","/order/exportdone"+url);
+        });
     </script>
 {% endblock %}
