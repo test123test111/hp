@@ -59,6 +59,21 @@ class OwnerController extends \yii\web\Controller {
              'params'=>Yii::$app->request->getQueryParams(),
         ]);
     }
+    /**
+     * export hp user 
+     * @return [type] [description]
+     */
+    public function actionExport(){
+        $result = OwnerSearch::getImportData(Yii::$app->request->getQueryParams());
+        $filename = '用户信息.csv';
+        header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
+    }
     public function actionBudget(){
         if (!Yii::$app->request->isPost) {
             throw new HttpException(404, 'The requested page does not exist.');

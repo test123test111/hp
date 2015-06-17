@@ -28,6 +28,9 @@
     <input type="submit" value="搜索" class="search_btn" />
   </form>
 </div>
+<div class="material_cart clearfix">
+    <a href="javascript:void(0);" class="export_btn">导出用户信息</a>
+</div>
 <div class="materiel_box">
         <table id="material_list" class="materiel_table">
             <thead>
@@ -71,7 +74,12 @@
 </div>
 <script type='text/javascript' src='/js/layer.min.js'></script>
 <script type='text/javascript' src='/js/owner-budget.js'></script>
-      
+<script type="text/javascript">
+$(function(){
+    var url = window.location.search;
+    $(".export_btn").attr("href","/owner/export"+url);
+});
+</script>
 {% endblock %}
 
 
