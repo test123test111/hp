@@ -60,6 +60,10 @@
                 3:{
                   'attribute':'name',
                 },
+                4:{
+                  'attribute':'owner_id',
+                  'value':'return $model->owners->english_name;'|value_callback,
+                },
                 11:{
                   'attribute':'property',
                   'value':searchModel.getPropertyName(),

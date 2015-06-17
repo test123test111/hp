@@ -27,7 +27,7 @@
                     </ul>
                 </form>
             </div>
-        {% if sidebar_name == '已完成的订单' %}
+        {% if sidebar_name == '已完成的订单' and results is not empty %}
         <div class="material_cart clearfix">
             <a href="javascript:;" class="export_btn">导出订单</a>
         </div>

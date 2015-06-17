@@ -10,7 +10,7 @@ use backend\models\StockTotal;
 use backend\models\search\StockSearch;
 use backend\components\BackendController;
 use backend\models\Upload;
-
+use common\models\SendEmail;
 class StockController extends BackendController {
     public $enableCsrfValidation;
     /**
@@ -64,8 +64,31 @@ class StockController extends BackendController {
 
                     Share::updateShare($model->owner_id,$model->owner_id,$model->material_id,$model->storeroom_id);
                     $transaction->commit();
+                    //create send mail log
 
                     Yii::$app->session->setFlash('success', '新建成功！');
+                    $countshare = Share::find()->where(['owner_id'=>$material->owner_id,'status'=>Share::STATUS_IS_NORMAL])->count();
+                    if($countshare > 1){
+                        $share = "已分享";
+                    }else{
+                        $share = "未分享";
+                    }
+                    $ret = [
+                        'code'=>$material->code,
+                        'name'=>$material->name,
+                        'stock_time'=>$model->stock_time,
+                        'quantity'=>$model->actual_quantity,
+                        'property'=>$material->getMyPropertyName(),
+                        'share'=>$share,
+                        'delivery'=>$model->delivery,
+                        'email'=>$material->owners->email,
+                        'info'=>"",
+                    ];
+                    $sendEmail = new SendEmail;
+                    $sendEmail->template = 'newstock';
+                    $sendEmail->content = json_encode($ret);
+                    $sendEmail->created = date('Y-m-d H:i:s');
+                    $sendEmail->save();
                     $this->redirect("/stocktotal/list");
                 }catch (\Exception $e) {
                     $transaction->rollback();

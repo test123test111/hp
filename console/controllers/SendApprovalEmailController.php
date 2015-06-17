@@ -58,6 +58,8 @@ class SendApprovalEmailController extends Controller{
                     $subject = '库存预警';
                 }elseif($task->template == 'warning'){
                     $subject = '费用预警';
+                }elseif($task->template == 'newstock'){
+                    $subject = '物料入库';
                 }
                 $template = '@customer/views/mail/'.$task->template;
                 if(!empty($record)){
