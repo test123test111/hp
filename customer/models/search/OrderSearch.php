@@ -277,7 +277,11 @@ class OrderSearch extends Order
                 $data[$i]['address'] = $result->to_province.$result->to_city.$result->to_district.$result->contact;
                 $data[$i]['user'] = $result->recipients;
                 $data[$i]['transporttype'] = $result->getMyTransportType();
-                $data[$i]['send_date'] = "";
+                if($result->st_send_date != 0){
+                    $data[$i]['send_date'] = date('Y-m-d H:i',$result->st_send_date);
+                }else{
+                    $data[$i]['send_date'] = "";
+                }
                 $data[$i]['status'] = '已完成';
                 $data[$i]['owner'] = $result->details[0]->owner->english_name;
                 if(isset($result->details[0]->owner->departments)){
