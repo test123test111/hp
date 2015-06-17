@@ -10,7 +10,14 @@
                             <input type="text" name="order_id" value="{% if params.order_id is defined %}{{ params.order_id }}{% endif %}" class="search_ipt" placeholder="" />
                         </li>
                         <li class="clearfix">
-                            
+                            {% if sidebar_name == '进行中的订单' or sidebar_name == '已完成的订单' or sidebar_name == '异常订单'%}
+                            <label>订单类型：</label>
+                            <select name="storeroom_id">
+                                <option value="">请选择订单类型</option>
+                                <option {% if params.type is defined and params.type == 0 %}selected="selected"{% endif %} value="0">日常订单</option>
+                                <option {% if params.type is defined and params.type == 1 %}selected="selected"{% endif %} value="1">大发放</option>
+                            </select>
+                            {% endif %}
                         </li>
                         <li class="clearfix">
                             <label>开始日期：</label>

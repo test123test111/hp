@@ -127,6 +127,9 @@ class OrderSearch extends Order
                 $query->andWhere('created >= :begin_time AND created <= :end_time',[':begin_time'=>$begin_time,":end_time"=>$end_time]);
             }
         }
+        if(isset($params['type']) && $params['type'] !=""){
+            $query->andWhere(['type'=>$params['type']]);
+        }
         $count = $query->count();
         $pages = new \yii\data\Pagination(['totalCount' => $count]);
         $ret = [];
@@ -155,6 +158,9 @@ class OrderSearch extends Order
                 $query->andWhere('created >= :begin_time AND created <= :end_time',[':begin_time'=>$begin_time,":end_time"=>$end_time]);
             }
         }
+        if(isset($params['type']) && $params['type'] !=""){
+            $query->andWhere(['type'=>$params['type']]);
+        }
         $count = $query->count();
         $pages = new \yii\data\Pagination(['totalCount' => $count]);
         $ret = [];
@@ -182,6 +188,9 @@ class OrderSearch extends Order
                 $end_time = $params['end_time']." 23:59:59";
                 $query->andWhere('created >= :begin_time AND created <= :end_time',[':begin_time'=>$begin_time,":end_time"=>$end_time]);
             }
+        }
+        if(isset($params['type']) && $params['type'] !=""){
+            $query->andWhere(['type'=>$params['type']]);
         }
         $count = $query->count();
         $pages = new \yii\data\Pagination(['totalCount' => $count]);
@@ -254,6 +263,9 @@ class OrderSearch extends Order
                 $end_time = $params['end_time']." 23:59:59";
                 $query->andWhere('created >= :begin_time AND created <= :end_time',[':begin_time'=>$begin_time,":end_time"=>$end_time]);
             }
+        }
+        if(isset($params['type']) && $params['type'] !=""){
+            $query->andWhere(['type'=>$params['type']]);
         }
         $count = $query->count();
         $str = "序号,申请人,申请订单日期,订单号,库房位置,起运城市,收货城市,收货地址,收货人,运输方式,发货日期,订单状态,所属人,部门,组别,一级产品线,二级产品线,备注信息\n";
