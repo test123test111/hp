@@ -6,6 +6,21 @@ use Yii;
 class AddressController extends \yii\web\Controller {
 	public $layout = false;
 
+	public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['list', 'import'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
 	public function actionList(){
 		list($data,$pages,$count) = Address::getAddressByUid(Yii::$app->user->id);
 		return $this->render('list',[
