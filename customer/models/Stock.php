@@ -559,15 +559,15 @@ class Stock extends CustomerActiveRecord {
                     $data[$i]['out_time'] = "";
                 }
                 if($result->increase == 1){
-                    $data[$i]['out_quantity'] = $result->actual_quantity;
+                    $data[$i]['out_quantity'] = 0 - $result->actual_quantity;
                 }else{
                     $data[$i]['out_quantity'] = "";
                 }
                 if($result->increase == 1){
                     if($result->order->to_type == 0 ){
-                        $data[$i]['out_to'] = '收件人 '.$result->order->to_privince.$result->order->to_city.$result->order->to_district.$result->contact;
+                        $data[$i]['out_to'] = '收件人 '.$result->order->to_province.$result->order->to_city.$result->order->to_district.$result->order->contact;
                     }else{
-                        $data[$i]['out_to'] = '平台库 '.$result->order->to_privince.$result->order->to_city.$result->order->to_district.$result->contact;
+                        $data[$i]['out_to'] = '平台库 '.$result->order->to_province.$result->order->to_city.$result->order->to_district.$result->order->contact;
                     }
                 }else{
                     $data[$i]['out_to'] = "";

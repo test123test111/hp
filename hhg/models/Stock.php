@@ -9,7 +9,8 @@ use common\models\Share;
 use common\models\ProductLine;
 use common\models\ProductTwoLine;
 use backend\models\StockTotal;
-
+use backend\models\Owner;
+use backend\models\Order;
 class Stock extends CustomerActiveRecord {
     const IS_NOT_INCREASE = 1;
     const IS_INCREASE = 0;
@@ -145,6 +146,9 @@ class Stock extends CustomerActiveRecord {
     }
     public function getStocktotal(){
         return $this->hasOne(StockTotal::className(),['material_id'=>'material_id']);
+    }
+    public function getOrder(){
+        return $this->hasOne(Order::className(),['id'=>'order_id']);
     }
     public function getLink(){
         return '
@@ -357,31 +361,73 @@ class Stock extends CustomerActiveRecord {
         }
         return 0;
     }
+    // public static function getDetail($params){
+    //     $query = Static::find()->orderBy(['material_id'=>SORT_DESC,'id'=>SORT_DESC]);
+
+    //     $dataProvider = new ActiveDataProvider([
+    //         'query' => $query,
+    //     ]);
+    //     if(isset($params['material_id']) && $params['material_id'] != ""){
+    //         $query->andWhere(['material_id'=>$params['material_id']]);
+    //     }       
+    //     if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
+    //         $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);
+    //     }
+    //     if(isset($params['begin_time']) && $params['begin_time'] != ""){
+    //         if(isset($params['end_time']) && $params['end_time'] != ""){
+    //             $query->andWhere('created_time >= :begin_time AND created_time <= :end_time',[':begin_time'=>$params['begin_time'],'end_time'=>$params['end_time']]);
+    //         }
+            
+    //     }
+    //     if(isset($params['material_code']) && $params['material_code'] != ""){
+    //         $material = Material::find()->where(['code'=>$params['material_code']])->one();
+    //         // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
+    //         if(!empty($material)){
+    //             $query->andWhere(['material_id'=>$material->id]);
+    //         }
+    //     }
+    //     $count = $query->count();
+    //     $pages = new \yii\data\Pagination(['totalCount' => $count]);
+    //     $ret = [];
+    //     $query->offset($pages->offset)->limit(20);
+
+    //     $data = $query->all();
+    //     return [$data,$pages,$count];
+    // }
     public static function getDetail($params){
-        $query = Static::find()->orderBy(['material_id'=>SORT_DESC,'id'=>SORT_DESC]);
+        $query = Static::find()->with(['material','storeroom',
+                                    'owners'=>function($query){
+                                        return $query->with(['departments','categorys','productlines','producttwolines']);
+                                    },
+                                    'order'=>function($query){
+                                            return $query->with('createuser');
+                                     }]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
-            $query->andWhere(['material_id'=>$params['material_id']]);
-        }       
+            $material = Material::find()->where(['code'=>$params['material_id']])->one();
+            if(!empty($material)){
+                $query->andWhere(['material_id'=>$params['material_id']]);
+            }else{
+                $material = Material::find()->where(['like','name',$params['material_id']])->one();
+                if(!empty($material)){
+                    $query->andWhere(['material_id'=>$material->id]);
+                }else{
+                    $query->andWhere(['material_id'=>-1]);
+                }
+            }
+        }
         if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
             $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);
         }
         if(isset($params['begin_time']) && $params['begin_time'] != ""){
             if(isset($params['end_time']) && $params['end_time'] != ""){
-                $query->andWhere('created_time >= :begin_time AND created_time <= :end_time',[':begin_time'=>$params['begin_time'],'end_time'=>$params['end_time']]);
-            }
-            
-        }
-        if(isset($params['material_code']) && $params['material_code'] != ""){
-            $material = Material::find()->where(['code'=>$params['material_code']])->one();
-            // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
-            if(!empty($material)){
-                $query->andWhere(['material_id'=>$material->id]);
+                $query->andWhere('stock_time >= :begin_time AND stock_time <= :end_time',[':begin_time'=>$params['begin_time'],'end_time'=>$params['end_time']]);
             }
         }
+        
         $count = $query->count();
         $pages = new \yii\data\Pagination(['totalCount' => $count]);
         $ret = [];
@@ -389,6 +435,107 @@ class Stock extends CustomerActiveRecord {
 
         $data = $query->all();
         return [$data,$pages,$count];
+    }
+    public static function getExportDetail($params){
+        $query = Static::find()->with(['material','storeroom',
+                                    'owners'=>function($query){
+                                        return $query->with(['departments','categorys','productlines','producttwolines']);
+                                    },
+                                    'order'=>function($query){
+                                            return $query->with('createuser');
+                                     }]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        if(isset($params['material_id']) && $params['material_id'] != ""){
+            $material = Material::find()->where(['code'=>$params['material_id']])->one();
+            if(!empty($material)){
+                $query->andWhere(['material_id'=>$params['material_id']]);
+            }else{
+                $material = Material::find()->where(['like','name',$params['material_id']])->one();
+                if(!empty($material)){
+                    $query->andWhere(['material_id'=>$material->id]);
+                }else{
+                    $query->andWhere(['material_id'=>-1]);
+                }
+            }
+        }
+        if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
+            $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);
+        }
+        if(isset($params['begin_time']) && $params['begin_time'] != ""){
+            if(isset($params['end_time']) && $params['end_time'] != ""){
+                $query->andWhere('stock_time >= :begin_time AND stock_time <= :end_time',[':begin_time'=>$params['begin_time'],'end_time'=>$params['end_time']]);
+            }
+        }
+        
+        $count = $query->count();
+        $str = "序号,物料编号,物料名称,所属人,部门,组别,一级产品线,二级产品线,物料类别,库房位置,入库时间,入库数量,出库时间,出库数量,出库至,申请人\n";
+        $offset = 0;
+        $limit = 100;
+        $data = [];
+        $i = 1;
+        while(true){
+            $results = $query->limit($limit)->offset($offset)->all();
+            if(empty($results)){
+                break;
+            }
+            foreach($results as $key =>$result){
+                $data[$i]['id'] = $i;
+                $data[$i]['code'] = $result->material->code;
+                $data[$i]['name'] = $result->material->name;
+                $data[$i]['owner'] = $result->owners->english_name;
+                $data[$i]['department'] = $result->owners->departments->name;
+                $data[$i]['category'] = $result->owners->categorys->name;
+                $data[$i]['productline'] = $result->owners->productlines->name;
+                $data[$i]['producttwoline'] = $result->owners->producttwolines->name;
+                $data[$i]['materialcategory'] = $result->material->getMyPropertyName();
+                $data[$i]['storeroom'] = $result->storeroom->name;
+                if($result->increase == 0){
+                    $data[$i]['stock_time'] = date('Y-m-d H:i',strtotime($result->stock_time));
+                }else{
+                    $data[$i]['stock_time'] = "";
+                }
+                if($result->increase == 0){
+                    $data[$i]['quantity'] = $result->actual_quantity;
+                }else{
+                    $data[$i]['quantity'] = "";
+                }
+                if($result->increase == 1){
+                    $data[$i]['out_time'] = date('Y-m-d H:i',strtotime($result->stock_time));
+                }else{
+                    $data[$i]['out_time'] = "";
+                }
+                if($result->increase == 1){
+                    $data[$i]['out_quantity'] = 0 - $result->actual_quantity;
+                }else{
+                    $data[$i]['out_quantity'] = "";
+                }
+                if($result->increase == 1){
+                    if($result->order->to_type == 0 ){
+                        $data[$i]['out_to'] = '收件人 '.$result->order->to_province.$result->order->to_city.$result->order->to_district.$result->order->contact;
+                    }else{
+                        $data[$i]['out_to'] = '平台库 '.$result->order->to_province.$result->order->to_city.$result->order->to_district.$result->order->contact;
+                    }
+                }else{
+                    $data[$i]['out_to'] = "";
+                }
+                if($result->increase == 1){
+                    $data[$i]['apply'] = $result->order->createuser->english_name;
+                }else{
+                    $data[$i]['apply'] = "";
+                }
+                $str .= $data[$i]['id'].",".$data[$i]['code'].",".$data[$i]['name'].",".$data[$i]['owner'].",".$data[$i]['department'].",".$data[$i]['category'].",".$data[$i]['productline'].",".$data[$i]['producttwoline'].",".$data[$i]['materialcategory'].",".$data[$i]['storeroom'].",".$data[$i]['stock_time'].",".$data[$i]['quantity'].",".$data[$i]['out_time'].",".$data[$i]['out_quantity'].",".$data[$i]['out_to'].",".$data[$i]['apply']."\r\n"; //用引文逗号分开
+                $i++;
+            }
+           
+            $offset += $limit;
+            if ($offset > $count) {
+                break;
+            }
+        }
+        return $str;
     }
 
 }

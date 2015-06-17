@@ -75,14 +75,38 @@ class StockController extends CustomerController {
         print(chr(0xEF).chr(0xBB).chr(0xBF));
         echo $result;
     }
+    /**
+     * stock detail 
+     * @return [type] [description]
+     */
     public function actionDetail(){
-        list($data,$pages,$count) = Stock::getDetail(Yii::$app->request->getQueryParams());
-        return $this->render('detail', [
-            'results' => $data,
-             'pages' => $pages,
-             'count'=>$count,
-             'params'=>Yii::$app->request->getQueryParams(),
-        ]);
+        $params = Yii::$app->request->getQueryParams();
+        if(!empty($params)){
+            list($data,$pages,$count) = Stock::getDetail(Yii::$app->request->getQueryParams());
+            return $this->render('detail', [
+                 'results' => $data,
+                 'pages' => $pages,
+                 'count'=>$count,
+                 'params'=>$params,
+                 'storerooms'=>Storeroom::find()->all(),
+            ]);
+        }
+        return $this->render('detail',['storerooms'=>Storeroom::find()->all(),'params'=>$params]);
+    }
+    /**
+     * stock detail 
+     * @return [type] [description]
+     */
+    public function actionExportdetail(){
+        $result = Stock::getExportDetail(Yii::$app->request->getQueryParams());
+        $filename = '出入库报表.csv';
+        header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
     }
     /**
      * Displays the page list

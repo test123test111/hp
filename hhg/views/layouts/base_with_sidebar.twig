@@ -20,12 +20,12 @@
                 <dd {% if sidebar_name == '异常订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/except">异常订单</a></dd>
             </dl>
             <dl>
-    			<dt class="havesub" data-index="2">我的报告</dt>
-    			<dd class="sub2" {% if sidebar_name == '库存报告' %}class="cur"{% endif %} {% if menu_name !="report" %} style="display:none;"{% endif %}><a href="/stock/list">库存报告</a></dd>
-    			<dd class="sub2" {% if sidebar_name == '物料进出' %}class="cur"{% endif %} {% if menu_name !="report" %} style="display:none;"{% endif %}><a href="/stock/inout">物料进出</a></dd>
-    			<dd class="sub2" {% if sidebar_name == '订单报告' %}class="cur"{% endif %} {% if menu_name !="report" %} style="display:none;"{% endif %}><a href="/order/report">订单报告</a></dd>
-    			<dd><a href="#">费用报告</a></dd>
-    		</dl>
+                <dt class="havesub">我的报告</dt>
+                <dd {% if sidebar_name == '库存报告' %}class="cur"{% endif %} {% if menu_name != 'report'%} style="display:none;"{% endif %}><a href="/stock/list">库存报告</a></dd>
+                <dd {% if sidebar_name == '物料进出' %}class="cur"{% endif %} {% if menu_name != 'report'%} style="display:none;"{% endif %}><a href="/stock/detail">出入库报告</a></dd>
+                <dd {% if sidebar_name == '订单报告' %}class="cur"{% endif %} {% if menu_name != 'report'%} style="display:none;"{% endif %}><a href="/order/report">订单报告</a></dd>
+                
+            </dl>
     	</div>
     	
     </div>

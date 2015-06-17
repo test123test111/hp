@@ -92,7 +92,7 @@ class StockController extends CustomerController {
                  'storerooms'=>Storeroom::find()->all(),
             ]);
         }
-        return $this->render('detail',['storerooms'=>Storeroom::find()->all()]);
+        return $this->render('detail',['storerooms'=>Storeroom::find()->all(),'params'=>$params]);
     }
     /**
      * stock detail 

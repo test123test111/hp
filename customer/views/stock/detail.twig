@@ -1,4 +1,4 @@
-{% set sidebar_name = "库存报告" %}
+{% set sidebar_name = "出入库报告" %}
 {% set menu_name = "report" %}
 {% extends "@app/views/layouts/main.twig" %}
 {% block content %}
@@ -8,7 +8,7 @@
                 <form onsubmit="return checkMaterial();">
                     <ul>
                         <li class="clearfix">
-                            <label>关键字：</label>
+                            <label>关键 字：</label>
                             <input type="text" name="material_id" value="{% if params.material_id is defined %}{{ params.material_id }}{% endif %}" id="materialVal" class="search_ipt" placeholder="输入物料编码或物料名称" />
                         </li>
                         <li>
@@ -39,7 +39,6 @@
             <div class="material_cart clearfix">
                 <a href="/stock/exportdetail" class="export_btn">导出库存报表</a>
             </div>
-        {% endif %}
         <div class="materiel_box">
                 <table id="material_list" class="materiel_table">
                     <thead>
@@ -96,6 +95,7 @@
                     {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
                 </div>
             </div>
+        {% endif %}
       </div>
 <script type='text/javascript' src='/js/date_input.js'></script>
     <script type="text/javascript">
