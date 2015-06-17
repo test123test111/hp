@@ -25,14 +25,21 @@ use common\models\SendEmail;
 class OrderController extends \yii\web\Controller {
     public $layout = false;
     public $enableCsrfValidation;
-    /**
-     * This is the default 'index' action that is invoked
-     * when an action is not explicitly requested by users.
-     */
-    public function actionIndex() {
-        // renders the view file 'protected/views/site/index.php'
-        // using the default layout 'protected/views/layouts/main.php'
-        $this->render('index');
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
     }
     /**
      * This is the action to handle external exceptions.
@@ -68,19 +75,6 @@ class OrderController extends \yii\web\Controller {
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
         ]);
-    }
-    /**
-     * [actionSearch description]
-     * @return [type] [description]
-     */
-    public function actionSearch(){
-        $model = new Order;
-        $dataProvider = [];
-        if(isset($_POST['orderid'])){
-            $searchModel = new OrderSearch;
-            $dataProvider = $searchModel->searchByPost($_POST['orderid']);
-        }
-        return $this->render("search",['model'=>$model,'dataProvider'=>$dataProvider]);
     }
     /**
      * Displays the create page
@@ -227,7 +221,7 @@ class OrderController extends \yii\web\Controller {
                 $model->viewid = date('Ymd')."-".$model->id;
                 $model->update();
                 //create order detail 
-                $model->createOrderDetail($_POST['Carts'],Yii::$app->user->id);
+                $model->createOrderDetail($_POST['Carts'],$model->created_uid);
                 $transaction->commit();
                 $this->redirect("/order/success?id={$model->viewid}");
             }catch (\Exception $e) {
@@ -537,18 +531,17 @@ class OrderController extends \yii\web\Controller {
         }
     }
     public function actionReport(){
-        $data = [];
-        $pages = [];
-        $count = 0;
-        if(isset($_GET['search']) && $_GET['search'] ==1 ){
-            list($data,$pages,$count) = OrderSearch::getMyData(Yii::$app->request->getQueryParams());
-        }
+        $params = Yii::$app->request->getQueryParams();
+        list($data,$pages,$count) = OrderSearch::getDoneData(Yii::$app->request->getQueryParams());
+        $sidebar_name = '订单报告';
         return $this->render('report', [
-                 'results' => $data,
-                 'pages' => $pages,
-                 'count'=>$count,
-                 'params'=>Yii::$app->request->getQueryParams(),
-            ]);
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+             'menu_name'=>'report',
+        ]);
     }
     public function actionCity(){
         $out = [];

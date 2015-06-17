@@ -26,6 +26,22 @@ use common\models\SendEmail;
 class OrderController extends CustomerController {
     public $layout = false;
     public $enableCsrfValidation;
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
     /**
      * This is the default 'index' action that is invoked
      * when an action is not explicitly requested by users.
@@ -584,18 +600,17 @@ class OrderController extends CustomerController {
         }
     }
     public function actionReport(){
-        $data = [];
-        $pages = [];
-        $count = 0;
-        if(isset($_GET['search']) && $_GET['search'] ==1 ){
-            list($data,$pages,$count) = OrderSearch::getMyData(Yii::$app->request->getQueryParams());
-        }
+        $params = Yii::$app->request->getQueryParams();
+        list($data,$pages,$count) = OrderSearch::getDoneData(Yii::$app->request->getQueryParams());
+        $sidebar_name = '订单报告';
         return $this->render('report', [
-                 'results' => $data,
-                 'pages' => $pages,
-                 'count'=>$count,
-                 'params'=>Yii::$app->request->getQueryParams(),
-            ]);
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+             'menu_name'=>'report',
+        ]);
     }
     public function actionCity(){
         $out = [];

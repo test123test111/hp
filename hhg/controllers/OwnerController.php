@@ -10,17 +10,24 @@ use hhg\models\Hhg;
 class OwnerController extends \yii\web\Controller {
 
     public $layout = false;
-    /**
-     * This is the default 'index' action that is invoked
-     * when an action is not explicitly requested by users.
-     */
-    public function actionIndex() {
-        // renders the view file 'protected/views/site/index.php'
-        // using the default layout 'protected/views/layouts/main.php'
-        $this->render('index');
-    }
+    
     public function actionDisplaypassword(){
         return $this->render('resetpassword');
+    }
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['list', 'displaypassword','update','export','budget','updatebudget'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
     }
     /**
      * This is the action to handle external exceptions.
