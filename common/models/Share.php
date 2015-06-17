@@ -7,6 +7,7 @@ use backend\models\Material;
 use backend\models\Owner;
 use backend\models\StockTotal;
 use backend\models\Storeroom;
+use backend\models\Stock;
 class Share extends ActiveRecord
 {
     const STATUS_IS_NORMAL = 0;
@@ -42,6 +43,9 @@ class Share extends ActiveRecord
     }
     public function getStockTotals(){
         return $this->hasOne(StockTotal::className(),['material_id'=>'material_id','storeroom_id'=>'storeroom_id']);
+    }
+    public function getStocks(){
+        return $this->hasOne(Stock::className(),['material_id'=>'material_id','storeroom_id'=>'storeroom_id'])->orderBy(['stock_time'=>SORT_ASC]);
     }
     public function getStorerooms(){
         return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']);

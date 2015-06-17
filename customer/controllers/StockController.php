@@ -10,6 +10,7 @@ use customer\models\search\StockSearch;
 use customer\components\CustomerController;
 use backend\models\Upload;
 use customer\models\Storeroom;
+use common\models\Share;
 
 class StockController extends CustomerController {
     public $layout = false;
@@ -50,13 +51,30 @@ class StockController extends CustomerController {
      */
     public function actionList() {
         list($data,$pages,$count) = Stock::getMyData(Yii::$app->request->getQueryParams());
+        $owners = Share::find()->select('owner_id')->distinct('owner_id')->with('owners')->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->all();
         return $this->render('list', [
              'results' => $data,
              'pages' => $pages,
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'storerooms'=>Storeroom::find()->all(),
+             'ownersData'=>$owners,
         ]);
+    }
+    /**
+     * import stock total excel
+     * @return [type] [description]
+     */
+    public function actionImport(){
+        $result = Stock::getImportData(Yii::$app->request->getQueryParams());
+        $filename = '库存报表.csv';
+        header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
     }
     public function actionDetail(){
         list($data,$pages,$count) = Stock::getDetail(Yii::$app->request->getQueryParams());

@@ -14,4 +14,19 @@ class AddressController extends \yii\web\Controller {
 			'count'=>$count,
 		]);
 	}
+	/**
+	 * import customer address excel 
+	 * @return [type] [description]
+	 */
+	public function actionImport(){
+		$result = Address::getDatas(Yii::$app->user->id);
+		$filename = '收货人信息.csv';
+		header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
+	}
 }

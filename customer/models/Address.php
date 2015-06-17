@@ -24,7 +24,21 @@ class Address extends CustomerActiveRecord {
             [['phone', 'province', 'city', 'area', 'address', 'zip', 'tel_area_code', 'tel', 'tel_ext'], 'safe'],
         ];
     }
-
+    public function behaviors()
+    {
+        return BaseArrayHelper::merge(
+            parent::behaviors(),
+            [
+                'timestamp' => [
+                    'class' => 'yii\behaviors\TimestampBehavior',
+                    'attributes' => [
+                        CustomerActiveRecord::EVENT_BEFORE_INSERT => ['created'],
+                    ],
+                    'value' => function (){ return date("Y-m-d H:i:s");}
+                ],
+           ]
+        );
+    }
 
     /**
      * get user all address
@@ -51,6 +65,13 @@ class Address extends CustomerActiveRecord {
         return json_encode($ret);
     }
     /**
+     * table owner and table address relationship
+     * @return [type] [description]
+     */
+    public function getUser(){
+        return $this->hasOne(Owner::className(),['id'=>'uid']);
+    }
+    /**
      * 获取用户一个地址
      * @param $id int 地址ID
      * @param $uid int 用户ID
@@ -75,5 +96,45 @@ class Address extends CustomerActiveRecord {
 
         $data = $query->all();
         return [$data,$pages,$count];
+    }
+    /**
+     * get customer all address
+     * @param  [type] $begin_time [description]
+     * @param  [type] $end_time   [description]
+     * @return [type]             [description]
+     */
+    public static function getDatas($owner_id){
+        $str = "序号,创建人,收货单位名称,收货联系人,收货人联系电话,收货人地址,所在城市,创建日期,备注\n";
+        $offset = 0;
+        $limit = 100;
+        $num = self::find()->count();
+        $data = [];
+        $rs = [];
+        $i = 1;
+        while(true){
+            $results = self::find()->orderBy(['id'=>SORT_DESC,'uid'=>$owner_id])->limit($limit)->offset($offset)->all();
+            if(empty($results)){
+                break;
+            }
+            foreach($results as $key =>$result){
+                $data[$i]['id'] = $i;
+                $data[$i]['uid'] = $result->user->english_name;
+                $data[$i]['company'] = $result->company;
+                $data[$i]['name'] = $result->name;
+                $data[$i]['phone'] = $result->phone;
+                $data[$i]['address'] = $result->province.$result->city.$result->area.$result->address;
+                $data[$i]['city'] = $result->city;
+                $data[$i]['created'] = $result->created;
+                $data[$i]['info'] = "";
+                $str .= $data[$i]['id'].",".$data[$i]['uid'].",".$data[$i]['company'].",".$data[$i]['name'].",".$data[$i]['phone'].",".$data[$i]['address'].",".$data[$i]['city'].",".$data[$i]['created'].",".$data[$i]['info']."\r\n"; //用引文逗号分开
+                $i++;
+            }
+           
+            $offset += $limit;
+            if ($offset > $num) {
+                break;
+            }
+        }
+        return $str;
     }
 }

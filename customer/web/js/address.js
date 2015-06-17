@@ -41,7 +41,7 @@ $(function(){
     });
 
     // buy submit
-    $(".buy_btn").click(function(){
+    $("#buy_btn").click(function(){
         if(!$(this).hasClass("btn_order_undefined")){
             if($("#orderType").val() == 0){
                 if($("#address_area li").length == 0){
