@@ -1,15 +1,16 @@
 <?php
 
-namespace customer\controllers;
+namespace hhg\controllers;
 
 use Yii;
-use customer\models\Stock;
+use hhg\models\Stock;
 use backend\models\Material;
 use backend\models\StockTotal;
-use customer\models\search\StockSearch;
+use hhg\models\search\StockSearch;
 use customer\components\CustomerController;
 use backend\models\Upload;
-use customer\models\Storeroom;
+use hhg\models\Storeroom;
+use backend\models\Owner;
 
 class StockController extends CustomerController {
     public $layout = false;
@@ -56,7 +57,23 @@ class StockController extends CustomerController {
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'storerooms'=>Storeroom::find()->all(),
+             'ownersData'=>Owner::find()->all(),
         ]);
+    }
+    /**
+     * import stock total excel
+     * @return [type] [description]
+     */
+    public function actionImport(){
+        $result = Stock::getImportData(Yii::$app->request->getQueryParams());
+        $filename = '库存报表.csv';
+        header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
     }
     public function actionDetail(){
         list($data,$pages,$count) = Stock::getDetail(Yii::$app->request->getQueryParams());

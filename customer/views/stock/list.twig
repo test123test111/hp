@@ -41,7 +41,7 @@
           </form>
         </div>
         <div class="material_cart clearfix">
-            <a href="/stock/import" class="buy_btn" id="exportStockBtn" style="width:150px;font-size:1rem;">导出库存报表</a>
+            <a href="/stock/import" class="export_btn">导出库存报表</a>
         </div>
         <div class="materiel_box">
                 <table id="material_list" class="materiel_table">
@@ -87,7 +87,14 @@
                 </div>
             </div>
       </div>
-<script type='text/javascript' src="/js/stock.js"></script>
+<script type="text/javascript">
+
+$(function(){
+    var url = window.location.search;
+    $(".export_btn").attr("href","/stock/import"+url);
+});
+
+</script>
 {% endblock %}
 
 

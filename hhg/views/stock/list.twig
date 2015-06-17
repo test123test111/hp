@@ -1,4 +1,5 @@
 {% set sidebar_name = "库存报告" %}
+{% set menu_name = "report" %}
 {% extends "@app/views/layouts/main.twig" %}
 {% block content %}
 {% include '@app/views/layouts/base_with_sidebar.twig' %}
@@ -20,8 +21,11 @@
                 </li>
                 <li>
                     <label>所属人：</label>
-                    <select>
-                        <option value="{{ App.user.id }}">{{ App.user.identity.english_name }}</option>
+                    <select name="owner_id">
+                        <option value="">请选择所属人</option>
+                        {% for owner in ownersData %}
+                        <option {% if params.owner_id is defined and params.owner_id == owner.id %}selected="selected"{% endif %} value="{{ owner.id }}">{{ owner.english_name }}</option>
+                        {% endfor %}
                         {# <option value="1">周星星</option>
                         <option value="1">张学友</option> #}
                     </select>
@@ -45,6 +49,7 @@
                             <td>物料编号</td>
                             <td>物料名称</td>
                             <td>库房名称</td>
+                            <td>所属人</td>
                             <td>现有库存</td>
                             <td>操作</td>
                         </tr>
@@ -55,6 +60,7 @@
                             <td>{{ result.material.code }}</td>
                             <td><a href="/material/view/{{ result.material_id }}" class="blue">{{ result.material.name }}</a></td>
                             <td>{{ result.storeroom.name }}</td>
+                            <td>{{ result.owner.english_name }}</td>
                             <td>{{ result.total }}</td>
                             <td>
                             <a class="blue" href="/stock/detail?material_id={{ result.material.id }}&storeroom_id={{ result.storeroom.id }}" target="_blank">查看出入库记录</a>
@@ -75,7 +81,7 @@
 
         $(function(){
             var url = window.location.search;
-            $(".export_btn").attr("href","/stock/export"+url);
+            $(".export_btn").attr("href","/stock/import"+url);
         });
         
       </script>

@@ -238,6 +238,83 @@ class Stock extends CustomerActiveRecord {
         return [$data,$pages,$count];
     }
     /**
+     * [getImportData description]
+     * @param  [type] $params [description]
+     * @return [type]         [description]
+     */
+    public static function getImportData($params){
+        $query = StockTotal::find()->with(['material','storeroom','owner'=>function($query){
+                                            return $query->with(['departments','categorys','productlines','producttwolines']);
+                                        }]);
+        if(isset($params['material_id']) && $params['material_id'] != ""){
+            $material = Material::find()->select('id')->where(['code'=>$params['material_id']])->column();
+            // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
+            if(empty($material)){
+                $material = Material::find()->where(['like','name',$params['material_id']])->column();
+            }
+            if(empty($material)){
+                $query->andWhere(['material_id'=>""]);
+            }else{
+                $query->andWhere(['material_id'=>$material]);
+            }
+            
+        }
+        if(isset($params['owner_id']) && $params['owner_id'] !=""){
+            $query->andWhere(['owner_id'=>$params['owner_id']]);
+        }
+        if(isset($params['storeroom_id']) && $params['storeroom_id'] !=""){
+            $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);
+        }
+        if(isset($params['channel']) && $params['channel'] != ""){
+            $productLine = ProductTwoLine::find()->where(['name'=>$params['channel']])->one();
+            if(!empty($productLine)){
+                $owners = Owner::find()->select('id')->where(['product_two_line'=>$productLine->id])->column();
+                $to_customer_ids = Share::find()->select('owner_id')->where(['to_customer_id'=>Yii::$app->user->id])->column();
+                $resultIds = array_intersect($owners,$to_customer_ids);
+                $query->andWhere(['owner_id'=>$resultIds]);
+            }else{
+                $query->andWhere(['owner_id'=>'-1']);
+            }
+        }
+        $count = $query->count();
+        $str = "序号,物料编号,物料名称,所属人,部门,组别,一级产品线,二级产品线,物料类别,入库时间,库房位置,库存数量,分享与否,物料规格,备注\n";
+        $offset = 0;
+        $limit = 100;
+        $data = [];
+        $i = 1;
+        while(true){
+            $results = $query->limit($limit)->offset($offset)->all();
+            if(empty($results)){
+                break;
+            }
+            foreach($results as $key =>$result){
+                $data[$i]['id'] = $i;
+                $data[$i]['code'] = $result->material->code;
+                $data[$i]['name'] = $result->material->name;
+                $data[$i]['owner'] = $result->owner->english_name;
+                $data[$i]['department'] = $result->owner->departments->name;
+                $data[$i]['category'] = $result->owner->categorys->name;
+                $data[$i]['productline'] = $result->owner->productlines->name;
+                $data[$i]['producttwoline'] = $result->owner->producttwolines->name;
+                $data[$i]['materialcategory'] = $result->material->getMyPropertyName();
+                $data[$i]['stock_time'] = date('Y-m-d H:i',strtotime($result->created));
+                $data[$i]['storeroom'] = $result->storeroom->name;
+                $data[$i]['total'] = $result->total - $result->lock_num;
+                $data[$i]['share'] = "";
+                $data[$i]['package'] = $result->material->package;
+                $data[$i]['info'] = $result->material->desc;
+                $str .= $data[$i]['id'].",".$data[$i]['code'].",".$data[$i]['name'].",".$data[$i]['owner'].",".$data[$i]['department'].",".$data[$i]['category'].",".$data[$i]['productline'].",".$data[$i]['producttwoline'].",".$data[$i]['materialcategory'].",".$data[$i]['stock_time'].",".$data[$i]['storeroom'].",".$data[$i]['total'].",".$data[$i]['share'].",".$data[$i]['package'].",".$data[$i]['info']."\r\n"; //用引文逗号分开
+                $i++;
+            }
+           
+            $offset += $limit;
+            if ($offset > $count) {
+                break;
+            }
+        }
+        return $str;
+    }
+    /**
      * get refund data
      * @return [type] [description]
      */
