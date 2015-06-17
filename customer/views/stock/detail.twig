@@ -1,28 +1,91 @@
-{% set sidebar_name = "物料进出" %}
+{% set sidebar_name = "库存报告" %}
+{% set menu_name = "report" %}
 {% extends "@app/views/layouts/main.twig" %}
 {% block content %}
 {% include '@app/views/layouts/base_with_sidebar.twig' %}
-<div class="main">
+  <div class="main">
+        <div class="order_search">
+                <form onsubmit="return checkMaterial();">
+                    <ul>
+                        <li class="clearfix">
+                            <label>关键字：</label>
+                            <input type="text" name="material_id" value="{% if params.material_id is defined %}{{ params.material_id }}{% endif %}" id="materialVal" class="search_ipt" placeholder="输入物料编码或物料名称" />
+                        </li>
+                        <li>
+                            <label>选择仓库：</label>
+                            <select name="storeroom_id">
+                                <option value="">请选择仓库</option>
+                                {% for storeroom in storerooms %}
+                                <option {% if params.storeroom_id is defined and params.storeroom_id == storeroom.id %}selected="selected"{% endif %} value="{{ storeroom.id }}">{{ storeroom.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </li>
+                        <li class="clearfix">
+                            <label>开始日期：</label>
+                            <input type="text" name="begin_time" class="search_ipt date_input" value="{% if params.begin_time is defined %}{{ params.begin_time }}{% endif %}" placeholder="点击选择开始日期" />
+                        </li>
+                        <li class="clearfix">
+                            <label>结束日期：</label>
+                            <input type="text" name="end_time" class="search_ipt date_input" value="{% if params.end_time is defined %}{{ params.end_time }}{% endif %}" placeholder="点击选择结束日期" />
+                        </li>
+                        <li class="clearfix">
+                            <label>&nbsp;</label>
+                            <input type="submit" name="" class="search_btn" value="搜索" />
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        {% if params is not empty %}
+            <div class="material_cart clearfix">
+                <a href="/stock/exportdetail" class="export_btn">导出库存报表</a>
+            </div>
+        {% endif %}
         <div class="materiel_box">
-                <table class="materiel_table">
+                <table id="material_list" class="materiel_table">
                     <thead>
                         <tr>
-                            <td>操作时间</td>
-                            <td>物料</td>
-                            <td>仓库</td>
-                            <td>行为</td>
-                            <td>出入库数量</td>
-                            
+                            <td>物料编号</td>
+                            <td>物料名称</td>
+                            <td>所属人</td>
+                            <td>部门</td>
+                            <td>组别</td>
+                            <td>一级产品线</td>
+                            <td>二级产品线</td>
+                            <td>物料类型</td>
+                            <td>库房位置</td>
+                            <td>入库时间</td>
+                            <td>入库数量</td>
+                            <td>出库时间</td>
+                            <td>出库数量</td>
+                            <td>出库至</td>
+                            <td>申请人</td>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for result in results %}
+                        {% for key,result in results %}
                         <tr>
-                            <td>{{ result.stock_time }}</td>
-                            <td><a href="/material/view/{{ result.material_id }}" class="blue">{{ result.material.name }}</a></td>
+                            <td>{{ result.material.code }}</td>
+                            <td>{{ result.material.name }}</td>
+                            <td>{{ result.owners.english_name }}</td>
+                            <td>{{ result.owners.departments.name }}</td>
+                            <td>{{ result.owners.categorys.name }}</td>
+                            <td>{{ result.owners.productlines.name }}</td>
+                            <td>{{ result.owners.producttwolines.name }}</td>
+                            <td>{{ result.material.getMyPropertyName() }}</td>
                             <td>{{ result.storeroom.name }}</td>
-                            <td>{% if result.actual_quantity > 0 %}入库{% else %}出库{% endif %}</td>
-                            <td>{{ result.actual_quantity }}</td>
+                            <td>{% if result.increase == 0 %}{{ result.stock_time|date('Y-m-d H:i') }}{% else %}{% endif %}</td>
+                            <td>{% if result.increase == 0 %}{{ result.actual_quantity }}{% else %}{% endif %}</td>
+                            <td>{% if result.increase == 1 %}{{ result.stock_time|date('Y-m-d H:i') }}{% else %}{% endif %}</td>
+                            <td>{% if result.increase == 1 %}{{ 0 - result.actual_quantity }}{% else %}{% endif %}</td>
+                            <td>{% if result.increase == 1 %}
+                                    {% if result.order.to_type == 0 %}
+                                    收件人 {{ result.order.to_city }} {{ result.contact }}
+                                    {% else %}
+                                    平台库 {{ result.order.to_city }} {{ result.contact }}
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>{% if result.increase == 1 %}{{ result.order.createuser.english_name }}{% endif %}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -34,4 +97,21 @@
                 </div>
             </div>
       </div>
+<script type='text/javascript' src='/js/date_input.js'></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.date_input').date_input();
+        });
+        $(function(){
+            var url = window.location.search;
+            $(".export_btn").attr("href","/stock/exportdetail"+url);
+        });
+        function checkMaterial(){
+            var m_value = $("#materialVal").val();
+            if(m_value == ""){
+                alert("请输入物料编码或名称");
+                return false;
+            }
+        }
+    </script>
 {% endblock %}

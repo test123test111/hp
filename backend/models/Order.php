@@ -208,7 +208,10 @@ class Order extends BackendActiveRecord {
     public function getStoreroom(){
         return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']);
     }
-        /**
+    public function getCreateuser(){
+        return $this->hasOne(Owner::className(),['id'=>'created_uid']);
+    }
+    /**
      * [getCanUseStorerooms description]
      * @return [type] [description]
      */
