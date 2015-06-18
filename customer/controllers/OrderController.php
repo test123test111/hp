@@ -512,11 +512,6 @@ class OrderController extends CustomerController {
         }
         return $error;
     }
-    public function actionSuccess(){
-        $id = Yii::$app->request->get('id');
-        $order = Order::find()->where(['viewid'=>$id])->one();
-        return $this->render('success',['id'=>$id,'order'=>$order]);
-    }
     /**
      * [createOrder description]
      * @param  [type] $orderArray [description]
@@ -598,6 +593,11 @@ class OrderController extends CustomerController {
             $transaction->rollBack();
             return false;
         }
+    }
+    public function actionSuccess(){
+        $id = Yii::$app->request->get('id');
+        $order = Order::find()->where(['viewid'=>$id])->one();
+        return $this->render('success',['id'=>$id,'order'=>$order]);
     }
     public function actionReport(){
         $params = Yii::$app->request->getQueryParams();

@@ -18,6 +18,7 @@
                 <dd {% if sidebar_name == '进行中的订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/doing">进行中的订单</a></dd>
                 <dd {% if sidebar_name == '已完成的订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/done">已完成的订单</a></dd>
                 <dd {% if sidebar_name == '异常订单' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/except">异常订单</a></dd>
+                <dd {% if sidebar_name == '大发放' %}class="cur"{% endif %} {% if menu_name != 'order'%} style="display:none;"{% endif %}><a href="/order/import">大发放</a></dd>
             </dl>
             <dl>
                 <dt class="havesub">我的报告</dt>
