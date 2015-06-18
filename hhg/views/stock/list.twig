@@ -63,7 +63,7 @@
                             <td>{{ result.owner.english_name }}</td>
                             <td>{{ result.total }}</td>
                             <td>
-                            <a class="blue" href="/stock/detail?material_id={{ result.material.id }}&storeroom_id={{ result.storeroom.id }}" target="_blank">查看出入库记录</a>
+                            <a class="blue" href="/stock/detail?material_id={{ result.material.code }}&storeroom_id={{ result.storeroom.id }}" target="_blank">查看出入库记录</a>
                            {#  <a class="blue" href="/stock/exportstock?sid={{ result.storeroom.id }}&mid={{ result.material.id }}" target="_blank">导出报表</a> #}
                             </td>
                         </tr>

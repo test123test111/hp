@@ -415,7 +415,7 @@ class Stock extends CustomerActiveRecord {
         if(isset($params['material_id']) && $params['material_id'] != ""){
             $material = Material::find()->where(['code'=>$params['material_id']])->one();
             if(!empty($material)){
-                $query->andWhere(['material_id'=>$params['material_id']]);
+                $query->andWhere(['material_id'=>$material->id]);
             }else{
                 $material = Material::find()->where(['like','name',$params['material_id']])->one();
                 if(!empty($material)){
