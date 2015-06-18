@@ -60,7 +60,7 @@
                         0
                         {% endif %}
                     </td>
-                    <td><a href="javascript:;" data-id="{{ result.id }}" class="blue edit_link">修改预算</a></td>
+                    <td><a href="/budget/index?owner_id={{ result.id }}" class="blue">查看预算</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

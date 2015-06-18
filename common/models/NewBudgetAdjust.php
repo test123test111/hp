@@ -31,6 +31,13 @@ class NewBudgetAdjust extends ActiveRecord
         return 'new_budget_adjust';
     }
     /**
+     * table new_budget_adjust and table new_budget relationship
+     * @return [type] [description]
+     */
+    public function getBudget(){
+        return $this->hasOne(Budget::className(),['id'=>'budget_id']);
+    }
+    /**
      * [getAllOwnerBudgetAdjust description]
      * @param  [type] $params [description]
      * @return [type]         [description]

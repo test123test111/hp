@@ -3,7 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
-
+use backend\models\Owner;
 class Budget extends ActiveRecord
 {
 	public function behaviors()

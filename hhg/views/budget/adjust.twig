@@ -1,0 +1,41 @@
+{% set sidebar_name = "客户预算" %}
+{% set menu_name = "budget" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+  {% include '@app/views/layouts/base_with_sidebar.twig' %}
+  <div class="main">
+        <div class="order_search">
+         
+        </div>
+        <div class="materiel_box">
+                <table id="material_list" class="materiel_table">
+                    <thead>
+                        <tr>
+                            <td>客户名</td>
+                            <td>库房名称</td>
+                            <td>年</td>
+                            {# <td>分享</td> #}
+                            <td>月份/季度</td>
+                            <td>预算费用</td>
+                            <td>调整费用</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bg in budget.adjusts %}
+                        <tr>
+                            <td>{{ bg.bugget.owner.english_name }}</td>
+                            <td>{{ bg.bugget.storeroom.name }}</td>
+                            <td>{{ bg.bugget.year }}</td>
+                            <td>{{ bg.bugget.time }}</td>
+                            <td>{{ bg.bugget.price }}</td>
+                            <td>{{ bg.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>      
+            </div>
+      </div>
+{% endblock %}
+
+
+

@@ -3,7 +3,8 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
-
+use backend\models\Owner;
+use backend\models\Storeroom;
 class NewBudget extends ActiveRecord
 {
 	public function behaviors()
@@ -43,6 +44,20 @@ class NewBudget extends ActiveRecord
         ];
     }
     /**
+     * table storeroom and table new_budget relationship
+     * @return [type] [description]
+     */
+    public function getStoreroom(){
+        return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']);
+    }
+    /**
+     * table owner and table new_budget relationship
+     * @return [type] [description]
+     */
+    public function getOwner(){
+        return $this->hasOne(Owner::className(),['id'=>'owner_id']);
+    }
+    /**
      * table new_budget and new_budget_adjust relationship
      * @return [type] [description]
      */
@@ -67,7 +82,7 @@ class NewBudget extends ActiveRecord
      * @return [type]         [description]
      */
     public static function getAllOwnerBudget($params){
-        $query = static::find()->orderBy(['id'=>SORT_DESC]);
+        $query = static::find()->with(['owner'])->orderBy(['id'=>SORT_DESC]);
 
         if(isset($params['owner_id']) && $params['owner_id'] != ""){
             $query->andWhere(['owner_id'=>$params['owner_id']]);
@@ -83,7 +98,7 @@ class NewBudget extends ActiveRecord
         }
         
         $count = $query->count();
-        $pages = new \yii\data\Pagination(['totalCount' => $counrt]);
+        $pages = new \yii\data\Pagination(['totalCount' => $count]);
         $ret = [];
         $query->offset($pages->offset)->limit(20);
 

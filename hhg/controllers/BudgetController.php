@@ -20,7 +20,7 @@ class BudgetController extends \yii\web\Controller {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index','adjust'],
+                        'actions' => ['index','adjust','create'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -40,6 +40,7 @@ class BudgetController extends \yii\web\Controller {
             'count'=>$count,
             'storerooms'=>Storeroom::find()->all(),
             'owners'=>Owner::find()->all(),
+            'params'=>Yii::$app->request->getQueryParams()
         ]);
     }
     /**
