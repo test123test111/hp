@@ -630,6 +630,52 @@ CREATE TABLE `send_email` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `new_budget`;
+CREATE TABLE `new_budget` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owner_id` int(11) NOT NULL,
+  `storeroom_id` int(11) NOT NULL,
+  `price` float(10,2) NOT NULL,
+  `year` varchar(16) NOT NULL,
+  `time` tinyint(4) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_uid` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `owner_id`(`owner_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `new_budget_adjust`;
+CREATE TABLE `new_budget_adjust` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `budget_id` int(11) NOT NULL,
+  `price` float(10,2) NOT NULL DEFAULT '0.00',
+  `created_uid` int(11) NOT NULL,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `budget_id`(`budget_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `new_budget_total`;
+CREATE TABLE `new_budget_total` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `budget_id` int(11) NOT NULL,
+  `price` float(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `budget_id`(`budget_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `new_budget_consume`;
+CREATE TABLE `new_budget_consume` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owner_id` int(11) NOT NULL,
+  `budget_id` int(11) NOT NULL,
+  `price` float(10,2) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `owner_id`(`owner_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 
 
