@@ -73,13 +73,14 @@ class BudgetController extends \yii\web\Controller {
      * @return [type] [description]
      */
     public function actionAdjust($id){
+        $budget = NewBudget::findOne($id);
         if(Yii::$app->request->isPost){
             $price = Yii::$app->request->post('price');
             if($price){
-                $budget->updateAdjust($price);
+                $budget->updateAdjust($price,Yii::$app->user->id);
             }
         }
-        $budget = NewBudget::findOne($id);
+        // $budget = NewBudget::findOne($id);
         if($budget == null){
             throw new \Exception("Error Processing Request", 404);
         }

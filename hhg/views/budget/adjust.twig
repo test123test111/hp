@@ -4,9 +4,24 @@
 {% block content %}
   {% include '@app/views/layouts/base_with_sidebar.twig' %}
   <div class="main">
-        <div class="order_search">
-         
+        <div class="form_view">
+        <div class="mc">
+            {% set form = activeform.begin() %}
+                <ul class="form_list">
+                    <li class="clearfix">
+                        <label>调整金额:</label>
+                        <div class="item">
+                            <input type="text" name="price" />
+                            <input type="hidden" value="{{ budget.id }}" name="budget_id" />
+                        </div>
+                    </li>
+                </ul>
+                <div class="form_submit">
+                    <input type="submit" value="确定" class="form_btn" name="">
+                </div>
+            {{ void(form.end()) }} 
         </div>
+    </div>
         <div class="materiel_box">
                 <table id="material_list" class="materiel_table">
                     <thead>
@@ -23,11 +38,11 @@
                     <tbody>
                         {% for bg in budget.adjusts %}
                         <tr>
-                            <td>{{ bg.bugget.owner.english_name }}</td>
-                            <td>{{ bg.bugget.storeroom.name }}</td>
-                            <td>{{ bg.bugget.year }}</td>
-                            <td>{{ bg.bugget.time }}</td>
-                            <td>{{ bg.bugget.price }}</td>
+                            <td>{{ budget.owner.english_name }}</td>
+                            <td>{{ budget.storeroom.name }}</td>
+                            <td>{{ budget.year }}</td>
+                            <td>{{ budget.time }}</td>
+                            <td>{{ budget.price }}</td>
                             <td>{{ bg.price }}</td>
                         </tr>
                         {% endfor %}
