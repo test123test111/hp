@@ -4,59 +4,58 @@
 {% block content %}
 {% include '@app/views/layouts/base_with_sidebar.twig' %}
 <div class="main">
-  <div class="order_search">
-         {% set form = activeform.begin({'id':'create-form','options':{'enctype':'multipart/form-data'},'layout':'horizontal','fieldConfig':{'horizontalCssClasses':{'wrapper':'col-lg-5'} } }) %}
-                     {% if error is not empty %}
-                     <div class="alert alert-warning">
-                          <div class="error-summary"><p>您的EXCEL表格包含以下错误</p>
-                            <ul>
-                              {% if error.storeroom_error is not empty %}
-                                {% for st,v1 in error.storeroom_error %}
-                                  <li>{{ v1 }}不存在!</li>
-                                {% endfor %}
-                              {% endif %}
-                              {% if error.total_error is not empty %}
-                                {% for tt,v2 in error.total_error %}
-                                  <li>{{ v2 }}库存不足!</li>
-                                {% endfor %}
-                              {% endif %}
-                              {% if error.material_error is not empty %}
-                                {% for mt,v3 in error.material_error %}
-                                  <li>{{ v3 }}不存在!</li>
-                                {% endfor %}
-                              {% endif %}
-                              {% if error.owner_error is not empty %}
-                                {% for ot,v4 in error.owner_error %}
-                                  <li>{{ v4 }}不存在!</li>
-                                {% endfor %}
-                              {% endif %}
-                              {% if error.transport_error is not empty %}
-                                {% for ot,v4 in error.transport_error %}
-                                  <li>{{ ot }}暂不支持{{ v4 }}运输方式!</li>
-                                {% endfor %}
-                              {% endif %}
-                              {% if error.transport_cost is not empty %}
-                                {% for ot,v4 in error.transport_cost %}
-                                  <li>{{ ot }}目的地{{ v4 }}方式暂时不能结算费用!</li>
-                                {% endfor %}
-                              {% endif %}
-                            </ul>
-                          </div>
-                    </div>
-                    {% endif %}
-                    {% if right == true %}
-                     <div class="alert alert-success">
-                        Well done! 成功导入订单，您可在未处理的订单查看导入的订单.
-                    </div>
-                    {% endif %}
-{{ form.field(model,'file').fileinput().label(null,{'class':'control-label col-lg-2'})|raw }} 
-                      <div class="form-group">
-                        <div class="col-lg-offset-2 col-lg-6">
-                          <button type="submit" class="btn btn-primary">Save</button>
+    <div class="form_view">
+        <div class="mc">
+            {% set form = activeform.begin({'id':'create-form','options':{'enctype':'multipart/form-data'} }) %}
+                {% if error is not empty %}
+                          {% if error.storeroom_error is not empty %}
+                            {% for st,v1 in error.storeroom_error %}
+                              <p class="tip">{{ v1 }}不存在!</p>
+                            {% endfor %}
+                          {% endif %}
+                          {% if error.total_error is not empty %}
+                            {% for tt,v2 in error.total_error %}
+                              <p class="tip">{{ v2 }}库存不足!</p>
+                            {% endfor %}
+                          {% endif %}
+                          {% if error.material_error is not empty %}
+                            {% for mt,v3 in error.material_error %}
+                              <p class="tip">{{ v3 }}不存在!</p>
+                            {% endfor %}
+                          {% endif %}
+                          {% if error.owner_error is not empty %}
+                            {% for ot,v4 in error.owner_error %}
+                              <p class="tip">{{ v4 }}不存在!</p>
+                            {% endfor %}
+                          {% endif %}
+                          {% if error.transport_error is not empty %}
+                            {% for ot,v4 in error.transport_error %}
+                              <p class="tip">{{ ot }}暂不支持{{ v4 }}运输方式!</p>
+                            {% endfor %}
+                          {% endif %}
+                          {% if error.transport_cost is not empty %}
+                            {% for ot,v4 in error.transport_cost %}
+                              <p class="tip">{{ ot }}目的地{{ v4 }}方式暂时不能结算费用!</p>
+                            {% endfor %}
+                          {% endif %}
+                {% endif %}
+                {% if right == true %}
+                  <p class="tip">成功导入订单，您可在未处理的订单查看导入的订单。</p>
+                {% endif %}
+                
+                <ul class="form_list">
+                    <li class="clearfix">
+                        <label>Excel文件：</label>
+                        <div class="item">
+                          {{ form.field(model,'file').fileinput().label(false)|raw }}
                         </div>
-                      </div>
-                     {{ void(form.end()) }} 
-  </div>
-
+                    </li>
+                </ul>
+                <div class="form_submit">
+                    <input type="submit" value="确定" class="form_btn" name="">
+                </div>
+            {{ void(form.end()) }} 
+        </div>
+    </div>
 </div>
 {% endblock %}

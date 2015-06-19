@@ -5,6 +5,7 @@
   {% include '@app/views/layouts/base_with_sidebar.twig' %}
   <div class="main">
         <div class="order_search">
+        {% if ownersData is not empty %}
           <form>
             <ul class="clearfix">
                 <li>
@@ -39,6 +40,7 @@
             
             <input type="submit" value="搜索" class="search_btn" />
           </form>
+        {% endif %}
         </div>
         <div class="material_cart clearfix">
             <a href="javascript:void(0);" class="cart_btn" onclick="materiel_cart();"></a>

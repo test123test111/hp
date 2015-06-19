@@ -363,7 +363,9 @@ class Order extends BackendActiveRecord {
             //lock stock 
             $stockTotal = StockTotal::find()->where(['material_id'=>$value['material_id'],'storeroom_id'=>$value['storeroom_id']])->one();
             $stockTotal->updateCounters(['lock_num' => $value['quantity']]);
-            //Cart::deleteAll(['id'=>$cart->id]);
+
+            $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
+            Cart::deleteAll(['id'=>$cart->id]);
         }
         if($flag == 0){
             $this->owner_approval = self::PASS_OWNER_APPROVAL;

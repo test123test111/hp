@@ -371,3 +371,14 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 .order_view .shenpi li p{float:left;width:45%;}
 .order_view .shenpi li span{float:left;width:40%;}
 .order_view .shenpi li span a{margin-right:20px;}
+
+/* 6.18 css */
+.form_view{padding:50px;text-align:center;}
+.form_view .tip{text-align:center;padding:10px;color:#333;font-size:16px;}
+.form_view .form_list{display:inline-block;margin:10px auto;}
+.form_view .form_list li{padding:10px 0;}
+.form_view .form_list label{float:left;width:160px;text-align:right;line-height:30px;}
+.form_view .form_list .item{float:left;width:300px;text-align:left;}
+.form_view .form_list input{border:1px solid #b6b2b1;background:#fff;height:30px;line-height:30px;padding:0 10px;width:200px;font-size:14px;}
+.form_view .form_list select{height:30px;border:1px solid #b6b2b1;width:200px;padding:0 10px;}
+.form_btn{padding:0 50px;height:40px;line-height:40px;color:#fff;font-size:20px;text-align:center;border-radius:5px;background:#0089d4;border:0 none;cursor:pointer;}
