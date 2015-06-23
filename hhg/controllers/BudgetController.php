@@ -95,7 +95,7 @@ class BudgetController extends \yii\web\Controller {
      */
     public function actionExport(){
         $result = NewBudget::getExportData(Yii::$app->request->getQueryParams());
-        $filename = '用户信息.csv';
+        $filename = '预算报告.csv';
         header("Content-type:text/csv");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
