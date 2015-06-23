@@ -44,7 +44,7 @@ class BudgetController extends \yii\web\Controller {
         ]);
     }
     /**
-     * 13935816676
+     * 
      * create a budget for owner 
      * @return [type] [description]
      */

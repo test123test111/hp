@@ -201,7 +201,7 @@ class OrderController extends CustomerController {
             $model->load(Yii::$app->request->post());
             $db = Order::getDb();
             $transaction = $db->beginTransaction();
-            try{
+            // try{
                 if($model->to_type == Order::TO_TYPE_USER){
                     $address_id = Yii::$app->request->post('address');
                     $address = Address::findOne($address_id);
@@ -244,10 +244,10 @@ class OrderController extends CustomerController {
                 $model->createOrderDetail($_POST['Carts'],Yii::$app->user->id);
                 $transaction->commit();
                 $this->redirect("/order/success?id={$model->viewid}");
-            }catch (\Exception $e) {
-                $transaction->rollback();
-                throw new \Exception($e->getMessage(), $e->getCode());
-            }
+            // }catch (\Exception $e) {
+            //     $transaction->rollback();
+            //     throw new \Exception($e->getMessage(), $e->getCode());
+            // }
                 
         }
     }

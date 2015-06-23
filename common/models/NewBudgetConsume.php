@@ -6,21 +6,6 @@ use yii\db\ActiveRecord;
 
 class NewBudgetConsume extends ActiveRecord
 {
-	public function behaviors()
-    {
-        return yii\helpers\BaseArrayHelper::merge(
-            parent::behaviors(),
-            [
-                'timestamp' => [
-                    'class' => 'yii\behaviors\TimestampBehavior',
-                    'attributes' => [
-                        ActiveRecord::EVENT_BEFORE_INSERT => ['created'],
-                    ],
-                    'value' => function (){ return date("Y-m-d H:i:s");}
-                ],
-           ]
-        );
-    }
     /**
      * function_description
      *

@@ -211,20 +211,22 @@ class NewBudget extends ActiveRecord
         $year = date('Y');
         if(!empty($storeroom)){
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                $time = ceil((date('n',strtotime($date)))/3);
+                $time = ceil((date('n')/3));
             }else{
                 $time = date('m');
             }
 
             $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
-            $adjust = NewBudgetAdjust::find()->select('price')->where(['budget_id'=>$budget->id])->sum('price');
-
             if(!empty($budget)){
-                $total = NewBudgetTotal::find()->where(['budget_id'=>$budget->id])->one();
-                return [($budget->price + $adjust),($budget->price + $adjust - $total->price)];
+                $adjust = NewBudgetAdjust::find()->select('price')->where(['budget_id'=>$budget->id])->sum('price');
+                if(!empty($budget)){
+                    $total = NewBudgetTotal::find()->where(['budget_id'=>$budget->id])->one();
+                    return [($budget->price + $adjust),($budget->price + $adjust - $total->price)];
+                }
             }
+            
         }
-        return 0;
+        return [0,0];
     }
     /**
      * [getCurrentIdByUid description]
@@ -236,11 +238,10 @@ class NewBudget extends ActiveRecord
         $year = date('Y');
         if(!empty($storeroom)){
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                $time = ceil((date('n',strtotime($date)))/3);
+                $time = ceil((date('n'))/3);
             }else{
                 $time = date('m');
             }
-
             $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
             if(!empty($budget)){
                 return $budget->id;

@@ -450,7 +450,7 @@ class Order extends BackendActiveRecord {
         // $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
         // $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
 
-        list($total,$consume) = NewBudgetTotal::getPriceTotalByCategory($this->created_uid,$this->storeroom_id);
+        list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->created_uid,$this->storeroom_id);
 
         if($department->id == Department::IS_COMERCIAL){
             //中央库规则
@@ -635,7 +635,7 @@ class Order extends BackendActiveRecord {
         $price = $ship_fee + $fenjian_fee;
         $owner = Owner::findOne($this->created_uid);
         $budget_id = NewBudget::getCurrentIdByUid($this->created_uid,$this->storeroom_id);
-        $model = new BudgetConsume;
+        $model = new NewBudgetConsume;
         $model->owner_id = $this->created_uid;
         $model->budget_id = $budget_id;
         $model->price = $price;
@@ -648,7 +648,7 @@ class Order extends BackendActiveRecord {
         // $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
         // $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
 
-        list($total,$consume) = NewBudgetTotal::getPriceTotalByCategory($this->created_uid,$this->storeroom_id);
+        list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->created_uid,$this->storeroom_id);
         if($total != 0){
             if($consume / $total >= 0.5 && $consume / $total < 0.85){
                 $warning_price = '50%';
