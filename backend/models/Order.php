@@ -296,6 +296,13 @@ class Order extends BackendActiveRecord {
     public function getOrderPackage(){
         return $this->hasOne(OrderPackage::className(),['order_id'=>'id']);
     }
+    /**
+     * table package and table order relationship
+     * @return [type] [description]
+     */
+    public function getPackage(){
+        return $this->hasOne(Package::className(),['order_id'=>'id']);
+    }
     public function getMethodText(){
         $methods = (new Package())->getMethod();
         if(isset($methods[$this->packageInfo->method])){
@@ -323,6 +330,9 @@ class Order extends BackendActiveRecord {
         }
         if($this->status == self::ORDER_STATUS_IS_APPROVAL_FAIL){
             return "<font color='red'>审核未通过</font>";
+        }
+        if($this->status == self::ORDER_STATUS_IS_PACKAGE){
+            return "<font color='red'>已包装</font>";
         }
         if($this->status == self::ORDER_STATUS_IS_TRUCK){
             return "<font color='red'>已发货</font>";
@@ -446,11 +456,12 @@ class Order extends BackendActiveRecord {
      * @return [type] [description]
      */
     public function checkOrderNeedApproval(){
-        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
+        list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($this->id);
         $budget_fee = $ship_fee + $fenjian_fee;
 
         $this->ship_fee = $ship_fee;
         $this->fenjian_fee = $fenjian_fee;
+        $this->tariff = $tariff;
         $this->update(false);
 
         $owner = Owner::findOne($this->created_uid);
@@ -642,7 +653,7 @@ class Order extends BackendActiveRecord {
      * @return [type] [description]
      */
     public function consume(){
-        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
+        list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($this->id);
         $price = $ship_fee + $fenjian_fee;
         $owner = Owner::findOne($this->created_uid);
         $budget_id = NewBudget::getCurrentIdByUid($this->created_uid,$this->storeroom_id);

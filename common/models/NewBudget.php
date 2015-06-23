@@ -265,4 +265,10 @@ class NewBudget extends ActiveRecord
         }
         return $arr;
     }
+    public function attributeLabels(){
+        return [
+            'owner_id'=>'所属人',
+            'price'=>'预算金额',
+        ];
+    }
 }

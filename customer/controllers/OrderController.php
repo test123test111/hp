@@ -201,7 +201,12 @@ class OrderController extends CustomerController {
             $model->load(Yii::$app->request->post());
             $db = Order::getDb();
             $transaction = $db->beginTransaction();
-            try{
+            // try{
+                $owner = Owner::findOne(Yii::$app->user->id);
+                if(empty($owner) || $owner->category == 0){
+                    throw new \Exception("下单人不属于任何部门，不具备下订单权限", 1);
+                }
+                $model->category_id = $owner->category;
                 if($model->to_type == Order::TO_TYPE_USER){
                     $address_id = Yii::$app->request->post('address');
                     $address = Address::findOne($address_id);
@@ -245,10 +250,10 @@ class OrderController extends CustomerController {
                 $model->createOrderDetail($_POST['Carts'],Yii::$app->user->id);
                 $transaction->commit();
                 $this->redirect("/order/success?id={$model->viewid}");
-            }catch (\Exception $e) {
-                $transaction->rollback();
-                throw new \Exception($e->getMessage(), $e->getCode());
-            }
+            // }catch (\Exception $e) {
+            //     $transaction->rollback();
+            //     throw new \Exception($e->getMessage(), $e->getCode());
+            // }
                 
         }
     }
@@ -318,7 +323,7 @@ class OrderController extends CustomerController {
     public function actionView($id)
     {   
         $order = Order::find()->with('details')->where(['id'=>$id])->one();
-        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($order->id);
+        list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($order->id);
         return $this->render('view', [
             'order' => $order,
             'ship_fee'=>$ship_fee,
@@ -333,7 +338,7 @@ class OrderController extends CustomerController {
     public function actionViewapproval($id)
     {   
         $order = Order::find()->with('details')->where(['id'=>$id])->one();
-        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($order->id);
+        list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($order->id);
         return $this->render('viewapproval', [
             'order' => $order,
             'ship_fee'=>$ship_fee,

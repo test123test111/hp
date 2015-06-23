@@ -11,7 +11,6 @@ class Package extends BackendActiveRecord {
     const METHOD_RAILWAY = 2;
     const METHOD_AIR = 3;
     const METHOD_EXPRESS = 4;
-    public $order_ids = [];
     /**
      * function_description
      *
@@ -30,8 +29,8 @@ class Package extends BackendActiveRecord {
      */
     public function rules() {
         return [
-            [['num','actual_weight','throw_weight','method','trunk','delivery'],'required'],
-            [['box','info','order_ids','volume'],'safe'],
+            [['num','actual_weight','throw_weight','method','trunk','delivery','order_id'],'required'],
+            [['box','info','volume','package_fee','other_fee'],'safe'],
             [['actual_weight','throw_weight','height','width','length'],'integer']
         ];
     }
@@ -165,6 +164,8 @@ class Package extends BackendActiveRecord {
             'info'=>'封装',
             'created'=>'操作时间',
             'created_uid'=>'操作人',
+            'package_fee'=>'包装材料费用',
+            'other_fee'=>'其他费用'
         ];
     }
     /**

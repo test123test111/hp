@@ -6,6 +6,8 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\Order;
+use backend\models\Owner;
+use backend\models\Material;
 
 /**
  * PostSearch represents the model behind the search form about `backend\models\Post`.
@@ -335,13 +337,19 @@ class OrderSearch extends Order
     public static function getConsumeData($params){
         $query = Order::find()->with(['details','consume','storeroom'=>function($query){
                                     return $query->with('citydata');
-                                },'createduser'])
+                                },'createduser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
-                              ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_APPROVALED,":c_status"=>self::ORDER_STATUS_IS_UNSIGN])
+                              ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_PACKAGE,":c_status"=>self::ORDER_STATUS_IS_UNSIGN])
                               ->orderBy(['id'=>SORT_DESC]);
 
         if(isset($params['created_uid']) && $params['created_uid'] != ""){
-            $query->andWhere(['created_uid'=>$params['created_uid']]);
+            $owner = Owner::find()->where(['english_name'=>$params['created_uid']])->one();
+            if(!empty($owner)){
+                $query->andWhere(['created_uid'=>$owner->id]);
+            }else{
+                $query->andWhere(['created_uid'=> -1]);
+            }
+            
         }
         if(isset($params['begin_time']) && $params['begin_time'] != ""){
             if(isset($params['end_time']) && $params['end_time'] != ""){
@@ -397,14 +405,14 @@ class OrderSearch extends Order
                     $producttwoline_str .= $detail->owner->producttwolines->name.'、';
                 }
                 $weight = ceil($weight * 1.05);
-                $data[$i]['weight'] = $weight;
-                $data[$i]['package_num'] = 1;
-                $data[$i]['tariff'] = 0;
+                $data[$i]['weight'] = $result->package->throw_weight;
+                $data[$i]['package_num'] = isset($result->package) ? $result->package->num : 0;
+                $data[$i]['tariff'] = $result->tariff;
                 $data[$i]['fenjian'] = $result->fenjian_fee;
                 $data[$i]['ship_fee'] = $result->ship_fee;
                 $data[$i]['insurance_price'] = $result->insurance_price;
-                $data[$i]['package_fee'] = 0;
-                $data[$i]['other_fee'] = 0;
+                $data[$i]['package_fee'] = isset($result->package) ? $result->package->package_fee : 0;
+                $data[$i]['other_fee'] = isset($result->package) ? $result->package->other_fee : 0;
                 $data[$i]['total_fee'] = $result->fenjian_fee + $result->ship_fee + $result->insurance_price + $data[$i]['package_fee'] + $data[$i]['other_fee'];
                 $data[$i]['budget_fee'] = $result->fenjian_fee + $result->ship_fee;
                 if($result->st_send_date != 0){
@@ -427,6 +435,7 @@ class OrderSearch extends Order
                                     .$data[$i]['send_city'].","
                                     .$data[$i]['to_city'].","
                                     .$data[$i]['transporttype'].","
+                                    .$data[$i]['transport_cat'].","
                                     .$data[$i]['weight'].","
                                     .$data[$i]['package_num'].","
                                     .$data[$i]['tariff'].","
@@ -438,8 +447,8 @@ class OrderSearch extends Order
                                     .$data[$i]['total_fee'].","
                                     .$data[$i]['budget_fee'].","
                                     .$data[$i]['send_date'].","
-                                    .$data[$i]['owner'].","
-                                    .$data[$i]['department'].",".$data[$i]['category'].",".$data[$i]['productline'].",".$data[$i]['producttwoline'].","
+                                    .rtrim($data[$i]['owner'],'、').","
+                                    .rtrim($data[$i]['department'],'、').",".rtrim($data[$i]['category'],'、').",".rtrim($data[$i]['productline'],'、').",".rtrim($data[$i]['producttwoline'],'、').","
                                     .$data[$i]['to_address'].","
                                     .$data[$i]['recipients'].","
                                     .$data[$i]['viewid'].","

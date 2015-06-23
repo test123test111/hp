@@ -33,7 +33,7 @@ class OrderController extends \yii\web\Controller {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','settlement'],
+                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','settlement','exportsettlement'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -303,7 +303,7 @@ class OrderController extends \yii\web\Controller {
     public function actionView($id)
     {   
         $order = Order::find()->with('details')->where(['id'=>$id])->one();
-        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($order->id);
+        list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($order->id);
         return $this->render('view', [
             'order' => $order,
             'ship_fee'=>$ship_fee,
@@ -318,7 +318,7 @@ class OrderController extends \yii\web\Controller {
     public function actionViewapproval($id)
     {   
         $order = Order::find()->with('details')->where(['id'=>$id])->one();
-        list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($order->id);
+        list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($order->id);
         return $this->render('viewapproval', [
             'order' => $order,
             'ship_fee'=>$ship_fee,

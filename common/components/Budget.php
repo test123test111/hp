@@ -32,9 +32,9 @@ class Budget extends yii\base\Component{
 		}
 		$weight = ceil($weight * self::WEIGHT_RATIO);
 		$kg = ceil($weight / 1000);
-		list($result,$fee,$return_code) = ShippmentCost::getFeeByProperty($storeroom_id,$order->to_district,$kg,$order->transport_type,$order->to_type);
+		list($result,$fee,$return_code,$tariff) = ShippmentCost::getFeeByProperty($storeroom_id,$order->to_district,$kg,$order->transport_type,$order->to_type);
 		$count_detail = count($orderDetail);
 		$fenjian_fee = ShippmentCost::getFenjianFee($count_detail);
-		return [$fee,$fenjian_fee];
+		return [$fee,$fenjian_fee,$tariff];
 	}
 }

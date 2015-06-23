@@ -51,10 +51,9 @@
           1:'recipients',
           2:'to_province',
           3:'to_city',
-          4:'recipients_address',
-          5:'recipients_contact',
+          4:'contact',
           8:'info',
-          9:'limitday',
+          9:{'attribute':'运输时效','value':order.getMyTransportType() },
           
           10:{
             'attribute':'状态',
@@ -104,10 +103,10 @@
                       <tbody>
                         {% for de in detail %}
                         <tr>
-                          <td>{{ de.goods_code }}</td>
+                          <td>{{ de.material.code }}</td>
                           <td>{{ de.material.name }}</td>
                           <td>{{ de.storeroom.name }}</td>
-                          <td>{{ de.goods_quantity }}</td>
+                          <td>{{ de.quantity }}</td>
                         </tr>
                         {% endfor %}
                       </tbody>
@@ -229,7 +228,7 @@
         </div>
 
       </div>
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+{# <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog">
   <div class="modal-content">
             <div class="modal-header">
@@ -258,7 +257,7 @@
             </form>
           </div>
 </div>
-</div>
+</div> #}
 <script type="text/javascript">
 function changeStatus(orderid){
     $('#image_num').val(orderid);

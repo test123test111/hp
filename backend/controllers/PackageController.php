@@ -58,13 +58,14 @@ class PackageController extends BackendController {
         if (isset($_POST['Package'])) {
             $model->load($_POST);
             if ($model->validate() && $model->save()) {
-                $model->saveOrderPackage();
+                $order->status = Order::ORDER_STATUS_IS_PACKAGE;
+                $order->update(false);
                 Yii::$app->session->setFlash('success', '新建成功！');
-                $this->redirect("/order/list?OrderSearch[status]=1");
+                $this->redirect("/order/list?OrderSearch[status]=3");
             }
         }
         return $this->render('create', array(
-            'model' => $model,'isNew'=>true,'order'=>[$order],
+            'model' => $model,'isNew'=>true,'order'=>$order,
         )); 
     }
     /**
@@ -72,15 +73,11 @@ class PackageController extends BackendController {
      * @return [type] [description]
      */
     public function actionUpdate($id){
-        // $order = Order::findOne($id);
-        $package = OrderPackage::find()->where(['order_id'=>$id])->one();
-        if(!empty($package)){
-            $model = $this->loadModel($package->package_id);
+        $order = Order::findOne($id);
+        if(empty($order)){
+            throw new \Exception("Error Processing Request", 1);
         }
-        $ret = [];
-        foreach($model->orders as $v){
-            $ret[] = Order::findOne($v->order_id);
-        }
+        $model = Package::find()->where(['order_id'=>$order->id])->one();
         // collect user input data
         if (isset($_POST['Package'])) {
             $model->load($_POST);
@@ -90,7 +87,7 @@ class PackageController extends BackendController {
             }
         }
         return $this->render('create', array(
-            'model' => $model,'isNew'=>true,'order'=>$ret,
+            'model' => $model,'isNew'=>true,'order'=>$order,
         )); 
     }
     public function actionMultiple(){

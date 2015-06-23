@@ -42,7 +42,7 @@ class ShippmentCost extends ActiveRecord
     	$increase_weight = $templete->increase_weight;
     	$increase_price = $templete->increase_price;
     	if($weight <= $fob_weight){
-    		return [true,$fob_price,self::REQUEST_IS_SUCCESS];
+    		return [true,$fob_price,self::REQUEST_IS_SUCCESS,$increase_price];
     	}
     	$margin = $weight - $fob_weight;
     	if($increase_weight != 0){
@@ -50,7 +50,7 @@ class ShippmentCost extends ActiveRecord
     	}else{
     		$price = $fob_price;
     	}
-    	return [true,$price,self::REQUEST_IS_SUCCESS];
+    	return [true,$price,self::REQUEST_IS_SUCCESS,$increase_price];
     }	
     /**
      * [getFenjianFee description]
