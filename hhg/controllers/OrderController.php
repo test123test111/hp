@@ -33,7 +33,7 @@ class OrderController extends \yii\web\Controller {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report'],
+                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','settlement'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -179,6 +179,11 @@ class OrderController extends \yii\web\Controller {
             $db = Order::getDb();
             $transaction = $db->beginTransaction();
             try{
+                $owner = Owner::findOne($model->created_uid);
+                if(empty($owner) || $owner->category == 0){
+                    throw new \Exception("下单人不属于任何部门，不具备下订单权限", 1);
+                }
+                $model->category_id = $owner->category;
                 if($model->to_type == Order::TO_TYPE_USER){
                     $address_id = Yii::$app->request->post('address');
                     $address = Address::findOne($address_id);
@@ -1198,5 +1203,32 @@ class OrderController extends \yii\web\Controller {
                 echo 0;
             }
         }
+    }
+    /**
+     * action for settlement 
+     * @return [type] [description]
+     */
+    public function actionSettlement(){
+        $params = Yii::$app->request->getQueryParams();
+        $sidebar_name = '结算报告';
+        return $this->render('settlement', [
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+        ]);
+    }
+    /**
+     * export settlement info 
+     * @return [type] [description]
+     */
+    public function actionExportsettlement(){
+        $result = OrderSearch::getConsumeData(Yii::$app->request->getQueryParams());
+        $filename = '结算报告.csv';
+        header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
     }
 }

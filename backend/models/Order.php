@@ -215,6 +215,13 @@ class Order extends BackendActiveRecord {
         return $this->hasOne(Owner::className(),['id'=>'created_uid']);
     }
     /**
+     * [getConsume description]
+     * @return [type] [description]
+     */
+    public function getConsume(){
+        return $this->hasOne(NewBudgetConsume::className(),['order_id'=>'id']);
+    }
+    /**
      * [getCanUseStorerooms description]
      * @return [type] [description]
      */
@@ -441,6 +448,10 @@ class Order extends BackendActiveRecord {
     public function checkOrderNeedApproval(){
         list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
         $budget_fee = $ship_fee + $fenjian_fee;
+
+        $this->ship_fee = $ship_fee;
+        $this->fenjian_fee = $fenjian_fee;
+        $this->update(false);
 
         $owner = Owner::findOne($this->created_uid);
         $department_id = $owner->department;

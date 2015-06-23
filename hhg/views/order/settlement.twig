@@ -1,0 +1,39 @@
+{% set menu_name = "report" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+<div class="main">
+<div class="order_search">
+  <form>
+    <ul class="clearfix">
+        <li>
+            <label>用 户：</label>
+            <input type="text" name="created_uid" value="{% if params.created_uid is defined %}{{ params.created_uid }}{% endif %}" class="search_ipt" placeholder="" />
+        </li>
+        <li>
+            <label>组 别：</label>
+            <input type="text" name="category" value="{% if params.category is defined %}{{ params.category }}{% endif %}" class="search_ipt" placeholder="" />
+        </li>
+        <li class="clearfix">
+            <label>开 始：</label>
+            <input type="text" name="begin_time" class="search_ipt date_input" value="{% if params.begin_time is defined %}{{ params.begin_time }}{% endif %}" placeholder="点击选择开始日期" />
+        </li>
+        <li class="clearfix">
+            <label>结 束：</label>
+            <input type="text" name="end_time" class="search_ipt date_input" value="{% if params.end_time is defined %}{{ params.end_time }}{% endif %}" placeholder="点击选择结束日期" />
+        </li>
+    </ul>
+    
+    <input type="submit" value="导出结算报表" class="search_btn" />
+  </form>
+</div>
+<script type='text/javascript' src='/js/date_input.js'></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.date_input').date_input();
+        });
+    </script>
+{% endblock %}
+
+
+

@@ -328,4 +328,130 @@ class OrderSearch extends Order
         ]);
         return $dataProvider;
     }
+    /**
+     * get refund data
+     * @return [type] [description]
+     */
+    public static function getConsumeData($params){
+        $query = Order::find()->with(['details','consume','storeroom'=>function($query){
+                                    return $query->with('citydata');
+                                },'createduser'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_APPROVALED,":c_status"=>self::ORDER_STATUS_IS_UNSIGN])
+                              ->orderBy(['id'=>SORT_DESC]);
+
+        if(isset($params['created_uid']) && $params['created_uid'] != ""){
+            $query->andWhere(['created_uid'=>$params['created_uid']]);
+        }
+        if(isset($params['begin_time']) && $params['begin_time'] != ""){
+            if(isset($params['end_time']) && $params['end_time'] != ""){
+                $begin_time = $params['begin_time']." 00:00:00";
+                $end_time = $params['end_time']." 23:59:59";
+                $query->andWhere('created >= :begin_time AND created <= :end_time',[':begin_time'=>$begin_time,":end_time"=>$end_time]);
+            }
+        }
+        if(isset($params['category']) && $params['category'] !=""){
+            $query->andWhere(['category_id'=>$params['category']]);
+        }
+        $count = $query->count();
+        $str = "序号,订单类型,库房位置,申请人,申请订单日期,预算所有人,起运城市,收货城市,运输时效,运输类别,重量(KG),包装数量,费率,分拣费,运费,保险费,包装材料费,其他费用,总计,预估价格,发货日期,所属人,部门,组别,一级产品线,二级产品线,收货地址,收货人,订单号,备注\n";
+        $offset = 0;
+        $limit = 100;
+        $data = [];
+        $i = 1;
+        while(true){
+            $results = $query->limit($limit)->offset($offset)->all();
+            if(empty($results)){
+                break;
+            }
+            foreach($results as $key =>$result){
+                $data[$i]['id'] = $i;
+                $data[$i]['type'] = '日常订单';
+                $data[$i]['storeroom'] = $result->storeroom->name;
+                $data[$i]['created_uid'] = $result->createduser->english_name;
+                $data[$i]['created'] = date('Y-m-d H:i',strtotime($result->created));
+                $data[$i]['budget_owner'] = $result->createduser->english_name;
+                $data[$i]['send_city'] = isset($result->storeroom->citydata) ? $result->storeroom->citydata->name : "";
+                $data[$i]['to_city'] = $result->to_city;
+                $data[$i]['transporttype'] = $result->getMyTransportType();
+                if($result->to_type == self::TO_TYPE_USER){
+                    $data[$i]['transport_cat'] = '寄送收件人';
+                }else{
+                    $data[$i]['transport_cat'] = '寄送平台库';
+                }
+               
+                $weight = 0;
+                $owner_str = '';
+                $department_str = '';
+                $category_str = '';
+                $productline_str = '';
+                $producttwoline_str = '';
+                foreach($result->details as $detail){
+                    $material = Material::findOne($detail->material_id);
+                    $materialWeight = $detail->quantity * $material->weight;
+                    $weight += $materialWeight;
+                    $owner_str .= $detail->owner->english_name.'、';
+                    $department_str .= $detail->owner->departments->name.'、';
+                    $category_str .= $detail->owner->categorys->name.'、';
+                    $productline_str .= $detail->owner->productlines->name.'、';
+                    $producttwoline_str .= $detail->owner->producttwolines->name.'、';
+                }
+                $weight = ceil($weight * 1.05);
+                $data[$i]['weight'] = $weight;
+                $data[$i]['package_num'] = 1;
+                $data[$i]['tariff'] = 0;
+                $data[$i]['fenjian'] = $result->fenjian_fee;
+                $data[$i]['ship_fee'] = $result->ship_fee;
+                $data[$i]['insurance_price'] = $result->insurance_price;
+                $data[$i]['package_fee'] = 0;
+                $data[$i]['other_fee'] = 0;
+                $data[$i]['total_fee'] = $result->fenjian_fee + $result->ship_fee + $result->insurance_price + $data[$i]['package_fee'] + $data[$i]['other_fee'];
+                $data[$i]['budget_fee'] = $result->fenjian_fee + $result->ship_fee;
+                if($result->st_send_date != 0){
+                    $data[$i]['send_date'] = date('Y-m-d H:i',$result->st_send_date);
+                }else{
+                    $data[$i]['send_date'] = "";
+                }
+
+                $data[$i]['owner'] = $owner_str;
+                $data[$i]['department'] = $department_str;
+                $data[$i]['category'] = $category_str;
+                $data[$i]['productline'] = $productline_str;
+                $data[$i]['producttwoline'] = $producttwoline_str;
+                $data[$i]['to_address'] = $result->to_province.$result->to_city.$result->to_district.$result->contact;
+                $data[$i]['recipients'] = $result->recipients;
+                $data[$i]['viewid'] = $result->viewid;
+                $data[$i]['info'] = $result->info;
+                $str .= $data[$i]['id'].",".$data[$i]['type'].",".$data[$i]['storeroom'].",".$data[$i]['created_uid'].",".$data[$i]['created'].",".
+                                    $data[$i]['budget_owner'].","
+                                    .$data[$i]['send_city'].","
+                                    .$data[$i]['to_city'].","
+                                    .$data[$i]['transporttype'].","
+                                    .$data[$i]['weight'].","
+                                    .$data[$i]['package_num'].","
+                                    .$data[$i]['tariff'].","
+                                    .$data[$i]['fenjian'].","
+                                    .$data[$i]['ship_fee'].","
+                                    .$data[$i]['insurance_price'].","
+                                    .$data[$i]['package_fee'].","
+                                    .$data[$i]['other_fee'].","
+                                    .$data[$i]['total_fee'].","
+                                    .$data[$i]['budget_fee'].","
+                                    .$data[$i]['send_date'].","
+                                    .$data[$i]['owner'].","
+                                    .$data[$i]['department'].",".$data[$i]['category'].",".$data[$i]['productline'].",".$data[$i]['producttwoline'].","
+                                    .$data[$i]['to_address'].","
+                                    .$data[$i]['recipients'].","
+                                    .$data[$i]['viewid'].","
+                                    .$data[$i]['info']."\r\n"; //用引文逗号分开
+                $i++;
+            }
+           
+            $offset += $limit;
+            if ($offset > $count) {
+                break;
+            }
+        }
+        return $str;
+    }
 }
