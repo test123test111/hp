@@ -50,6 +50,13 @@ class Storeroom extends ActiveRecord {
     public function getCitydata(){
         return $this->hasOne(HpCity::className(),['id'=>'city']);
     }
+    /**
+     * table hp_city and table storeroom relationship
+     * @return [type] [description]
+     */
+    public function getDistrictname(){
+        return $this->hasOne(HpCity::className(),['id'=>'district']);
+    }
     public function updateAttrs($attributes){
         $attrs = array();
         if (!empty($attributes['name']) && $attributes['name'] != $this->name) {

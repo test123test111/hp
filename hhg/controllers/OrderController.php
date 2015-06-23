@@ -196,6 +196,7 @@ class OrderController extends \yii\web\Controller {
                     $model->to_province = $province->name;
                     $city = HpCity::findOne($record->city);
                     $model->to_city = $city->name;
+                    $model->to_company = $record->name;
                     $district = HpCity::findOne($record->district);
                     if(!empty($district)){
                         $model->to_district = $district->name;
@@ -1101,6 +1102,7 @@ class OrderController extends \yii\web\Controller {
             $to_city = Yii::$app->request->post('to_city');
             $transport_type = Yii::$app->request->post('transport_type');
             $order_type = Yii::$app->request->post('order_type');
+
             $templete = ShippmentCost::find()->where(['storeroom_id'=>$storeroom_id,'transport_type'=>$transport_type,'to_type'=>$order_type,'to_city'=>$to_city])->one();
             if(!empty($templete)){
                 echo 1;

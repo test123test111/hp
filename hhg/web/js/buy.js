@@ -63,7 +63,12 @@ $(function(){
                 alert("请选择正确的下单人");
                 return false;
             }
-            var to_city = $("#addrArea").html();
+            if(orderType == 0){
+                var to_city = $("#addrArea").html();
+            }else{
+                var to_city = $("#storeroomSe  option:selected").data('city');
+            }
+            
             var a = document.getElementsByName("Order[transport_type]");
             var n;
             for(var i=0;i<a.length;i++) {

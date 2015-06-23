@@ -26,9 +26,9 @@
                             <li data-type="1">平台库</li>
                         </ul>
                         <div class="add_content none">
-                            <select name="storeroom">
+                            <select name="storeroom" id="storeroomSe">
                                 {% for storeroom in storerooms %}
-                                <option value="{{ storeroom.id }}">{{ storeroom.name }}</option>
+                                <option value="{{ storeroom.id }}" data-city="{% if storeroom.districtname is defined %}{{ storeroom.districtname.name }}{% endif %}">{{ storeroom.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>

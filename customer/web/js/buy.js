@@ -58,7 +58,11 @@ $(function(){
                 alert("只能从中央库调配物资到平台库");
                 return false;
             }
-            var to_city = $("#addrArea").html();
+            if(orderType == 0){
+                var to_city = $("#addrArea").html();
+            }else{
+                var to_city = $("#storeroomSe  option:selected").data('city');
+            }
             var a = document.getElementsByName("Order[transport_type]");
             var n;
             for(var i=0;i<a.length;i++) {

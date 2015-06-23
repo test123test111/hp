@@ -201,7 +201,7 @@ class OrderController extends CustomerController {
             $model->load(Yii::$app->request->post());
             $db = Order::getDb();
             $transaction = $db->beginTransaction();
-            // try{
+            try{
                 if($model->to_type == Order::TO_TYPE_USER){
                     $address_id = Yii::$app->request->post('address');
                     $address = Address::findOne($address_id);
@@ -219,6 +219,7 @@ class OrderController extends CustomerController {
                     $model->to_province = $province->name;
                     $city = HpCity::findOne($record->city);
                     $model->to_city = $city->name;
+                    $model->to_company = $record->name;
                     $district = HpCity::findOne($record->district);
                     if(!empty($district)){
                         $model->to_district = $district->name;
@@ -244,10 +245,10 @@ class OrderController extends CustomerController {
                 $model->createOrderDetail($_POST['Carts'],Yii::$app->user->id);
                 $transaction->commit();
                 $this->redirect("/order/success?id={$model->viewid}");
-            // }catch (\Exception $e) {
-            //     $transaction->rollback();
-            //     throw new \Exception($e->getMessage(), $e->getCode());
-            // }
+            }catch (\Exception $e) {
+                $transaction->rollback();
+                throw new \Exception($e->getMessage(), $e->getCode());
+            }
                 
         }
     }
