@@ -15,6 +15,9 @@ use common\models\BudgetTotal;
 use common\models\Approval;
 use hhg\models\Hhg;
 use common\models\SendEmail;
+use common\models\NewBudget;
+use common\models\NewBudgetConsume;
+use common\models\NewBudgetTotal;
 class Order extends BackendActiveRecord {
 
     const BUDGET_RATIO = 1.05;
@@ -444,11 +447,15 @@ class Order extends BackendActiveRecord {
         $department = Department::findOne($department_id);
         $storeroom = Storeroom::findOne($this->storeroom_id);
         //商用部门规则
-        $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
-        $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
+        // $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
+        // $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
+
+        list($total,$consume) = NewBudgetTotal::getPriceTotalByCategory($this->created_uid,$this->storeroom_id);
+
         if($department->id == Department::IS_COMERCIAL){
             //中央库规则
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+                // if($budget_fee > ($total - $consume)){
                 if($budget_fee > ($total - $consume)){
                     $this->can_formal = self::IS_NOT_FORMAL;
                     $this->update();
@@ -627,17 +634,21 @@ class Order extends BackendActiveRecord {
         list($ship_fee,$fenjian_fee) = Yii::$app->budget->reckon($this->id);
         $price = $ship_fee + $fenjian_fee;
         $owner = Owner::findOne($this->created_uid);
+        $budget_id = NewBudget::getCurrentIdByUid($this->created_uid,$this->storeroom_id);
         $model = new BudgetConsume;
         $model->owner_id = $this->created_uid;
-        $model->category = $owner->category;
+        $model->budget_id = $budget_id;
         $model->price = $price;
         $model->order_id = $this->id;
         if($model->save()){
-            BudgetTotal::updateBudgetPrice($model->owner_id,$price);
+            // BudgetTotal::updateBudgetPrice($model->owner_id,$price);
+            NewBudgetTotal::updateBudgetPrice($budget_id,$price);
         }
         //send warning email
-        $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
-        $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
+        // $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
+        // $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
+
+        list($total,$consume) = NewBudgetTotal::getPriceTotalByCategory($this->created_uid,$this->storeroom_id);
         if($total != 0){
             if($consume / $total >= 0.5 && $consume / $total < 0.85){
                 $warning_price = '50%';

@@ -58,6 +58,7 @@
                             {# <td>分享</td> #}
                             <td>月份/季度</td>
                             <td>预算费用</td>
+                            <td>可用费用</td>
                             <td>查看调整记录</td>
                         </tr>
                     </thead>
@@ -69,6 +70,7 @@
                             <td>{{ result.year }}</td>
                             <td>{{ result.time }}</td>
                             <td>{{ result.price }}</td>
+                            <td>{% if result.total is defined %}{{ result.total.price }}{% endif %}</td>
                             <td><a href="/budget/adjust/{{ result.id }}" class="blue">调整</a> </td>
                         </tr>
                         {% endfor %}
@@ -81,6 +83,12 @@
                 </div>
             </div>
       </div>
+<script type="text/javascript">
+$(function(){
+    var url = window.location.search;
+    $(".export_btn").attr("href","/budget/export"+url);
+});
+</script>
 {% endblock %}
 
 

@@ -7,7 +7,7 @@ use common\models\NewBudgetAdjust;
 use common\models\NewBudgetTotal;
 use common\models\NewBudgetConsume;
 use backend\models\Storeroom;
-use backend\models\Owner;
+use hhg\models\Owner;
 
 class BudgetController extends \yii\web\Controller {
 
@@ -20,7 +20,7 @@ class BudgetController extends \yii\web\Controller {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index','adjust','create'],
+                        'actions' => ['index','adjust','create','export'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -60,12 +60,15 @@ class BudgetController extends \yii\web\Controller {
             }else{
                 $model->time = date('n',strtotime($date));
             }
+            $model->created_uid = Yii::$app->user->id;
             if($model->validate() && $model->save()){
                 $model->createBudgetTotal();
+                return $this->redirect('index');
             }   
         }
         return $this->render('create',[
             'model'=>$model,
+            'createusers'=>Owner::getCreateUsers(),
         ]);
     }
     /**
@@ -86,5 +89,19 @@ class BudgetController extends \yii\web\Controller {
         }
         return $this->render('adjust',['budget'=>$budget]);
     }
-
+    /**
+     * action for export budget 
+     * @return [type] [description]
+     */
+    public function actionExport(){
+        $result = NewBudget::getExportData(Yii::$app->request->getQueryParams());
+        $filename = '用户信息.csv';
+        header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
+    }
 }

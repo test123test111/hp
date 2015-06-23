@@ -42,8 +42,8 @@
                     <td>组别</td>
                     <td>一级产品线</td>
                     <td>二级产品</td>
-                    <td>当前预算</td>
-                    <td>操作</td>
+                    {# <td>当前预算</td>
+                    <td>操作</td> #}
                 </tr>
             </thead>
             <tbody>
@@ -55,12 +55,12 @@
                     <td>{{ result.categorys.name }}</td>
                     <td>{% if result.productlines is defined %}{{ result.productlines.name }}{% endif %}</td>
                     <td>{% if result.producttwolines is defined %}{{ result.producttwolines.name }}{% endif %}</td>
-                    <td>{% if result.budgets is defined %}{{ result.budgets.price }}
+                    {# <td>{% if result.budgets is defined %}{{ result.budgets.price }}
                         {% else %}
                         0
                         {% endif %}
                     </td>
-                    <td><a href="/budget/index?owner_id={{ result.id }}" class="blue">查看预算</a></td>
+                    <td>< a href="/budget/index?owner_id={{ result.id }}" class="blue">查看预算</a></td>#}
                 </tr>
                 {% endfor %}
             </tbody>
