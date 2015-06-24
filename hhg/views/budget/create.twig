@@ -8,11 +8,10 @@
     <div class="form_view">
         <div class="mc">
             {% set form = activeform.begin({'id':'create-form'}) %}  
-                <p class="tip">成功导入订单，您可在未处理的订单查看导入的订单。</p>
                 <ul class="form_list">
                     <li class="clearfix">
                         <label>客户:</label>
-                        {{ form.field(model,'owner_id',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':'','id':'autocompleteCreate','name':'date'}}).label(false)|raw}}
+                        {{ form.field(model,'owner',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':'','id':'autocompleteCreate','name':'','value':''}}).label(false)|raw}}
                     </li>
                     <input type="hidden" name="NewBudget[owner_id]" id="createUsert" />
                     <li class="clearfix">

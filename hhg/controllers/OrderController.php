@@ -370,49 +370,45 @@ class OrderController extends \yii\web\Controller {
         $right = false;
         if(isset($_POST['Order']) && $_POST['Order'] != ""){
             $objPHPExcel = new \PHPExcel();
-            // $objPHPExcel = \PHPExcel_IOFactory::load($_FILES["Order"]["tmp_name"]['file']);
-            // $datas = $objPHPExcel->getSheet(0)->toArray();
-            // $ret = [];
+            $objPHPExcel = \PHPExcel_IOFactory::load($_FILES["Order"]["tmp_name"]['file']);
+            $datas = $objPHPExcel->getSheet(0)->toArray();
+            $ret = [];
             // $datas = [
-            //     ['序号','收件人','收件地址','收件人电话','收件城市','活动','发货仓库','物料编码','物料属主','数量','到货需求','备注'],
-            //     ['1','','','','','','北京中央库','JIHFSN899011','alisa','20','4小时','must be'],
-            //     ['1','wanglei','beijing office','13800138000','beijing','2014 word cup','北京中央库','GSDGSG99990SGA','alisa','5','4小时','must be'],
-            //     ['2','lisi','beijing office','13800138000','beijing','2014 word cup','北京中央库','JIHFSN899011','alisa','40','4小时','must be'],
+            //     ['序号','订单类型','下单人','计划日期','发货仓库','运输时效','到达日期','是否保险','保险金额','收件类型','用途','收件单位','收件人','省份','城市','区县','地址','电话','备注','物料编码','数量'],
+            //     [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-8',10],
+            //     // [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-8',1000000],
+            //     // [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-2131238',1000000],
             // ];
-            $datas = [
-                ['序号','订单类型','下单人','计划日期','发货仓库','运输时效','到达日期','是否保险','保险金额','收件类型','用途','收件单位','收件人','省份','城市','区县','地址','电话','备注','物料编码','数量'],
-                [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-8',10],
-                [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-8',1000000],
-                [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-2131238',1000000],
-            ];
             foreach($datas as $key=>$data){
                 if($key == 0){
                     continue;
                 }else{
-                    $ret[$data[0]]['type'] = trim($data[1]) > 1 ? 0 : $data[1];
-                    $ret[$data[0]]['owner_id'] = trim($data[2]);
-                    $ret[$data[0]]['send_date'] = trim($data[3]) == "" ? date('Y-m-d H:i:s') : date('Y-m-d H:i:s',strtotime(trim($data[2])));
-                    $ret[$data[0]]['storeroom_id'] = trim($data[4]);  
-                    $ret[$data[0]]['transport_type'] = trim($data[5]);
-                    $ret[$data[0]]['arrive_date'] = !empty($data[6]) ? $data[6] : 0;
-                    $ret[$data[0]]['insurance'] = trim($data[7]) > 1 ? 0 : $data[7];
-                    $ret[$data[0]]['insurance_price'] = trim($data[8]);
-                    if(trim($data[9]) == "" || trim($data[9]) > 1){
-                        $ret[$data[0]]['to_type'] = 0;
-                    }else{
-                        $ret[$data[0]]['to_type'] = trim($data[9]);
+                    if($data[1] != null){
+                        $ret[$data[0]]['type'] = trim($data[1]) > 1 ? 0 : $data[1];
+                        $ret[$data[0]]['owner_id'] = trim($data[2]);
+                        $ret[$data[0]]['send_date'] = trim($data[3]) == "" ? date('Y-m-d H:i:s') : date('Y-m-d H:i:s',strtotime(trim($data[3])));
+                        $ret[$data[0]]['storeroom_id'] = trim($data[4]);  
+                        $ret[$data[0]]['transport_type'] = trim($data[5]);
+                        $ret[$data[0]]['arrive_date'] = !empty($data[6]) ? $data[6] : 0;
+                        $ret[$data[0]]['insurance'] = trim($data[7]) > 1 ? 0 : $data[7];
+                        $ret[$data[0]]['insurance_price'] = trim($data[8]);
+                        if(trim($data[9]) == "" || trim($data[9]) > 1){
+                            $ret[$data[0]]['to_type'] = 0;
+                        }else{
+                            $ret[$data[0]]['to_type'] = trim($data[9]);
+                        }
+                        
+                        $ret[$data[0]]['purpose'] = trim($data[10]);
+                        $ret[$data[0]]['to_company'] = trim($data[11]);
+                        $ret[$data[0]]['recipients'] = trim($data[12]);
+                        $ret[$data[0]]['to_province'] = trim($data[13]);
+                        $ret[$data[0]]['to_city'] = trim($data[14]);
+                        $ret[$data[0]]['to_district'] = trim($data[15]);
+                        $ret[$data[0]]['contact'] = trim($data[16]);
+                        $ret[$data[0]]['phone'] = trim($data[17]);
+                        $ret[$data[0]]['info'] = trim($data[18]);
+                        $ret[$data[0]]['goods'][trim($data[19])] = trim($data[20]);
                     }
-                    
-                    $ret[$data[0]]['purpose'] = trim($data[10]);
-                    $ret[$data[0]]['to_company'] = trim($data[11]);
-                    $ret[$data[0]]['recipients'] = trim($data[12]);
-                    $ret[$data[0]]['to_province'] = trim($data[13]);
-                    $ret[$data[0]]['to_city'] = trim($data[14]);
-                    $ret[$data[0]]['to_district'] = trim($data[15]);
-                    $ret[$data[0]]['contact'] = trim($data[16]);
-                    $ret[$data[0]]['phone'] = trim($data[17]);
-                    $ret[$data[0]]['info'] = trim($data[18]);
-                    $ret[$data[0]]['goods'][trim($data[19])] = trim($data[20]);
                 }
             }
             $error = $this->checkOrderRight($ret);
@@ -533,6 +529,7 @@ class OrderController extends \yii\web\Controller {
                 $model->type = $value['type'];
                 $model->modified_uid = $owner->id;
                 $model->hhg_uid = Yii::$app->user->id;
+                $model->category_id = $owner->category;
                 $model->save(false);
 
                 $model->viewid = date('Ymd')."-".$model->id;
