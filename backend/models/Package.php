@@ -147,6 +147,9 @@ class Package extends BackendActiveRecord {
     public function getOrders(){
         return $this->hasMany(OrderPackage::className(),['package_id'=>'id']);
     }
+    public function getOrder(){
+        return $this->hasMany(Order::className(),['id'=>'order_id']);
+    }
     public function attributeLabels(){
         return [
             'num'=>'包装数量',
@@ -165,7 +168,8 @@ class Package extends BackendActiveRecord {
             'created'=>'操作时间',
             'created_uid'=>'操作人',
             'package_fee'=>'包装材料费用',
-            'other_fee'=>'其他费用'
+            'other_fee'=>'其他费用',
+            'order_id'=>'订单号',
         ];
     }
     /**

@@ -15,7 +15,7 @@ class PackageSearch extends Package
     public function rules()
     {
         return [
-            [['id'], 'integer'],
+            [['id','order_view_id'], 'integer'],
             [['num', 'actual_weight','throw_weight','volume','method','trunk','delivery','price'], 'safe'],
         ];
     }
@@ -28,7 +28,7 @@ class PackageSearch extends Package
 
     public function search($params)
     {
-        $query = Package::find()->orderBy(['id'=>SORT_DESC]);
+        $query = Package::find()->with('order')->orderBy(['id'=>SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -40,6 +40,7 @@ class PackageSearch extends Package
 
         $query->andFilterWhere([
             'id' => $this->id,
+            'order_view_id'=>$this->order_view_id,
         ]);
 
         // $query->andFilterWhere(['like', 'name', $this->name]);
