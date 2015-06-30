@@ -170,6 +170,7 @@ class Package extends BackendActiveRecord {
             'package_fee'=>'包装材料费用',
             'other_fee'=>'其他费用',
             'order_id'=>'订单号',
+            'order_view_id'=>'订单号',
         ];
     }
     /**
