@@ -2,7 +2,9 @@
     	<div class="left_box">
     		<dl>
     			<dt class="havesub">我的物料</dt>
-    			<dd {% if sidebar_name == '专属物料' %}class="cur"{% endif %} {% if menu_name != 'material'%} style="display:none;"{% endif %}><a href="/material/list">专属物料</a></dd>
+                <dd {% if sidebar_name == '全部物料' %}class="cur"{% endif %} {% if menu_name != 'material'%} style="display:none;"{% endif %}><a href="/material/list">全部物料</a></dd>
+    			<dd {% if sidebar_name == '专属物料' %}class="cur"{% endif %} {% if menu_name != 'material'%} style="display:none;"{% endif %}><a href="/material/exclusive">专属物料</a></dd>
+                <dd {% if sidebar_name == '分享物料' %}class="cur"{% endif %} {% if menu_name != 'material'%} style="display:none;"{% endif %}><a href="/material/myshare">分享物料</a></dd>
             </dl>
             <dl>
     			{# <dd><a href="#">其他可订物料</a></dd> #}

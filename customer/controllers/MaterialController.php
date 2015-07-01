@@ -23,7 +23,7 @@ class MaterialController extends \yii\web\Controller {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'list','detail','export','view','share','updateshare'],
+                        'actions' => ['index', 'list','detail','export','view','share','updateshare','exclusive','myshare'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -60,12 +60,6 @@ class MaterialController extends \yii\web\Controller {
      * Displays the page list
      */
     public function actionList() {
-        // $searchModel = new StockSearch;
-        // $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-        // return $this->render('list', [
-        //     'dataProvider' => $dataProvider,
-        //     'searchModel' => $searchModel,
-        // ]);
         list($data,$pages,$count) = Stock::getMyData(Yii::$app->request->getQueryParams());
         $owners = Share::find()->select('owner_id')->distinct('owner_id')->with('owners')->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->all();
         return $this->render('list', [
@@ -75,6 +69,39 @@ class MaterialController extends \yii\web\Controller {
              'params'=>Yii::$app->request->getQueryParams(),
              'storerooms'=>Storeroom::find()->all(),
              'ownersData'=>$owners,
+             'sidebar_name'=>'全部物料',
+        ]);
+    }
+    /**
+     * Displays the page list
+     */
+    public function actionMyshare() {
+        list($data,$pages,$count) = Stock::getShareToMeData(Yii::$app->request->getQueryParams());
+        $owners = Share::find()->select('owner_id')->distinct('owner_id')->with('owners')->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->all();
+        return $this->render('list', [
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'storerooms'=>Storeroom::find()->all(),
+             'ownersData'=>$owners,
+             'sidebar_name'=>'分享物料',
+        ]);
+    }
+    /**
+     * Displays the page list
+     */
+    public function actionExclusive() {
+        list($data,$pages,$count) = Stock::getExclusiveData(Yii::$app->request->getQueryParams());
+        $owners = Share::find()->select('owner_id')->distinct('owner_id')->with('owners')->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->all();
+        return $this->render('list', [
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'storerooms'=>Storeroom::find()->all(),
+             'ownersData'=>$owners,
+             'sidebar_name'=>'专属物料',
         ]);
     }
     /**
