@@ -203,7 +203,8 @@ class Stock extends CustomerActiveRecord {
         // 
         $query = StockTotal::find()->with(['material','storeroom','owner'=>function($query){
                                             return $query->with('productlines');
-                                        }]);
+                                        }])
+                                   ->orderBy(['modified'=>SORT_DESC]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
             $material = Material::find()->select('id')->where(['code'=>$params['material_id']])->column();
             // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
