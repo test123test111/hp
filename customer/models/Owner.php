@@ -201,7 +201,18 @@ class Owner extends ActiveRecord implements IdentityInterface
             return false;
         }
     }
-
+    public function getDepartments(){
+        return $this->hasOne(\common\models\Department::className(),['id'=>'department']);
+    }
+    public function getCategorys(){
+        return $this->hasOne(\common\models\Category::className(),['id'=>'category']);
+    }
+    public function getProductlines(){
+        return $this->hasOne(\common\models\ProductLine::className(),['id'=>'product_line']);
+    }
+    public function getProducttwolines(){
+        return $this->hasOne(\common\models\ProductTwoLine::className(),['id'=>'product_two_line']);
+    }
     // public function 
     public function deleteUser($uid){
         $model = Owner::find($uid);

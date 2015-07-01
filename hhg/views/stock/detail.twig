@@ -7,7 +7,7 @@
         <div class="order_search">
                 <form>
                     <ul>
-                        <li class="clearfix">
+                        {# <li class="clearfix">
                             <label>物&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;料：</label>
                             <input type="text" name="material_id" value="{% if params.material_id is defined %}{{ params.material_id }}{% endif %}" id="materialVal" class="search_ipt" placeholder="输入物料编码或物料名称" />
                         </li>
@@ -19,7 +19,7 @@
                                 <option {% if params.storeroom_id is defined and params.storeroom_id == storeroom.id %}selected="selected"{% endif %} value="{{ storeroom.id }}">{{ storeroom.name }}</option>
                                 {% endfor %}
                             </select>
-                        </li>
+                        </li> #}
                         <li class="clearfix">
                             <label>开始日期：</label>
                             <input type="text" name="begin_time" class="search_ipt date_input" value="{% if params.begin_time is defined %}{{ params.begin_time }}{% endif %}" placeholder="点击选择开始日期" />
