@@ -86,7 +86,7 @@ function deleteCart(cart_id){
                     data:{"id":cart_id},
                     success:function(json){
                         if(json == 1){
-                            $("#cart_" + cart_id).parent().slideUp(300,function(){
+                            $("#cart_" + cart_id).slideUp(300,function(){
                                 $(this).remove();
                                 totalPrice();
                                 totalNumber();

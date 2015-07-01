@@ -61,30 +61,32 @@ class CartController extends CustomerController {
     public function actionBatchadd(){
         if(Yii::$app->request->isPost){
             $results = Yii::$app->request->post('items');
-            foreach($results as $result){
-                $uid = Yii::$app->user->id;
-                $material_id = $result['material_id'];
-                $storeroom_id = $result['storeroom_id'];
-                $quantity = $result['quantity'];
+            if(!empty($results)){
+                foreach($results as $result){
+                    $uid = Yii::$app->user->id;
+                    $material_id = $result['material_id'];
+                    $storeroom_id = $result['storeroom_id'];
+                    $quantity = $result['quantity'];
 
-                $material = Material::findOne($material_id);
-                // if(empty($material) || $material->owner_id != $uid){
-                //     echo json_encode(['data'=>'','err'=>'物主身份不符合','errno'=>10000]);
-                //     Yii::$app->end();
-                // }
-                // $total = Stock::getStockByUidAndStorageIdAndMaterialId($uid,$storeroom_id,$material_id);
-                // if($total == 0){
-                //     echo json_encode(['data'=>'','err'=>'所选物料库存不够','errno'=>10001]);
-                //     Yii::$app->end();
-                // }
-                Yii::$app->shoppingCart->addToCart($uid,$material_id,$quantity,$storeroom_id);
-                // if($data){
-                //     echo json_encode(['data'=>'','err'=>'添加购物车成功','errno'=>0]);
-                // }else{
-                //     echo json_encode(['data'=>'','err'=>'系统错误稍后再试','errno'=>10002]);
-                //     Yii::$app->end();
-                // }
-                
+                    $material = Material::findOne($material_id);
+                    // if(empty($material) || $material->owner_id != $uid){
+                    //     echo json_encode(['data'=>'','err'=>'物主身份不符合','errno'=>10000]);
+                    //     Yii::$app->end();
+                    // }
+                    // $total = Stock::getStockByUidAndStorageIdAndMaterialId($uid,$storeroom_id,$material_id);
+                    // if($total == 0){
+                    //     echo json_encode(['data'=>'','err'=>'所选物料库存不够','errno'=>10001]);
+                    //     Yii::$app->end();
+                    // }
+                    Yii::$app->shoppingCart->addToCart($uid,$material_id,$quantity,$storeroom_id);
+                    // if($data){
+                    //     echo json_encode(['data'=>'','err'=>'添加购物车成功','errno'=>0]);
+                    // }else{
+                    //     echo json_encode(['data'=>'','err'=>'系统错误稍后再试','errno'=>10002]);
+                    //     Yii::$app->end();
+                    // }
+                    
+                }
             }
         }
         echo json_encode(['data'=>'','err'=>'添加购物车成功','errno'=>0]);

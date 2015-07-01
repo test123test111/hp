@@ -168,7 +168,9 @@
                     var amount = parseInt($amount.val());
                     var storeroom_id = $(this).attr("data-storeroom");
                     var item = {"material_id":id,"quantity":amount,"storeroom_id":storeroom_id};
-                    material_data.push(item);
+                    if(amount > 0){
+                        material_data.push(item);
+                    }
                 });
                 var safeCode = $('meta[name=csrf-token]');
                 $.ajax({
@@ -177,9 +179,10 @@
                     dataType : "json",
                     data : {"items":material_data,"_csrf":safeCode.attr('content')},
                     success : function(json){
-                        $(".cart_success").fadeIn();
-                        $("#material_list input[type=checkbox]").removeAttr("checked");
-                        window.setTimeout(hideTip,3000);
+                        // $(".cart_success").fadeIn();
+                        // $("#material_list input[type=checkbox]").removeAttr("checked");
+                        // window.setTimeout(hideTip,3000);
+                        window.location.href="/cart";
                     }
                 });
             }

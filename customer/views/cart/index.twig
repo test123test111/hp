@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                         </div>
-                        <span class="room" data-storeroom="{{ cart.storeroom.id }}">{{ cart.storeroom.name }}</span>
+                        <span class="room" data-storeroom="{{ cart.storeroom.id }}">{{ cart.storeroom.name }}(库存:{{ stocks }})</span>
                         <div class="qty">
                             <div class="widget">
                                 <span class="increase" data-cart-id="{{ cart.id }}"></span>
@@ -61,6 +61,7 @@
             </div>
 
             <div class="cart_submit clearfix">
+                <a href="/material/list" class="buy_btn" style="float:left;">继续加物料</a>
                 <a href="javascript:;" class="buy_btn" id="buy_btn">去下单</a>
                 <div class="amount">共<span class="red" id="selectedCount">{{ carts|count }}</span> 件商品</div>
             </div>
