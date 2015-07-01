@@ -458,7 +458,6 @@ class Order extends BackendActiveRecord {
     public function checkOrderNeedApproval(){
         list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($this->id);
         $budget_fee = $ship_fee + $fenjian_fee;
-
         $this->ship_fee = $ship_fee;
         $this->fenjian_fee = $fenjian_fee;
         $this->tariff = $tariff;
@@ -473,7 +472,6 @@ class Order extends BackendActiveRecord {
         // $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
 
         list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->created_uid,$this->storeroom_id);
-
         if($department->id == Department::IS_COMERCIAL){
             //中央库规则
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
