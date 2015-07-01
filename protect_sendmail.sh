@@ -3,7 +3,7 @@
 while true
 do
 num=` ps aux | grep 'php /www/wwwroot/invertory/yii send-approval-email/run' | grep -v grep | wc -l`
-if [[ num -eq  1 ]]
+if [[ num -gt  0 ]]
 then
     echo OK;
     sleep 5;
