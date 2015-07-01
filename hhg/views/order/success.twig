@@ -6,21 +6,25 @@
     <div class="view_wrap">
         <div class="pay_box">
             <div class="pay_tip">
-                <p>
-                    {% if order.can_formal != 1 %}
-                    <span class="txt">订单提交成功，我们将尽快为您安排发货！</span>
+                {% if order.can_formal != 1 %}
+                        {% if order.need_fee_approval == 1 %}
+                            <span class="txt">您的订单预算费用是{{ order.ship_fee + order.fenjian_fee }}RMB，您的预算余额是{{ usefee }}RMB，订单需要费用审批，请点击查看订单发送您的费用审批</span>
+                        {% elseif order.owner_approval == 0 %}
+                            <span class="txt">您的订单预算费用是{{ order.ship_fee + order.fenjian_fee }}RMB，需要物料审批，请点击查看订单发送您的物料审批</span>
+                        {% else %}
+                            <span class="txt">您的订单预算费用是{{ order.ship_fee + order.fenjian_fee }}RMB，订单已生成，我们会尽快安排发货</span>
+                        {% endif %}
                     <span class="order">订单号：{{ id }}</span>
                     <span>
                         <a href="/material/list" class="success_link">继续下单</a>
                         <a href="/order/view/{{ order.id }}" class="success_link">查看订单</a>
                     </span>
                     {% else %}
-                    <span class="txt">您的订单由于超过费用预算未能生成正式订单</span>
+                    <span class="txt">您的订单预算费用是{{ order.ship_fee + order.fenjian_fee }}RMB，您的预算余额是{{ usefee }}RMB，由于超过费用预算未能生成正式订单</span>
                     <span>
                         <a href="/material/list" class="success_link">重新下单</a>
                     </span>
                     {% endif %}
-                </p>
             </div>
         </div>
     </div>

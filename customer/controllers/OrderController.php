@@ -22,6 +22,7 @@ use common\models\HpCity;
 use common\models\Approval;
 use common\models\ShippmentCost;
 use common\models\SendEmail;
+use common\models\NewBudget;
 
 class OrderController extends CustomerController {
     public $layout = false;
@@ -603,7 +604,9 @@ class OrderController extends CustomerController {
     public function actionSuccess(){
         $id = Yii::$app->request->get('id');
         $order = Order::find()->where(['viewid'=>$id])->one();
-        return $this->render('success',['id'=>$id,'order'=>$order]);
+        list($total,$consume) = NewBudget::getPriceTotalAndConsume($order->created_uid,$order->storeroom_id);
+        $usefee = $total - $consume;
+        return $this->render('success',['id'=>$id,'order'=>$order,'usefee'=>$usefee]);
     }
     public function actionReport(){
         $params = Yii::$app->request->getQueryParams();
