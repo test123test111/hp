@@ -67,6 +67,7 @@ class MaterialController extends \yii\web\Controller {
              'params'=>Yii::$app->request->getQueryParams(),
              'storerooms'=>Storeroom::find()->all(),
              'ownersData'=>Owner::find()->all(),
+             'property'=>(new Material())->getCanUseProperty(),
         ]);
     }
     /**

@@ -7,6 +7,7 @@ use yii\helpers\BaseArrayHelper;
 use customer\components\CustomerActiveRecord;
 use common\models\Share;
 use common\models\ProductLine;
+use common\models\Category;
 use common\models\ProductTwoLine;
 use backend\models\StockTotal;
 use backend\models\Owner;
@@ -218,6 +219,18 @@ class Stock extends CustomerActiveRecord {
         }
         if(isset($params['owner_id']) && $params['owner_id'] !=""){
             $query->andWhere(['owner_id'=>$params['owner_id']]);
+        }
+        if(isset($params['category']) && $params['category'] !=""){
+            $category = Category::find()->where(['name'=>$params['category']])->one();
+            if(!empty($category)){
+                $query->andWhere(['category'=>$category->id]);
+            }else{
+                $query->andWhere(['category'=>-1]);
+            }
+            
+        }
+        if(isset($params['property']) && $params['property'] !=""){
+            $query->andWhere(['property'=>$params['property']]);
         }
         if(isset($params['storeroom_id']) && $params['storeroom_id'] !=""){
             $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);

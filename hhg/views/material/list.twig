@@ -8,11 +8,11 @@
           <form>
             <ul class="clearfix">
                 <li>
-                    <label>关键字：</label>
+                    <label>关&ensp;键&ensp;字：</label>
                     <input type="text" name="material_id" value="{% if params.material_id is defined %}{{ params.material_id }}{% endif %}" class="search_input" placeholder="输入关键字进行搜索" />
                 </li>
                 <li>
-                    <label>选择仓库：</label>
+                    <label>仓&ensp;&ensp;库：</label>
                     <select name="storeroom_id">
                         <option value="">请选择仓库</option>
                         {% for storeroom in storerooms %}
@@ -21,7 +21,7 @@
                     </select>
                 </li>
                 <li>
-                    <label>所属人：</label>
+                    <label>所&ensp;属&ensp;人：</label>
                     <select name="owner_id">
                         <option value="">请选择所属人</option>
                         {% for owner in ownersData %}
@@ -32,7 +32,22 @@
                     </select>
                 </li>
                 <li>
-                    <label>产&ensp;品&ensp;线：</label>
+                    <label>组&ensp;&ensp;别：</label>
+                    <input type="text" name="category" value="{% if params.category is defined %}{{ params.category }}{% endif %}" class="search_input" placeholder="" />
+                </li>
+                <li>
+                    <label>物料类别：</label>
+                    <select name="property">
+                        <option value="">请选择物料类型</option>
+                        {% for p,v in property %}
+                        <option {% if params.property is defined and params.property == p %}selected="selected"{% endif %} value="{{ p }}">{{ v }}</option>
+                        {% endfor %}
+                        {# <option value="1">周星星</option>
+                        <option value="1">张学友</option> #}
+                    </select>
+                </li>
+                <li>
+                    <label>产品线：</label>
                     <input type="text" name="channel" value="{% if params.channel is defined %}{{ params.channel }}{% endif %}" class="search_input" placeholder="" />
                 </li>
             </ul>

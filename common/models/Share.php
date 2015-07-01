@@ -51,6 +51,13 @@ class Share extends ActiveRecord
         return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']);
     }
     public static function updateShare($owner_id,$to_customer_id,$material_id,$storeroom_id){
+        $owner = Owner::findOne($owner_id);
+        $cat_id = 0;
+        if($owner->categor != 0){
+            $category = Category::findOne($owner->category);
+            $cat_id = $category->id;
+        }
+        $material = Material::findOne($material_id);
         $bigOwner = Owner::getBigOwnerByUid($owner_id);
         if($bigOwner){
             $big_uid = $bigOwner->id;
@@ -63,6 +70,8 @@ class Share extends ActiveRecord
                 $model->storeroom_id = $storeroom_id;
                 $model->status = self::STATUS_IS_NORMAL;
                 $model->created_uid = Yii::$app->user->id;
+                $model->category = $cat_id;
+                $model->property = $material->property;
                 $model->save(false);
             }
         }
@@ -75,6 +84,8 @@ class Share extends ActiveRecord
             $model->storeroom_id = $storeroom_id;
             $model->status = self::STATUS_IS_NORMAL;
             $model->created_uid = Yii::$app->user->id;
+            $model->category = $cat_id;
+            $model->property = $material->property;
             if($model->save(false)){
                 return true;
             }

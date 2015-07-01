@@ -70,6 +70,7 @@ class MaterialController extends \yii\web\Controller {
              'storerooms'=>Storeroom::find()->all(),
              'ownersData'=>$owners,
              'sidebar_name'=>'全部物料',
+             'property'=>(new Material())->getCanUseProperty(),
         ]);
     }
     /**
@@ -86,6 +87,7 @@ class MaterialController extends \yii\web\Controller {
              'storerooms'=>Storeroom::find()->all(),
              'ownersData'=>$owners,
              'sidebar_name'=>'分享物料',
+             'property'=>(new Material())->getCanUseProperty(),
         ]);
     }
     /**
@@ -102,6 +104,7 @@ class MaterialController extends \yii\web\Controller {
              'storerooms'=>Storeroom::find()->all(),
              'ownersData'=>$owners,
              'sidebar_name'=>'专属物料',
+             'property'=>(new Material())->getCanUseProperty(),
         ]);
     }
     /**

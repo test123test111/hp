@@ -4,7 +4,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use backend\components\BackendActiveRecord;
-
+use common\models\Category;
 class StockTotal extends BackendActiveRecord {
     /**
      * function_description
@@ -21,8 +21,18 @@ class StockTotal extends BackendActiveRecord {
      * @return [type]              [description]
      */
     public static function updateTotal($storeroom_id,$material_id,$count,$warning_quantity,$owner_id){
+        
+
     	$material = self::find()->where(['material_id'=>$material_id,"storeroom_id"=>$storeroom_id])->one();
     	if(empty($material)){
+            $owner = Owner::findOne($owner_id);
+            $cat_id = 0;
+            if($owner->categor != 0){
+                $category = Category::findOne($owner->category);
+                $cat_id = $category->id;
+            }
+            $material_m = Material::findOne($material_id);
+
     		$model = new self;
     		$model->material_id = $material_id;
             $model->storeroom_id = $storeroom_id;
@@ -31,6 +41,9 @@ class StockTotal extends BackendActiveRecord {
             $model->created = date('Y-m-d H:i:s');
             $model->modified = date('Y-m-d H:i:s');
             $model->warning_quantity = $warning_quantity;
+            $model->category = $cat_id;
+            $model->property = $material_m->property;
+
     		$model->save();
     		return true;
     	}else{
