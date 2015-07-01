@@ -73,6 +73,7 @@
                             <td>库房地址</td>
                             <td>所属人</td>
                             <td>可用库存数</td>
+                            <td>预警数量</td>
                             <td>计划数量</td>
                         </tr>
                     </thead>
@@ -96,6 +97,14 @@
                             <td>{{ result.owner.english_name }}
                             </td>
                             <td>{{ result.total - result.lock_num }}</td>
+                            <td>
+                                {% if (result.total - result.lock_num) < result.warning_quantity %}
+                                <font color="red">{{ result.total - result.lock_num }}</font>
+                                {% else %}
+                                    {{ result.total - result.lock_num }}
+                                {% endif %}
+                            </td>
+                            <td>{{ result.warning_quantity }}</td>
                             <td><input type="text" value="" name="" class="m_amount" id="amount_{{ key }}" /></td>
                         </tr>
                         {% endfor %}
