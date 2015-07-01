@@ -4,7 +4,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\BaseArrayHelper;
-
+use common\models\HpCity;
 class Storeroom extends ActiveRecord {
     /**
      * function_description
@@ -71,6 +71,13 @@ class Storeroom extends ActiveRecord {
         } else {
             return false;
         }
+    }
+    /**
+     * table hp_city and table storeroom relationship
+     * @return [type] [description]
+     */
+    public function getDistrictname(){
+        return $this->hasOne(HpCity::className(),['id'=>'district']);
     }
     public function attributeLabels(){
         return [

@@ -3,7 +3,7 @@
 {% block body_class %}
 {% endblock%}
 {% block content %}
-    <link rel="stylesheet" href="/css/autocomplete.css">
+    <link rel="stylesheet" href="/css/jquery.auto-complete.css">
 	<div class="view_wrap">
         <div class="o_box">
         	{% set form = activeform.begin({'action':'/order/buy','id':'buyForm'}) %}
@@ -137,7 +137,7 @@
         </div>
     </div>
     <script type='text/javascript' src='/js/layer.min.js'></script>
-    <script type='text/javascript' src='/js/autocomplete.js'></script>
+    <script type='text/javascript' src='/js/jquery.auto-complete.min.js'></script>
     <script type='text/javascript' src='/js/buy.js'></script>
     <script type='text/javascript' src='/js/province.js'></script>
     <script type='text/javascript' src='/js/city.js'></script>
@@ -150,32 +150,72 @@
     </script>
     <script type="text/javascript">
     $(function(){
-        var data = {{ company|raw }}; 
-        $("#autocompleteName").autocomplete(data,{ 
-            formatItem: function(item) { 
-                return item.text; 
-            } 
-        }).result(function(event,item) { 
-            $.ajax({
-                url:item.url,
-                dataType:"html",
-                type:"GET",
-                success:function(json){
-                    $("#address_area").html(json);
-                    $(".buy_btn").removeClass("btn_order_undefined");
-                    layer.closeAll();
-                }
-            });
-            $("#company_box").html(item.text);
+        var data1 = {{ company|raw }}; 
+        $('#autocompleteName').autoComplete({
+            minChars: 0,
+            source: function(term, suggest){
+                term = term.toLowerCase();
+                var choices = data1;
+                var suggestions = [];
+                for (i=0;i<choices.length;i++)
+                    if (~(choices[i][0]+' '+choices[i][1]).toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+                suggest(suggestions);
+            },
+            renderItem: function (item, search){
+                var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
+                return '<div class="autocomplete-suggestion" data-langname="'+item[0]+'" data-lang="'+item[1]+'" data-val="'+search+'"> '+item[0].replace(re, "<b>$1</b>")+'</div>';
+            },
+            onSelect: function(e, term, item){
+                 $.ajax({
+                    url:item.data('lang'),
+                    dataType:"html",
+                    type:"GET",
+                    success:function(json){
+                        $("#address_area").html(json);
+                        $(".buy_btn").removeClass("btn_order_undefined");
+                        layer.closeAll();
+                    }
+                });
+                $('#autocompleteName').val(item.data('langname')+'');
+                $('#company_box').val(item.data('lang'));
+            }
         });
-
+        // $("#autocompleteName").autocomplete(data,{ 
+        //     formatItem: function(item) { 
+        //         return item.text; 
+        //     } 
+        // }).result(function(event,item) { 
+        //     $.ajax({
+        //         url:item.url,
+        //         dataType:"html",
+        //         type:"GET",
+        //         success:function(json){
+        //             $("#address_area").html(json);
+        //             $(".buy_btn").removeClass("btn_order_undefined");
+        //             layer.closeAll();
+        //         }
+        //     });
+        //     $("#company_box").html(item.text);
+        // });
         var data = {{ createusers|raw }}; 
-        $("#autocompleteCreate").autocomplete(data,{ 
-            formatItem: function(item) { 
-                return item.text; 
-            } 
-        }).result(function(event,item) { 
-            $('#createUsert').val(item.id);
+        $('#autocompleteCreate').autoComplete({
+            minChars: 0,
+            source: function(term, suggest){
+                term = term.toLowerCase();
+                var choices = data;
+                var suggestions = [];
+                for (i=0;i<choices.length;i++)
+                    if (~(choices[i][0]+' '+choices[i][1]).toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+                suggest(suggestions);
+            },
+            renderItem: function (item, search){
+                var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
+                return '<div class="autocomplete-suggestion" data-langname="'+item[0]+'" data-lang="'+item[1]+'" data-val="'+search+'"> '+item[0].replace(re, "<b>$1</b>")+'</div>';
+            },
+            onSelect: function(e, term, item){
+                $('#autocompleteCreate').val(item.data('langname')+'');
+                $('#createUsert').val(item.data('lang'));
+            }
         });
     })
     </script>

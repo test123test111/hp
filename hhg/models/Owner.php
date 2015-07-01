@@ -30,8 +30,7 @@ class Owner extends ActiveRecord
     	$results = static::find()->all();
         $ret = [];
         foreach($results as $result){
-            $array['text'] = $result->english_name;
-            $array['id'] = $result->id;
+            $array = [$result->english_name, $result->id];
             array_push($ret,$array);
         }
         return json_encode($ret);
