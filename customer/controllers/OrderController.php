@@ -201,7 +201,7 @@ class OrderController extends CustomerController {
             $model->load(Yii::$app->request->post());
             $db = Order::getDb();
             $transaction = $db->beginTransaction();
-            // try{
+            try{
                 $owner = Owner::findOne(Yii::$app->user->id);
                 if(empty($owner) || $owner->category == 0){
                     throw new \Exception("下单人不属于任何部门，不具备下订单权限", 1);
@@ -250,10 +250,10 @@ class OrderController extends CustomerController {
                 $model->createOrderDetail($_POST['Carts'],Yii::$app->user->id);
                 $transaction->commit();
                 $this->redirect("/order/success?id={$model->viewid}");
-            // }catch (\Exception $e) {
-            //     $transaction->rollback();
-            //     throw new \Exception($e->getMessage(), $e->getCode());
-            // }
+            }catch (\Exception $e) {
+                $transaction->rollback();
+                throw new \Exception($e->getMessage(), $e->getCode());
+            }
                 
         }
     }
