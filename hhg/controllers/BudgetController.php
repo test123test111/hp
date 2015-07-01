@@ -64,7 +64,7 @@ class BudgetController extends \yii\web\Controller {
             if($model->validate() && $model->save()){
                 $model->createBudgetTotal();
                 return $this->redirect('index');
-            }   
+            }
         }
         return $this->render('create',[
             'model'=>$model,

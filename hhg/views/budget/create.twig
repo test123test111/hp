@@ -2,7 +2,7 @@
 {% set menu_name = "budget" %}
 {% extends "@app/views/layouts/main.twig" %}
 {% block content %}
-<link rel="stylesheet" href="/css/autocomplete.css">
+<link rel="stylesheet" href="/css/jquery.auto-complete.css">
   {% include '@app/views/layouts/base_with_sidebar.twig' %}
 <div class="main">
     <div class="form_view">
@@ -36,7 +36,7 @@
     </div>
 </div>
 <script type='text/javascript' src='/js/date_input.js'></script>
-<script type='text/javascript' src='/js/autocomplete.js'></script>
+<script type='text/javascript' src='/js/jquery.auto-complete.min.js'></script>
     <script type="text/javascript">
         $("#create-form").keypress(function(e) {
           if (e.which == 13) {
@@ -47,12 +47,24 @@
             $('.date_input').date_input();
         });
         var data = {{ createusers|raw }}; 
-        $("#autocompleteCreate").autocomplete(data,{ 
-            formatItem: function(item) { 
-                return item.text; 
-            } 
-        }).result(function(event,item) { 
-            $('#createUsert').val(item.id);
+        $('#autocompleteCreate').autoComplete({
+            minChars: 0,
+            source: function(term, suggest){
+                term = term.toLowerCase();
+                var choices = data;
+                var suggestions = [];
+                for (i=0;i<choices.length;i++)
+                    if (~(choices[i][0]+' '+choices[i][1]).toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+                suggest(suggestions);
+            },
+            renderItem: function (item, search){
+                var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
+                return '<div class="autocomplete-suggestion" data-langname="'+item[0]+'" data-lang="'+item[1]+'" data-val="'+search+'"> '+item[0].replace(re, "<b>$1</b>")+'</div>';
+            },
+            onSelect: function(e, term, item){
+                $('#autocompleteCreate').val(item.data('langname')+'');
+                $('#createUsert').val(item.data('lang'));
+            }
         });
     </script>
 {% endblock %}
