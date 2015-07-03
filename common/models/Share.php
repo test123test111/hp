@@ -179,7 +179,7 @@ class Share extends ActiveRecord
      */
     protected static function removeShare($material_id,$storeroom_id,$owner_id,$to_customer_ids) {
         if (empty($to_customer_ids)) {
-            return true;
+            return static::updateAll(['status'=>self::STATUS_IS_NOT_NORMAL],'material_id = :material_id AND storeroom_id = :storeroom_id AND owner_id = :owner_id AND to_customer_id != :to_customer_id',[':material_id'=>$material_id,':storeroom_id'=>$storeroom_id,':owner_id'=>$owner_id,':to_customer_id'=>$owner_id]);
         }
         return static::updateAll(['status'=>self::STATUS_IS_NOT_NORMAL],['material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'owner_id'=>$owner_id,'to_customer_id'=>$to_customer_ids]);
     }

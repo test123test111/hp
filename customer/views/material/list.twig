@@ -74,6 +74,7 @@
                             <td>入库时间</td>
                             <td>库房地址</td>
                             <td>所属人</td>
+                            <td>是否分享</td>
                             <td>可用库存数</td>
                             <td>预警数量</td>
                             <td>计划数量</td>
@@ -97,10 +98,17 @@
                             <td>{{ result.created }}</td>
                             <td>{{ result.storerooms.name }}</td>
                             <td>{{ result.owners.english_name }}
+                                
+                            </td>
+                            <td>
                                 {% if result.owner_id == App.user.id %}
-                                <a href="javascript:void(0);" class="blue" onclick="shareTo({{ result.material_id }},{{ result.storeroom_id }});">分享</a>
+                                {% if result.materials.checkShare(App.user.id,result.storerooms.id) %}
+                                是
                                 {% else %}
-
+                                否
+                                {% endif %}
+                                <a href="javascript:void(0);" class="blue" onclick="shareTo({{ result.materials.id }},{{ result.storerooms.id }});">更改</a>
+                                {% else %}
                                 {% endif %}
                             </td>
                             <td>
