@@ -51,7 +51,11 @@ class StockController extends BackendController {
         // collect user input data
         if (isset($_POST['Stock'])) {
             $model->load($_POST);
-            $model->warning_quantity = $_POST['Stock']['warning_quantity'];
+            if($_POST['Stock']['warning_quantity'] == ""){
+                $model->warning_quantity = 0;
+            }else{
+                $model->warning_quantity = $_POST['Stock']['warning_quantity'];
+            }
             if ($model->validate()) {
                 $db = Stock::getDb();
                 $transaction = $db->beginTransaction();
