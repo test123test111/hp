@@ -259,6 +259,7 @@ class Material extends BackendActiveRecord {
     public function checkShare($owner_id,$sid){
         $share = Share::find()->where(['material_id'=>$this->id,'storeroom_id'=>$sid,'owner_id'=>$owner_id])
                               ->andWhere(['<>','to_customer_id',$owner_id])
+                              ->andWhere(['status'=>Share::STATUS_IS_NORMAL])
                               ->one();
         if(!empty($share)){
             return true;

@@ -8,7 +8,7 @@ em,i{font-style:normal;}
 textarea{resize:none}
 body,input,textarea{font-size:12px;font-family:"Microsoft Yahei",Verdana,Arial}
 body{font-family:"Microsoft Yahei",Verdana,Arial text-align:center;background:url(../images/bg_metal.png);}
-body#w{background:url(../images/wrap_bg.png) repeat-y left;}
+body#w{background:url(../images/wrap_bg.png) repeat-y -60px center;}
 
 /* clear float */
 .clearfix:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}
@@ -89,12 +89,12 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 
 /* main */
 .wrap{width:100%;position:relative;}
-.left_box{position:absolute;left:0;top:0;width:284px;text-align:left;font-size:14px;}
-.left_box dt{background:url(../images/left_dt.png) no-repeat;height:56px;line-height:56px;padding-left:56px;color:#898989;}
+.left_box{position:absolute;left:0;top:0;width:224px;text-align:left;font-size:14px;}
+.left_box dt{background:url(../images/left_dt.png) repeat-y -60px center;height:56px;line-height:56px;padding-left:56px;color:#898989;}
 .left_box dd{height:36px;}
 .left_box dd a{display:block;line-height:36px;padding-left:56px;color:#595757;background:url(../images/left_dd.png);}
 .left_box dd.cur a,.left_box dd a:hover,.left_box dd a:active{color:#fff;background:url(../images/left_cur.png);}
-.main{margin-left:284px;border-top:1px solid #bcbcbc;height:100%;min-height:600px;padding:15px;padding-bottom:65px;}
+.main{margin-left:224px;border-top:1px solid #bcbcbc;height:100%;min-height:600px;padding:15px;padding-bottom:65px;}
 
 /* order style */
 .order_search{text-align:left;}
