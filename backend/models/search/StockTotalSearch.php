@@ -27,7 +27,7 @@ class StockTotalSearch extends StockTotal
 
     public function search($params)
     {
-        $query = StockTotal::find();
+        $query = StockTotal::find()->orderBy(['modified'=>SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

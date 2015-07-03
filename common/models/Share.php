@@ -53,7 +53,7 @@ class Share extends ActiveRecord
     public static function updateShare($owner_id,$to_customer_id,$material_id,$storeroom_id){
         $owner = Owner::findOne($owner_id);
         $cat_id = 0;
-        if($owner->categor != 0){
+        if($owner->category != 0){
             $category = Category::findOne($owner->category);
             $cat_id = $category->id;
         }
