@@ -371,7 +371,9 @@ class Order extends BackendActiveRecord {
             $material = Material::findOne($value['material_id']);
             $model->owner_id = $material->owner_id;
 
-            if($model->owner_id == $created_uid || $big_owner_id == $created_uid){
+            // if($model->owner_id == $created_uid || $big_owner_id == $created_uid){
+            
+            if($model->owner_id == $created_uid){
                 $model->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
                 $model->approval_uid = $created_uid;
                 $model->approval_date = strtotime($this->created);
@@ -385,7 +387,10 @@ class Order extends BackendActiveRecord {
             $stockTotal->updateCounters(['lock_num' => $value['quantity']]);
 
             $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
-            Cart::deleteAll(['id'=>$cart->id]);
+            if(!empty($cart)){
+                Cart::deleteAll(['id'=>$cart->id]);
+            }
+            
         }
         if($flag == 0){
             $this->owner_approval = self::PASS_OWNER_APPROVAL;

@@ -414,7 +414,7 @@ class Stock extends CustomerActiveRecord {
             }
         }
         $count = $query->count();
-        $str = "序号,物料编号,物料名称,所属人,部门,组别,一级产品线,二级产品线,物料类别,入库时间,库房位置,库存数量,分享与否,物料规格,备注\n";
+        $str = "序号,物料编号,物料名称,所属人,部门,组别,一级产品线,二级产品线,物料类别,入库时间,库房位置,库存数量,是否分享,物料规格,备注\n";
         $offset = 0;
         $limit = 100;
         $data = [];
@@ -439,9 +439,9 @@ class Stock extends CustomerActiveRecord {
                 $data[$i]['total'] = $result->stockTotals->total - $result->stockTotals->lock_num;
                 $countshare = Share::find()->where(['owner_id'=>$result->materials->owner_id,'status'=>Share::STATUS_IS_NORMAL])->count();
                 if($countshare > 1){
-                    $data[$i]['share'] = "已分享";
+                    $data[$i]['share'] = "是";
                 }else{
-                    $data[$i]['share'] = "未分享";
+                    $data[$i]['share'] = "否";
                 }
                 
                 $data[$i]['package'] = $result->materials->package;

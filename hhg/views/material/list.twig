@@ -91,7 +91,11 @@
                                 {% endif %}
                             </td> #}
                             <td>{{ result.material.getMyPropertyName() }}</td>
-                            <td>{{ result.owner.producttwolines.name }}</td>
+                            <td>
+                                {% if result.owner.producttwolines is defined %}
+                                {{ result.owner.producttwolines.name }}
+                                {% endif %}
+                            </td>
                             <td>{{ result.created }}</td>
                             <td>{{ result.storeroom.name }}</td>
                             <td>{{ result.owner.english_name }}

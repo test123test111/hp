@@ -62,6 +62,8 @@ class PackageController extends BackendController {
                 $order->update(false);
                 Yii::$app->session->setFlash('success', '新建成功！');
                 $this->redirect("/order/list?OrderSearch[status]=3");
+            }else{
+                var_dump($model->getErrors());exit;
             }
         }
         return $this->render('create', array(

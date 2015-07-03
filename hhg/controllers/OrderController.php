@@ -21,6 +21,7 @@ use common\models\HpCity;
 use common\models\Approval;
 use common\models\ShippmentCost;
 use common\models\SendEmail;
+use common\models\NewBudget;
 
 class OrderController extends \yii\web\Controller {
     public $layout = false;
@@ -178,7 +179,7 @@ class OrderController extends \yii\web\Controller {
             $model->load(Yii::$app->request->post());
             $db = Order::getDb();
             $transaction = $db->beginTransaction();
-            try{
+            // try{
                 $owner = Owner::findOne($model->created_uid);
                 if(empty($owner) || $owner->category == 0){
                     throw new \Exception("下单人不属于任何部门，不具备下订单权限", 1);
@@ -230,10 +231,10 @@ class OrderController extends \yii\web\Controller {
                 $model->createOrderDetail($_POST['Carts'],$model->created_uid);
                 $transaction->commit();
                 $this->redirect("/order/success?id={$model->viewid}");
-            }catch (\Exception $e) {
-                $transaction->rollback();
-                throw new \Exception($e->getMessage(), $e->getCode());
-            }
+            // }catch (\Exception $e) {
+            //     $transaction->rollback();
+            //     throw new \Exception($e->getMessage(), $e->getCode());
+            // }
                 
         }
     }
