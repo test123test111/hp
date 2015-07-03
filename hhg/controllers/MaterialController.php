@@ -4,6 +4,7 @@ namespace hhg\controllers;
 use Yii;
 use backend\models\Material;
 use hhg\models\Stock;
+use hhg\models\StockTotal;
 use hhg\models\Storeroom;
 use hhg\models\search\MaterialSearch;
 use hhg\models\search\StockSearch;
@@ -172,6 +173,9 @@ class MaterialController extends \yii\web\Controller {
         return $this->render('view', [
             'material' => $material,
             'storerooms'=>Stock::getStockByUidAndMaterialId($uid,$id),
+            'storeroom'=>Storeroom::findOne($params['sid']),
+            'stocktotal'=>StockTotal::find()->where(['material_id'=>$material->id,'storeroom_id'=>$params['sid']])->one(),
+            'owner'=>Owner::findOne($material->owner_id),
             'sid'=>$params['sid'],
         ]);
     }

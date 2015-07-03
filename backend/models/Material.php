@@ -238,4 +238,31 @@ class Material extends BackendActiveRecord {
             'jiliang'=>'计量规格',
         ];
     }
+    /**
+     * [getFirstStockTime description]
+     * @param  [type] $storeroom_id [description]
+     * @return [type]               [description]
+     */
+    public function getFirstStockTime($storeroom_id){
+        $stock = Stock::find()->where(['material_id'=>$this->id,'storeroom_id'=>$storeroom_id,'increase'=>Stock::IS_INCREASE])->orderBy(['id'=>SORT_ASC])->one();
+        if(!empty($stock)){
+            return $stock->stock_time;
+        }
+        return '';
+    }
+    /**
+     * [checkShare description]
+     * @param  [type] $owner_id [description]
+     * @param  [type] $sid      [description]
+     * @return [type]           [description]
+     */
+    public function checkShare($owner_id,$sid){
+        $share = Share::find()->where(['material_id'=>$this->id,'storeroom_id'=>$sid,'owner_id'=>$owner_id])
+                              ->andWhere(['<>','to_customer_id',$owner_id])
+                              ->one();
+        if(!empty($share)){
+            return true;
+        }
+        return false;
+    }
 }

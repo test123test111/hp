@@ -1,5 +1,5 @@
 <?php
-namespace customer\models;
+namespace hhg\models;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;

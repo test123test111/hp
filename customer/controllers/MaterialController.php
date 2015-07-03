@@ -5,6 +5,7 @@ namespace customer\controllers;
 use Yii;
 use backend\models\Material;
 use customer\models\Stock;
+use customer\models\StockTotal;
 use customer\models\Storeroom;
 use customer\models\search\MaterialSearch;
 use customer\models\search\StockSearch;
@@ -209,6 +210,9 @@ class MaterialController extends \yii\web\Controller {
         return $this->render('view', [
             'material' => $material,
             'storerooms'=>Stock::getStockByUidAndMaterialId($uid,$id),
+            'storeroom'=>Storeroom::findOne($params['sid']),
+            'stocktotal'=>StockTotal::find()->where(['material_id'=>$material->id,'storeroom_id'=>$params['sid']])->one(),
+            'owner'=>Owner::findOne($material->owner_id),
             'sid'=>$params['sid'],
         ]);
     }

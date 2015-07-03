@@ -5,6 +5,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\BaseArrayHelper;
 use customer\components\CustomerActiveRecord;
+use common\models\Share;
 
 class Material extends CustomerActiveRecord {
     public $upload;
@@ -173,4 +174,5 @@ class Material extends CustomerActiveRecord {
             'created_uid'=>'创建人',
         ];
     }
+    
 }

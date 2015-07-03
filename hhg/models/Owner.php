@@ -20,7 +20,7 @@ use yii\data\ArrayDataProvider;
  * @property integer $create_time
  * @property integer $update_time
  */
-class Owner extends ActiveRecord
+class Owner extends \customer\models\Owner
 {
     
     public static function tableName(){

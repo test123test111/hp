@@ -34,7 +34,6 @@ class CartController extends CustomerController {
      */
     public function actionAdd(){
 		if(Yii::$app->request->isPost){
-            $uid = Yii::$app->user->id;
             $material_id = Yii::$app->request->post('material_id');
             $storeroom_id = Yii::$app->request->post('storeroom_id');
             $quantity = Yii::$app->request->post('quantity');
@@ -44,12 +43,12 @@ class CartController extends CustomerController {
             // 	echo json_encode(['data'=>'','err'=>'物主身份不符合','errno'=>10000]);
             // 	Yii::$app->end();
             // }
-            $total = Stock::getStockByUidAndStorageIdAndMaterialId($uid,$storeroom_id,$material_id);
+            $total = Stock::getStockByUidAndStorageIdAndMaterialId($storeroom_id,$material_id);
             if($total == 0){
             	echo json_encode(['data'=>'','err'=>'所选物料库存不够','errno'=>10001]);
             	Yii::$app->end();
             }
-            $data = Yii::$app->shoppingCart->addToCart($uid,$material_id,$quantity,$storeroom_id);
+            $data = Yii::$app->shoppingCart->addToCart(Yii::$app->user->id,$material_id,$quantity,$storeroom_id);
             if($data){
             	echo json_encode(['data'=>'','err'=>'添加购物车成功','errno'=>0]);
             	Yii::$app->end();

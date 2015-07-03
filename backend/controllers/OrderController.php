@@ -290,7 +290,7 @@ class OrderController extends BackendController {
     }
     public function actionMarkunsign($id){
         $order = $this->loadModel($id);
-        if($order->status != Order::SHIPPING_ORDER){
+        if($order->status != Order::ORDER_STATUS_IS_TRUCK){
             throw new CHttpException(404, '数据错误，请检查一下订单是否是发货状态，不是发货状态的订单不能标记为签收');
         }
         if(Yii::$app->user->identity->storeroom_id != Order::BIGEST_STOREROOM_ID){

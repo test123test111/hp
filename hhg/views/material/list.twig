@@ -100,7 +100,6 @@
                             <td>{{ result.storeroom.name }}</td>
                             <td>{{ result.owner.english_name }}
                             </td>
-                            <td>{{ result.total - result.lock_num }}</td>
                             <td>
                                 {% if (result.total - result.lock_num) < result.warning_quantity %}
                                 <font color="red">{{ result.total - result.lock_num }}</font>

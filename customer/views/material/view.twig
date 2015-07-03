@@ -27,30 +27,65 @@
                             <em>{{ material.getMyPropertyName() }}</em>
                         </p>
                         <p>
-                            <label>产品线：</label>
-                            <em>{{ material.channel }}</em>
-                        </p>
-                        <p>
-                            <label>数据来源：</label>
-                            <em>{{ material.getMyDataSourceName() }}</em>
-                        </p>
-                        <p>
                             <label>所属人：</label>
                             <em>{% if material.owners is defined %}{{ material.owners.english_name }}{% endif %}</em>
+                        </p>
+                        <p>
+                            <label>入库时间：</label>
+                            <em>{{ material.getFirstStockTime(sid) }}</em>
+                        </p>
+                        <p>
+                            <label>使用期限：</label>
+                            <em>{{ material.expire }}</em>
+                        </p>
+                        <p>
+                            <label>库房位置：</label>
+                            <em>{{ storeroom.name }}</em>
+                        </p>
+                        <p>
+                            <label>库存数量：</label>
+                            <em>
+                                {{ stocktotal.total - stocktotal.lock_num }}
+                            </em>
+                        </p>
+                        <p>
+                            <label>预警数量：</label>
+                            <em>{{ stocktotal.warning_quantity }}</em>
+                        </p>
+                        <p>
+                            <label>分享：</label>
+                            <em>{% if material.owner_id == App.user.id %}
+                                {% if material.checkShare(App.user.id,sid) %}
+                                已分享
+                                {% else %}
+                                未分享
+                                {% endif %}
+                                <a href="javascript:void(0);" class="blue" onclick="shareTo({{ material.id }},{{ sid }});">更改</a>
+                                {% else %}{% endif %}</em>
+                        </p>
+                        <p>
+                            <label>部门：</label>
+                            <em>{% if owner.departments is defined %}{{ owner.departments.name }}{% endif %}</em>
+                        </p>
+                        <p>
+                            <label>组别：</label>
+                            <em>{% if owner.categorys is defined %}{{ owner.categorys.name }}{% endif %}</em>
+                        </p>
+                        <p>
+                            <label>产品线一级：</label>
+                            <em>{% if owner.productlines is defined %}{{ owner.productlines.name }}{% endif %}</em>
+                        </p>
+                        <p>
+                            <label>产品线二级：</label>
+                            <em>{% if owner.producttwolines is defined %}{{ owner.producttwolines.name }}{% endif %}</em>
                         </p>
                         <p>
                             <label>PN号：</label>
                             <em>{{ material.pn }}</em>
                         </p>
                         <p>
-                            <label>预警数量：</label>
-                            <em>
-                                {% for st in storerooms%}
-                              {% if sid == st.storeroom_id %}
-                                {{ st.warning_quantity }}
-                                {% endif %}
-                              {% endfor %}  
-                            </em>
+                            <label>备注：</label>
+                            <em></em>
                         </p>
                         <div class="choose">
                             <span id="material_id" class="none">{{ material.id }}</span>
@@ -77,11 +112,7 @@
                                             </div>
                                             <span class="stock">库存
                                             <i id="mall_stock">
-                                                  {% for st in storerooms%}
-                                                  {% if sid == st.storeroom_id %}
-                                                    {{ st.total - st.lock_num }}
-                                                    {% endif %}
-                                                  {% endfor %}  
+                                                    {{ stocktotal.total - stocktotal.lock_num }}
                                             </i></span>
                                             <div class="clear"></div>
                                             <span class="fl error_stock">您所选的物料数量超过库存!</span>
@@ -90,7 +121,6 @@
                                 </li>
                             </ul>
                         </div>
-
                         <div class="cart_submit clearfix">
                             <a href="javascript:void(0);" class="cart_btn" onclick="buyCart();"></a>
                             <span class="cart_tip">已成功加入购物车！</span>
@@ -102,20 +132,12 @@
                     <h3>商品详情</h3>
                     <div class="intro">
                         <p>
-                            <label>数据来源:</label>
-                            <em>{{ material.getMyDataSourceName() }}</em>
-                        </p>
-                        <p>
-                            <label>送货单位:</label>
-                            <em>{% for st in storerooms%}
-                                                  {% if sid == st.storeroom_id %}
-                                                    {{ st.delivery }}
-                                                    {% endif %}
-                                                  {% endfor %}</em>
-                        </p>
-                        <p>
-                            <label>规格尺寸:</label>
+                            <label>物料规格:</label>
                             <em>{{ material.size }}</em>
+                        </p>
+                        <p>
+                            <label>计量规格:</label>
+                            <em>{{ material.jiliang }}</em>
                         </p>
                         <p>
                             <label>包装规格:</label>
@@ -124,6 +146,22 @@
                         <p>
                             <label>单位重量(g):</label>
                             <em>{{ material.weight }}</em>
+                        </p>
+                        <p>
+                            <label>数据来源:</label>
+                            <em>{{ material.getMyDataSourceName() }}</em>
+                        </p>
+                        <p>
+                            <label>送货单位:</label>
+                            <em>{% for st in storerooms%}
+                              {% if sid == st.storeroom_id %}
+                                {{ st.delivery }}
+                                {% endif %}
+                              {% endfor %}</em>
+                        </p>
+                        <p>
+                            <label>备注:</label>
+                            <em></em>
                         </p>
                     </div>
                     <div class="views">
@@ -142,4 +180,43 @@
         </div>
     </div>
  <script type="text/javascript" src="/js/view.js"></script>
+ <script type="text/javascript">
+        function shareTo(mid,rid){
+            var safeCode = $('meta[name=csrf-token]');
+            $.ajax({
+                url : "/material/share",
+                type : "POST",
+                dataType : "html",
+                data : {"material_id":mid,"storeroom_id":rid,"_csrf":safeCode.attr('content')},
+                success : function(json){
+                    $.layer({
+                        type: 1,
+                        shade: [0.5, '#000'],
+                        area: ['500', '450'],
+                        title: '分享',
+                        btns: 2,
+                        btn: ['确定', '取消'],
+                        border: [5, 0.2, '#000'],
+                        yes: function(){
+                            var userIds = [];
+                            $.each($(".share_list dd input:checked"),function(){
+                                userIds.push($(this).val());
+                            });
+                            $.ajax({
+                                url : "/material/updateshare",
+                                type : "POST",
+                                dataType : "json",
+                                data : {"material_id":mid,"storeroom_id":rid,"user_ids":userIds,"_csrf":safeCode.attr('content')},
+                                success : function(json){
+                                    $("#succShare").show();
+                                    window.setTimeout("$('#succShare').fadeOut()",2000)
+                                }
+                            });
+                        },
+                        page: {html:json}
+                    });
+                }
+            });
+        }
+ </script>
 {% endblock %}

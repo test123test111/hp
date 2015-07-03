@@ -27,30 +27,58 @@
                             <em>{{ material.getMyPropertyName() }}</em>
                         </p>
                         <p>
-                            <label>产品线：</label>
-                            <em>{{ material.channel }}</em>
-                        </p>
-                        <p>
-                            <label>数据来源：</label>
-                            <em>{{ material.getMyDataSourceName() }}</em>
-                        </p>
-                        <p>
                             <label>所属人：</label>
                             <em>{% if material.owners is defined %}{{ material.owners.english_name }}{% endif %}</em>
+                        </p>
+                        <p>
+                            <label>入库时间：</label>
+                            <em>{{ material.getFirstStockTime(sid) }}</em>
+                        </p>
+                        <p>
+                            <label>使用期限：</label>
+                            <em>{{ material.expire }}</em>
+                        </p>
+                        <p>
+                            <label>库房位置：</label>
+                            <em>{{ storeroom.name }}</em>
+                        </p>
+                        <p>
+                            <label>库存数量：</label>
+                            <em>
+                                {{ stocktotal.total - stocktotal.lock_num }}
+                            </em>
+                        </p>
+                        <p>
+                            <label>预警数量：</label>
+                            <em>{{ stocktotal.warning_quantity }}</em>
+                        </p>
+                        <p>
+                            <label>分享：</label>
+                            <em></em>
+                        </p>
+                        <p>
+                            <label>部门：</label>
+                            <em>{% if owner.departments is defined %}{{ owner.departments.name }}{% endif %}</em>
+                        </p>
+                        <p>
+                            <label>组别：</label>
+                            <em>{% if owner.categorys is defined %}{{ owner.categorys.name }}{% endif %}</em>
+                        </p>
+                        <p>
+                            <label>产品线一级：</label>
+                            <em>{% if owner.productlines is defined %}{{ owner.productlines.name }}{% endif %}</em>
+                        </p>
+                        <p>
+                            <label>产品线二级：</label>
+                            <em>{% if owner.producttwolines is defined %}{{ owner.producttwolines.name }}{% endif %}</em>
                         </p>
                         <p>
                             <label>PN号：</label>
                             <em>{{ material.pn }}</em>
                         </p>
                         <p>
-                            <label>预警数量：</label>
-                            <em>
-                                {% for st in storerooms%}
-                              {% if sid == st.storeroom_id %}
-                                {{ st.warning_quantity }}
-                                {% endif %}
-                              {% endfor %}  
-                            </em>
+                            <label>备注：</label>
+                            <em></em>
                         </p>
                         <div class="choose">
                             <span id="material_id" class="none">{{ material.id }}</span>
@@ -77,11 +105,7 @@
                                             </div>
                                             <span class="stock">库存
                                             <i id="mall_stock">
-                                                  {% for st in storerooms%}
-                                                  {% if sid == st.storeroom_id %}
-                                                    {{ st.total - st.lock_num }}
-                                                    {% endif %}
-                                                  {% endfor %}  
+                                                    {{ stocktotal.total - stocktotal.lock_num }}
                                             </i></span>
                                             <div class="clear"></div>
                                             <span class="fl error_stock">您所选的物料数量超过库存!</span>
@@ -90,7 +114,6 @@
                                 </li>
                             </ul>
                         </div>
-
                         <div class="cart_submit clearfix">
                             <a href="javascript:void(0);" class="cart_btn" onclick="buyCart();"></a>
                             <span class="cart_tip">已成功加入购物车！</span>
@@ -102,20 +125,12 @@
                     <h3>商品详情</h3>
                     <div class="intro">
                         <p>
-                            <label>数据来源:</label>
-                            <em>{{ material.getMyDataSourceName() }}</em>
-                        </p>
-                        <p>
-                            <label>送货单位:</label>
-                            <em>{% for st in storerooms%}
-                                                  {% if sid == st.storeroom_id %}
-                                                    {{ st.delivery }}
-                                                    {% endif %}
-                                                  {% endfor %}</em>
-                        </p>
-                        <p>
-                            <label>规格尺寸:</label>
+                            <label>物料规格:</label>
                             <em>{{ material.size }}</em>
+                        </p>
+                        <p>
+                            <label>计量规格:</label>
+                            <em>{{ material.jiliang }}</em>
                         </p>
                         <p>
                             <label>包装规格:</label>
@@ -124,6 +139,22 @@
                         <p>
                             <label>单位重量(g):</label>
                             <em>{{ material.weight }}</em>
+                        </p>
+                        <p>
+                            <label>数据来源:</label>
+                            <em>{{ material.getMyDataSourceName() }}</em>
+                        </p>
+                        <p>
+                            <label>送货单位:</label>
+                            <em>{% for st in storerooms%}
+                              {% if sid == st.storeroom_id %}
+                                {{ st.delivery }}
+                                {% endif %}
+                              {% endfor %}</em>
+                        </p>
+                        <p>
+                            <label>备注:</label>
+                            <em></em>
                         </p>
                     </div>
                     <div class="views">

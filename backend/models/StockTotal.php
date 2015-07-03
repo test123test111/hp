@@ -27,7 +27,7 @@ class StockTotal extends BackendActiveRecord {
     	if(empty($material)){
             $owner = Owner::findOne($owner_id);
             $cat_id = 0;
-            if($owner->categor != 0){
+            if($owner->category != 0){
                 $category = Category::findOne($owner->category);
                 $cat_id = $category->id;
             }
