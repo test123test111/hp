@@ -56,9 +56,9 @@ class BudgetController extends \yii\web\Controller {
             $date = Yii::$app->request->post('date');
             $model->year = date('Y',strtotime($date));
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                $model->time = ceil((date('n',strtotime($date)))/3);
-            }else{
                 $model->time = date('n',strtotime($date));
+            }else{
+                $model->time = ceil((date('n',strtotime($date)))/3);
             }
             $model->created_uid = Yii::$app->user->id;
             if($model->validate() && $model->save()){

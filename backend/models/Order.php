@@ -386,10 +386,10 @@ class Order extends BackendActiveRecord {
             $stockTotal = StockTotal::find()->where(['material_id'=>$value['material_id'],'storeroom_id'=>$value['storeroom_id']])->one();
             $stockTotal->updateCounters(['lock_num' => $value['quantity']]);
 
-            $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
-            if(!empty($cart)){
-                Cart::deleteAll(['id'=>$cart->id]);
-            }
+            // $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
+            // if(!empty($cart)){
+            //     Cart::deleteAll(['id'=>$cart->id]);
+            // }
             
         }
         if($flag == 0){
@@ -406,6 +406,15 @@ class Order extends BackendActiveRecord {
         //     $this->update(false);
         // }
         $this->checkOrderNeedApproval();
+        if($this->can_formal != self::IS_NOT_FORMAL){
+            foreach($postData as $key=>$value){
+                $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
+                if(!empty($cart)){
+                    Cart::deleteAll(['id'=>$cart->id]);
+                }
+                
+            }
+        }
         return true;
     }
 
@@ -467,7 +476,6 @@ class Order extends BackendActiveRecord {
         $this->fenjian_fee = $fenjian_fee;
         $this->tariff = $tariff;
         $this->update(false);
-
         $owner = Owner::findOne($this->created_uid);
         $department_id = $owner->department;
         $department = Department::findOne($department_id);

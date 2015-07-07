@@ -19,7 +19,7 @@ class ProductLine extends Pl
     }
     public function getOptLink(){
         return '
-             return \yii\helpers\Html::a("编辑","/department/updateprodtwo/$model->id")."|".\yii\helpers\Html::a("设置二级产品线","/department/setting-prod-two?ProductTwoLineSearch[product_line_id]=$model->id");
+             return \yii\helpers\Html::a("编辑","/department/updateprod/$model->id")."|".\yii\helpers\Html::a("设置二级产品线","/department/setting-prod-two?ProductTwoLineSearch[product_line_id]=$model->id");
         ';
     }
     /**
