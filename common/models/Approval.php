@@ -9,7 +9,8 @@ class Approval extends ActiveRecord
 {
     const TYPE_IS_MATERIAL = 0;
     const TYPE_IS_FEE = 1;
-
+    const TYPE_IS_BUDGET = 2;
+    
     const STATUS_IS_UNHANDLE = 0;
     const STATUS_IS_PASS = 1;
     const STATUS_IS_REJECT = 2;

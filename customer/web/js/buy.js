@@ -49,6 +49,10 @@ $(function(){
                     return false;
                 }
             }
+            if($("#autocompleteCreate").val() == ""){
+                alert("请输入预算所属人");
+                return false;
+            }
             // else{
             //     $("#buyForm").submit();
             // }

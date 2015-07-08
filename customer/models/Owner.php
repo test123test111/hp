@@ -234,4 +234,14 @@ class Owner extends ActiveRecord implements IdentityInterface
             'tell'=>'固定电话',
         ];
     }
+    public static function getBudgetUsers($uid){
+        $owner = static::findOne($uid);
+        $results = static::find()->where(['category'=>$owner->category])->all();
+        $ret = [];
+        foreach($results as $result){
+            $array = [$result->english_name, $result->id];
+            array_push($ret,$array);
+        }
+        return json_encode($ret);
+    }
 }

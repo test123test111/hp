@@ -21,6 +21,16 @@ $(function(){
         var id = $(this).data('id');
         disagreeApproval(id);
     });
+    $(".agree-budget-approval").live("click",function(event){
+        event.stopPropagation();
+        var id = $(this).data('id');
+        agreeBudgetApproval(id);
+    });
+    $(".disagree-budget-approval").live("click",function(event){
+        event.stopPropagation();
+        var id = $(this).data('id');
+        disagreeBudgetApproval(id);
+    });
 });
 function agreeApproval(id,detail_id){
     safeCode = $('meta[name=csrf-token]');
@@ -57,7 +67,70 @@ function agreeApproval(id,detail_id){
         }
     });
 }
-
+function agreeBudgetApproval(id){
+    safeCode = $('meta[name=csrf-token]');
+    $.layer({
+        shade: [1],
+        // area: ['auto','auto'],
+        dialog: {
+            msg: '确认通过审批吗？',
+            btns: 2,                    
+            type: 4,
+            btn: ['确认','取消'],
+            shade: [0.5, '#000'],
+            area: ['900', '380'],
+            yes: function(){
+                var delete_url = "/order/agreeapprovalbudget";
+                $.ajax({
+                    url:delete_url,
+                    dataType:"json",
+                    type:"POST",
+                    data:{"id":id,'_csrf':safeCode.attr('content')},
+                    success:function(json){
+                        if(json == 0){
+                            $("#spprovalBudget").html("已同意审批人审批");
+                        }else{
+                            alert(json);
+                        }
+                    }
+                });
+                layer.closeAll();
+            }
+        }
+    });
+}
+function disagreeBudgetApproval(id){
+    safeCode = $('meta[name=csrf-token]');
+    $.layer({
+        shade: [1],
+        // area: ['auto','auto'],
+        dialog: {
+            msg: '确认驳回审批吗？',
+            btns: 2,                    
+            type: 4,
+            btn: ['确认','取消'],
+            shade: [0.5, '#000'],
+            area: ['900', '380'],
+            yes: function(){
+                var delete_url = "/order/disagreeapprovalbudget";
+                $.ajax({
+                    url:delete_url,
+                    dataType:"json",
+                    type:"POST",
+                    data:{"id":id,'_csrf':safeCode.attr('content')},
+                    success:function(json){
+                        if(json == 0){
+                            $("#spprovalBudget").html("已驳回审批人审批");
+                        }else{
+                            alert(json);
+                        }
+                    }
+                });
+                layer.closeAll();
+            }
+        }
+    });
+}
 function agreeFee(id){
     safeCode = $('meta[name=csrf-token]');
     $.layer({

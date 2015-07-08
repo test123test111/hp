@@ -122,7 +122,11 @@
                         <input type="text" placeholder="输入用途" name="Order[purpose]" class="memo_input" />
                         <input type="text" placeholder="输入备注信息" name="Order[info]" class="memo_input" />
                     </div>
-
+                    <div class="dt">5 预算所属人</div>
+                    <div class="dd">
+                        <input type="text" id="autocompleteCreate" class="active_input" />
+                        <input type="hidden" name="Order[budget_uid]" value="{{ App.user.id }}" id="createUsert" />
+                    </div>
                     <div class="cart_submit clearfix">
                         <a href="javascript:;" class="buy_btn">确认订单</a>
                         <div class="amount">共<span class="red" id="selectedCount">{{ quantity }}</span> 件商品</div>
@@ -173,6 +177,27 @@
                 });
                 $('#autocompleteName').val(item.data('langname')+'');
                 $('#company_box').val(item.data('lang'));
+            }
+        });
+
+        var data = {{ createusers|raw }}; 
+        $('#autocompleteCreate').autoComplete({
+            minChars: 0,
+            source: function(term, suggest){
+                term = term.toLowerCase();
+                var choices = data;
+                var suggestions = [];
+                for (i=0;i<choices.length;i++)
+                    if (~(choices[i][0]+' '+choices[i][1]).toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+                suggest(suggestions);
+            },
+            renderItem: function (item, search){
+                var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
+                return '<div class="autocomplete-suggestion" data-langname="'+item[0]+'" data-lang="'+item[1]+'" data-val="'+search+'"> '+item[0].replace(re, "<b>$1</b>")+'</div>';
+            },
+            onSelect: function(e, term, item){
+                $('#autocompleteCreate').val(item.data('langname')+'');
+                $('#createUsert').val(item.data('lang'));
             }
         });
     })

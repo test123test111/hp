@@ -5,6 +5,11 @@ $(function(){
         var id = $(this).data('id');
         sendapproval(id);
     });
+    $(".send-budget-approval").live("click",function(event){
+        event.stopPropagation();
+        var id = $(this).data('id');
+        sendbudgetapproval(id);
+    });
     $(".send-fee-approval").live("click",function(event){
         event.stopPropagation();
         var id = $(this).data('id');
@@ -48,7 +53,38 @@ function sendapproval(id){
         }
     });
 }
-
+function sendbudgetapproval(id){
+    safeCode = $('meta[name=csrf-token]');
+    $.layer({
+        shade: [1],
+        // area: ['auto','auto'],
+        dialog: {
+            msg: '确认发送审批吗？',
+            btns: 2,                    
+            type: 4,
+            btn: ['确认','取消'],
+            shade: [0.5, '#000'],
+            area: ['900', '380'],
+            yes: function(){
+                var delete_url = "/order/sendbudgetapproval";
+                $.ajax({
+                    url:delete_url,
+                    dataType:"json",
+                    type:"POST",
+                    data:{"id":id,'_csrf':safeCode.attr('content')},
+                    success:function(json){
+                        if(json == 1){
+                            $("#spprovalBudget").html("审批申请已发送,请等待审批人审批");
+                        }else{
+                            alert(json);
+                        }
+                    }
+                });
+                layer.closeAll();
+            }
+        }
+    });
+}
 function sendfeeapproval(id){
     safeCode = $('meta[name=csrf-token]');
     $.layer({

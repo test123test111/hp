@@ -47,7 +47,7 @@ class GTwigExtension extends \Twig_Extension
         );
     }
     function formatnumber($number){
-        return sprintf("%01.2f", $number);
+        return sprintf("%01.3f", $number);
     }
     /**
     * {@inheritdoc}

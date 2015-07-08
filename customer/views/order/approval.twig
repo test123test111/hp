@@ -13,7 +13,8 @@
                 <select name="type">
                     <option value="">请选择审批内容</option>
                     <option {% if params.type is defined and params.type == 0 %}selected="selected"{% endif %} value="0">物料审批</option>
-                    <option {% if params.type is defined and params.type == 1 %}selected="selected"{% endif %} value="0">费用审批</option>
+                    <option {% if params.type is defined and params.type == 1 %}selected="selected"{% endif %} value="1">费用审批</option>
+                    <option {% if params.type is defined and params.type == 2 %}selected="selected"{% endif %} value="2">预算审批</option>
                 </select>
             </li>
             

@@ -35,7 +35,7 @@ class OrderController extends CustomerController {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report'],
+                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','sendbudgetapproval','agreeapprovalbudget','disagreeapprovalbudget'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -244,11 +244,14 @@ class OrderController extends CustomerController {
                 }else{
                     $model->arrive_date = 0;
                 }
+                if($model->budget_uid == Yii::$app->user->id){
+                    $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
+                }
                 $model->save();
                 $model->viewid = date('Ymd')."-".$model->id;
                 $model->update();
                 //create order detail 
-                $model->createOrderDetail($_POST['Carts'],Yii::$app->user->id);
+                $model->createOrderDetail($_POST['Carts'],$model->budget_uid);
                 $transaction->commit();
                 $this->redirect("/order/success?id={$model->viewid}");
             }catch (\Exception $e) {
@@ -877,7 +880,7 @@ class OrderController extends CustomerController {
                 $order->fee_approval_uid = Yii::$app->user->id;
                 $order->update();
             }
-            if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Order::IS_FORMAL){
+            if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Order::IS_FORMAL && $order->budget_approval == Order::BUDGET_APPROVAL_PASS){
                 $order->status = Order::ORDER_STATUS_IS_APPROVALED;
                 $order->update();
 
@@ -953,6 +956,33 @@ class OrderController extends CustomerController {
                 echo json_encode($str);
             }
             
+        }
+    }
+    /**
+     * 发送预算费用审批
+     * @return [type] [description]
+     */
+    public function actionSendbudgetapproval(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('id');
+            $order = Order::findOne($order_id);
+            if($order->budget_approval == Order::BUDGET_APPROVAL_NOT_PASS){
+                $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_BUDGET])->one();
+                if(empty($approval)){
+                    $model = new Approval;
+                    $model->order_id = $order_id;
+                    $model->owner_id = $order->budget_uid;
+                    $model->applicant = $order->created_uid;
+                    $model->type = Approval::TYPE_IS_BUDGET;
+                    $model->created = date('Y-m-d H:i:s');
+                    $model->modified = date('Y-m-d H:i:s');
+                    $model->save();
+                }
+                echo 1;
+            }else{
+                $str = '该订单不需要审批';
+                echo json_encode($str);
+            }
         }
     }
     //发送审批
@@ -1175,6 +1205,91 @@ class OrderController extends CustomerController {
                 }
             }
             echo 0;
+        }
+    }
+    /**
+     * [actionDisagreeapproval description]
+     * @return [type] [description]
+     */
+    public function actionDisagreeapprovalbudget(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('id');
+            $order = Order::findOne($order_id);
+            if(!empty($order)){
+                if($order->budget_approval == Order::BUDGET_APPROVAL_NOT_PASS){
+                    $order->is_del = Order::ORDER_IS_DEL;
+                    $order->status = Order::ORDER_STATUS_IS_CANCEL;
+                    if($order->update(false)){
+                        foreach($order->details as $detail){
+                            //只解锁未被拒绝的订单
+                            //lock stock total
+                            $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                            $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                            $stockTotal->total = $stockTotal->total - $detail->quantity;
+                            $stockTotal->update();
+                        }
+                        echo 0;
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * [actionDisagreeapproval description]
+     * @return [type] [description]
+     */
+    public function actionAgreeapprovalbudget(){
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('id');
+            $order = Order::findOne($order_id);
+            if(!empty($order)){
+                if($order->budget_approval == Order::BUDGET_APPROVAL_NOT_PASS){
+                    $order->budget_approval = Order::BUDGET_APPROVAL_PASS;
+                    if($order->update(false)){
+                        if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Order::IS_FORMAL && $order->budget_approval == Order::BUDGET_APPROVAL_PASS){
+                            $order->status = Order::ORDER_STATUS_IS_APPROVALED;
+                            $order->update();
+
+                            foreach($order->details as $detail){
+                                $stock = new Stock;
+                                $stock->material_id = $detail->material->id;
+                                $stock->storeroom_id = $detail->storeroom_id;
+                                $stock->owner_id = $detail->owner_id;
+                                $stock->actual_quantity = 0 - $detail->quantity;
+                                $stock->stock_time = date('Y-m-d H:i:s');
+                                $stock->created = date('Y-m-d H:i:s');
+                                $stock->increase = Stock::IS_NOT_INCREASE;
+                                $stock->order_id = $detail->order_id;
+                                $stock->save(false);
+
+                                //lock stock total
+                                $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                                $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                                $stockTotal->total = $stockTotal->total - $detail->quantity;
+                                $stockTotal->update();
+
+                                if($stockTotal->total < $stockTotal->warning_quantity){
+                                    //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
+                                    $ret = [
+                                        'code'=>$detail->material->code,
+                                        'name'=>$detail->material->name,
+                                        'email'=>$detail->owner->email,
+                                        'type'=>'物料',
+                                    ];
+                                    $sendEmail = new SendEmail;
+                                    $sendEmail->template = 'stock';
+                                    $sendEmail->content = json_encode($ret);
+                                    $sendEmail->created = date('Y-m-d H:i:s');
+                                    $sendEmail->save();
+                                }
+
+                            }
+                            $order->consume();
+                        }
+                        echo 0;
+                    }
+                }
+            }
         }
     }
     /**

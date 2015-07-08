@@ -73,6 +73,10 @@ class Order extends BackendActiveRecord {
     const ORDER_TYPE_NORMAL = 0;
     const ORDER_TYPE_BATCH = 1;
 
+
+    const BUDGET_APPROVAL_PASS = 1;
+    const BUDGET_APPROVAL_NOT_PASS = 0;
+
     /**
      * function_description
      *
@@ -131,7 +135,7 @@ class Order extends BackendActiveRecord {
      */
     public function rules() {
         return [
-            [['storeroom_id','transport_type','to_type'],'required'],
+            [['storeroom_id','transport_type','to_type','budget_uid'],'required'],
             [['info','purpose','insurance','insurance_price','send_date','arrive_date','created_uid','modified_uid'],'safe'],
             // ['goods_quantity',]/
         ];
@@ -483,7 +487,7 @@ class Order extends BackendActiveRecord {
         $this->fenjian_fee = $fenjian_fee;
         $this->tariff = $tariff;
         $this->update(false);
-        $owner = Owner::findOne($this->created_uid);
+        $owner = Owner::findOne($this->budget_uid);
         $department_id = $owner->department;
         $department = Department::findOne($department_id);
         $storeroom = Storeroom::findOne($this->storeroom_id);
@@ -491,7 +495,7 @@ class Order extends BackendActiveRecord {
         // $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
         // $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
 
-        list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->created_uid,$this->storeroom_id);
+        list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->budget_uid,$this->storeroom_id);
         if($department->id == Department::IS_COMERCIAL){
             //中央库规则
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
@@ -547,7 +551,7 @@ class Order extends BackendActiveRecord {
         // $this->warning_fee_price = 500;
         // $this->update();
         
-        if($this->owner_approval == Order::OWNER_PASS_APPROVAL && $this->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL && $this->can_formal == Order::IS_FORMAL){
+        if($this->owner_approval == Order::OWNER_PASS_APPROVAL && $this->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL && $this->can_formal == Order::IS_FORMAL && $this->budget_approval == Order::BUDGET_APPROVAL_PASS){
             $this->status = self::ORDER_STATUS_IS_APPROVALED;
             $this->update();
             $this->consume();
@@ -673,10 +677,10 @@ class Order extends BackendActiveRecord {
     public function consume(){
         list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($this->id);
         $price = $ship_fee + $fenjian_fee;
-        $owner = Owner::findOne($this->created_uid);
-        $budget_id = NewBudget::getCurrentIdByUid($this->created_uid,$this->storeroom_id);
+        $owner = Owner::findOne($this->budget_uid);
+        $budget_id = NewBudget::getCurrentIdByUid($this->budget_uid,$this->storeroom_id);
         $model = new NewBudgetConsume;
-        $model->owner_id = $this->created_uid;
+        $model->owner_id = $this->budget_uid;
         $model->budget_id = $budget_id;
         $model->price = $price;
         $model->order_id = $this->id;
@@ -685,10 +689,10 @@ class Order extends BackendActiveRecord {
             NewBudgetTotal::updateBudgetPrice($budget_id,$price);
         }
         //send warning email
-        // $total = BudgetTotal::getPriceTotalByCategory($this->created_uid);
-        // $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
+        // $total = BudgetTotal::getPriceTotalByCategory($this->budget_uid);
+        // $consume = BudgetConsume::getConsumePriceByOwner($this->budget_uid);
 
-        list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->created_uid,$this->storeroom_id);
+        list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->budget_uid,$this->storeroom_id);
         if($total != 0){
             if($consume / $total >= 0.5 && $consume / $total < 0.85){
                 $warning_price = '50%';
@@ -758,5 +762,19 @@ class Order extends BackendActiveRecord {
      */
     public static function getNewOrdersCount(){
         return static::find()->where(['status'=>self::ORDER_STATUS_IS_APPROVALED,'is_del'=>self::ORDER_IS_NOT_DEL])->count();
+    }
+    public function getBudgetUser(){
+        $owner = Owner::findOne($this->budget_uid);
+        if(!empty($owner)){
+            return $owner->english_name;
+        }
+        return "";
+    }
+    public function checkBudgetApproval(){
+        $approval = Approval::find()->where(['order_id'=>$this->id,'type'=>Approval::TYPE_IS_BUDGET])->one();
+        if(!empty($approval)){
+            return true;
+        }
+        return false;
     }
 }

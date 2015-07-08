@@ -239,9 +239,9 @@ class NewBudget extends ActiveRecord
         $year = date('Y');
         if(!empty($storeroom)){
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                $time = ceil((date('n'))/3);
-            }else{
                 $time = date('m');
+            }else{
+                $time = ceil((date('n'))/3);
             }
             $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
             if(!empty($budget)){
