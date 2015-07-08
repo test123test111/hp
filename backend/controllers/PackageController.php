@@ -57,6 +57,9 @@ class PackageController extends BackendController {
         // collect user input data
         if (isset($_POST['Package'])) {
             $model->load($_POST);
+            if($model->other_fee == null){
+                $model->other_fee = '0.00';
+            }
             if ($model->validate() && $model->save()) {
                 $order->status = Order::ORDER_STATUS_IS_PACKAGE;
                 $order->update(false);

@@ -55,9 +55,9 @@
                                 </td>
                                 <td class="price">物料编号：{{ d.material.code }}</td>
                                 <td class="qty">数量：{{ d.quantity }}</td>
-                                <td rowspan="2" class="status">订单状态<br/>{{ order.getOrderStatus()|raw }}</td>
+                                {% if loop.index == 1 %}<td rowspan="{{ order.details|count }}" class="status">订单状态<br/>{{ order.getOrderStatus()|raw }}</td>{% endif %}
                                 {% if loop.index == 1 %}
-                                <td rowspan="2" class="edit"><br/><a class="blue" href="/order/viewapproval/{{ d.order_id }}">去审批</a></td>
+                                <td rowspan="{{ order.details|count }}" class="edit"><br/><a class="blue" href="/order/viewapproval/{{ d.order_id }}">去审批</a></td>
                                 {% endif %}
                             </tr>
                           {% endfor %}

@@ -278,14 +278,21 @@ class Order extends BackendActiveRecord {
                 return \yii\helpers\Html::a("标记发货","#",["onclick"=>"markshipping($model->id)"]);
             }elseif($model->status == 4){
                 return \yii\helpers\Html::a("标记签收<br />","#",["onclick"=>"marksign($model->id)"]).\yii\helpers\Html::a("标记未签收","#",["onclick"=>"markunsign($model->id)"]);
-            }else{
+            }elseif($model->status == 6){
+                return "异常原因：未签收";
+            }
+            else{
                 return "";
             }
         ';
     }
     public function getPrintLink(){
         return '
-             return \yii\helpers\Html::a("打印<br />","/order/print?id=$model->id",["target"=>"_blank"]).\yii\helpers\Html::a("修改包装信息","/package/update?id=$model->id",["target"=>"_blank"]);
+             if($model->status == 6){
+                return \yii\helpers\Html::a("打印<br />","/order/print?id=$model->id",["target"=>"_blank"]).\yii\helpers\Html::a("重新标记签收","/order/marksign?id=$model->id",["target"=>"_blank"]);
+             }else{
+                return \yii\helpers\Html::a("打印<br />","/order/print?id=$model->id",["target"=>"_blank"]).\yii\helpers\Html::a("修改包装信息","/package/update?id=$model->id",["target"=>"_blank"]);
+             }
         ';
         // return 'return $model->packageInfo;';
     }

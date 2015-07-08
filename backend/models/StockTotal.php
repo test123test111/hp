@@ -107,7 +107,7 @@ class StockTotal extends BackendActiveRecord {
         if(empty($stock)){
             return false;
         }
-        if(($stock->total - $stock->lock_num) < $quantity){
+        if(($stock->total - $stock->lock_num + $quantity) < $quantity){
             return false;
         }
         return true;

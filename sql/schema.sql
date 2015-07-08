@@ -267,6 +267,7 @@ CREATE TABLE `delivery` (
 
 DROP TABLE IF EXISTS `order_sign`;
 CREATE TABLE `order_sign` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `order_id` int(11) NOT NULL,
   `sign_date` datetime NOT NULL,
   `signer` varchar(64) NOT NULL DEFAULT '',
@@ -276,7 +277,7 @@ CREATE TABLE `order_sign` (
   `modified` datetime NOT NULL,
   `created_uid` int(11) NOT NULL DEFAULT '1',
   `modified_uid` int(11) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`order_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 alter table `stock` add column `destory` int(11) NOT NULL DEFAULT '0';

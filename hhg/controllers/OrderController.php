@@ -690,6 +690,7 @@ class OrderController extends \yii\web\Controller {
     public function actionApprovalmaterial(){
         if(Yii::$app->request->isPost){
             $order_id = Yii::$app->request->post('id');
+            $detail_id = Yii::$app->request->post('detail_id');
             $orderInfo = Order::findOne($order_id);
             // $material_ids = Yii::$app->request->post('material_ids');
             // $details = OrderDetail::find()->where(['order_id'=>$order_id,'material_id'=>$material_ids,'owner_id'=>Yii::$app->user->id])->all();
@@ -722,28 +723,23 @@ class OrderController extends \yii\web\Controller {
             $details = OrderDetail::find()->where(['order_id'=>$order_id])->all();
             if(!empty($details)){
                 foreach($details as $detail){
-                    $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
-                    $detail->approval_uid = Yii::$app->user->id;
-                    $detail->approval_uid_type = OrderDetail::APPROVAL_USER_TYPE_IS_HHG;
-                    $detail->approval_date = time();
-                    $detail->update();
-
+                    if($detail->id == $detail_id){
+                        $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
+                        $detail->approval_uid = Yii::$app->user->id;
+                        $detail->approval_uid_type = OrderDetail::APPROVAL_USER_TYPE_IS_HHG;
+                        $detail->approval_date = time();
+                        $detail->update();
+                    }
                 }
             }
             $approval->status = Approval::STATUS_IS_PASS;
             $approval->modified = date('Y-m-d H:i:s');
             $approval->update();
-            foreach($details as $detail){
-                if($detail->is_owner_approval == OrderDetail::IS_OWNER_APPROVAL){
-                    
-                }else{
-                    $flag ++;
-                }
-            }
-            if($flag == 0){
+            $not_approval = OrderDetail::find()->where(['order_id'=>$order_id,'is_owner_approval'=>OrderDetail::IS_NOT_OWNER_APPROVAL])->count();
+            
+            if($not_approval == 0){
                 Order::updateAll(['owner_approval'=>Order::OWNER_PASS_APPROVAL],['id'=>$order_id]);
-            }
-            if($orderInfo->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL){
+                if($orderInfo->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL){
                 if($orderInfo->can_formal == Order::IS_FORMAL){
                     $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
                     $orderInfo->update();
@@ -828,7 +824,13 @@ class OrderController extends \yii\web\Controller {
                     $orderInfo->consume();
                 }
             }
-            echo 0;
+            }
+            
+            if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
+                echo 0;
+            }else{
+                echo 1;
+            }
             Yii::$app->end();
         }
     }

@@ -3,7 +3,8 @@ $(function(){
     $(".agree-approval").live("click",function(event){
         event.stopPropagation();
         var id = $(this).data('id');
-        agreeApproval(id);
+        var detail_id = $(this).data('detail-id');
+        agreeApproval(id,detail_id);
     });
     $(".agree-fee").live("click",function(event){
         event.stopPropagation();
@@ -21,7 +22,7 @@ $(function(){
         disagreeApproval(id);
     });
 });
-function agreeApproval(id){
+function agreeApproval(id,detail_id){
     safeCode = $('meta[name=csrf-token]');
     $.layer({
         shade: [1],
@@ -39,9 +40,12 @@ function agreeApproval(id){
                     url:delete_url,
                     dataType:"json",
                     type:"POST",
-                    data:{"id":id,'_csrf':safeCode.attr('content')},
+                    data:{"id":id,'detail_id':detail_id,'_csrf':safeCode.attr('content')},
                     success:function(json){
                         if(json == 0){
+                            $("#spprovalStatus").html("已同意审批人审批");
+                            $("#oSt").html("审核通过");
+                        }else if(json == 1){
                             $("#spprovalStatus").html("已同意审批人审批");
                         }else{
                             alert(json);

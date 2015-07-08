@@ -11,7 +11,7 @@
             <dt>预定单号：{{ order.viewid }}</dt>
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
             <dt>订单预估报价：{{ ship_fee + fenjian_fee }}RMB</dt>
-            <dt>订单状态：{{ order.getOrderStatus()|raw }}</dt>
+            <dt>订单状态：<span id="oSt">{{ order.getOrderStatus()|raw }}</span></dt>
         </dl>
         <dl>
             <dt>物料审批/费用审批</dt>
@@ -24,7 +24,7 @@
                             <p>订单发放物料中含有您的物料<b>{{ detail.material.name }}</b>,需要您的审批</p>
                             <span id="spprovalStatus">
                                 {% if detail.is_owner_approval == 0 %}
-                                <a href="javascript:void(0);" data-id="{{ order.id }}"  class="blue agree-approval">同意</a>
+                                <a href="javascript:void(0);" data-id="{{ order.id }}" data-detail-id="{{ detail.id }}" class="blue agree-approval">同意</a>
                                 {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
                                 <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue disagree-approval">驳回</a>
                                 {% elseif detail.is_owner_approval == 1 %}

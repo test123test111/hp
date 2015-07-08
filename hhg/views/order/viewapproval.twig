@@ -23,7 +23,7 @@
                             <p>订单发放物料中含有物料<b>{{ detail.material.name }}</b>,需要您的审批</p>
                             <span id="spprovalStatus">
                                 {% if detail.is_owner_approval == 0 %}
-                                <a href="javascript:void(0);" data-id="{{ order.id }}"  class="blue agree-approval">同意</a>
+                                <a href="javascript:void(0);" data-id="{{ order.id }}" data-detail-id="{{ detail.id }}" class="blue agree-approval">同意</a>
                                 {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
                                 <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue disagree-approval">驳回</a>
                                 {% elseif detail.is_owner_approval == 1 %}

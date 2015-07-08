@@ -268,7 +268,7 @@ class OrderController extends BackendController {
      */
     public function actionMarksign($id){
         $order = $this->loadModel($id);
-        if($order->status != Order::ORDER_STATUS_IS_TRUCK){
+        if($order->status != Order::ORDER_STATUS_IS_TRUCK && $order->status != Order::ORDER_STATUS_IS_UNSIGN){
             throw new CHttpException(404, '数据错误，请检查一下订单是否是发货状态，不是发货状态的订单不能标记为签收');
         }
         $model = new OrderSign;
@@ -306,10 +306,10 @@ class OrderController extends BackendController {
             if($model->validate()){
                 $model->type = OrderSign::ORDER_IS_NOT_SIGNED;
                 if($model->save()){
-                    $order->status = Order::UNSIGN_ORDER;
+                    $order->status = Order::ORDER_STATUS_IS_UNSIGN;
                     $order->save(false);
                 }
-                return $this->redirect("/order/list?OrderSearch[status]=7");
+                return $this->redirect("/order/list?OrderSearch[status]=6");
             }
         }
         return $this->render('markunsign',['id'=>$id,'order'=>$order,'model'=>$model]);

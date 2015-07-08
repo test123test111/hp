@@ -1,5 +1,17 @@
 {% set menu_name = "order" %}
-{% set sidebar_name = "订单列表" %}
+{% if status == 2 %}
+{% set sidebar_name = "未处理订单" %}
+{% elseif status == 3 %}
+{% set sidebar_name = "已包装订单" %}
+{% elseif status == 4 %}
+{% set sidebar_name = "已发货订单" %}
+{% elseif status == 5 %}
+{% set sidebar_name = "已签收订单" %}
+{% elseif status == 6 %}
+{% set sidebar_name = "异常订单" %}
+{% else %}
+{% set sidebar_name = "" %}
+{% endif %}
 {% extends "@app/views/layouts/header.twig" %}
   {% block content %}
       <!-- Page heading -->
@@ -152,7 +164,9 @@
                   area: ['450px','190px'],
                   shadeClose: true,
                   closeBtn: [1, true],
-                  close:function(){window.location.reload();},
+                  close:function(){
+                      window.location.href="/order/list?OrderSearch[status]=4";
+                  },
                   page:{
                       html : data_html
                   }
