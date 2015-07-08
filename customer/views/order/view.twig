@@ -32,6 +32,7 @@
         <dl>
             <dt>预定单号：{{ order.viewid }}</dt>
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
+            <dt>下单人：{{ order.createduser.english_name }}</dt>
             <dt>订单预估报价：{{ ship_fee + fenjian_fee }}RMB</dt>
             <dt>订单状态：{% if order.can_formal == constant("\\backend\\models\\Order::IS_FORMAL") %}{{ order.getOrderStatus()|raw }}{% else %}由于超出费用未能生成正式订单{% endif %}</dt>
         </dl>

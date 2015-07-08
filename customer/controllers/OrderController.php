@@ -880,6 +880,10 @@ class OrderController extends CustomerController {
                 $order->fee_approval_uid = Yii::$app->user->id;
                 $order->update();
             }
+            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_FEE,'owner_id'=>Yii::$app->user->id])->one();
+            $approval->status = Approval::STATUS_IS_PASS;
+            $approval->modified = date('Y-m-d H:i:s');
+            $approval->update();
             if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Order::IS_FORMAL && $order->budget_approval == Order::BUDGET_APPROVAL_PASS){
                 $order->status = Order::ORDER_STATUS_IS_APPROVALED;
                 $order->update();
@@ -1204,6 +1208,10 @@ class OrderController extends CustomerController {
                     }
                 }
             }
+            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_FEE,'owner_id'=>Yii::$app->user->id])->one();
+            $approval->status = Approval::STATUS_IS_PASS;
+            $approval->modified = date('Y-m-d H:i:s');
+            $approval->update();
             echo 0;
         }
     }
@@ -1232,6 +1240,10 @@ class OrderController extends CustomerController {
                     }
                 }
             }
+            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_BUDGET,'owner_id'=>Yii::$app->user->id])->one();
+            $approval->status = Approval::STATUS_IS_PASS;
+            $approval->modified = date('Y-m-d H:i:s');
+            $approval->update();
         }
     }
     /**
@@ -1286,6 +1298,10 @@ class OrderController extends CustomerController {
                             }
                             $order->consume();
                         }
+                        $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_BUDGET,'owner_id'=>Yii::$app->user->id])->one();
+                        $approval->status = Approval::STATUS_IS_PASS;
+                        $approval->modified = date('Y-m-d H:i:s');
+                        $approval->update();
                         echo 0;
                     }
                 }
@@ -1320,6 +1336,10 @@ class OrderController extends CustomerController {
                     
                 }
             }
+            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL,'owner_id'=>Yii::$app->user->id])->one();
+            $approval->status = Approval::STATUS_IS_PASS;
+            $approval->modified = date('Y-m-d H:i:s');
+            $approval->update();
             echo 0;
         }
     }

@@ -56,16 +56,16 @@ class Share extends ActiveRecord
         if($owner->category != 0){
             $category = Category::findOne($owner->category);
             $cat_id = $category->id;
+            $to_customer_ids = Owner::find()->select('id')->where(['category'=>$cat_id])->column();
         }
         $material = Material::findOne($material_id);
-        $bigOwner = Owner::getBigOwnerByUid($owner_id);
-        if($bigOwner){
-            $big_uid = $bigOwner->id;
-            $big_result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$big_uid,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
+        //only insert herself
+        if($cat_id == 0){
+            $big_result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$owner_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
             if(empty($big_result)){
                 $model = new Static;
                 $model->owner_id = $owner_id;
-                $model->to_customer_id = $big_uid;
+                $model->to_customer_id = $owner_id;
                 $model->material_id = $material_id;
                 $model->storeroom_id = $storeroom_id;
                 $model->status = self::STATUS_IS_NORMAL;
@@ -74,22 +74,59 @@ class Share extends ActiveRecord
                 $model->property = $material->property;
                 $model->save(false);
             }
-        }
-        $result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$to_customer_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
-        if(empty($result)){
-            $model = new Static;
-            $model->owner_id = $owner_id;
-            $model->to_customer_id = $to_customer_id;
-            $model->material_id = $material_id;
-            $model->storeroom_id = $storeroom_id;
-            $model->status = self::STATUS_IS_NORMAL;
-            $model->created_uid = Yii::$app->user->id;
-            $model->category = $cat_id;
-            $model->property = $material->property;
-            if($model->save(false)){
-                return true;
+        }else{
+            if(!empty($to_customer_ids)){
+                foreach($to_customer_ids as $to_customer_id){
+                    $big_result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$to_customer_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
+                    if(empty($big_result)){
+                        $model = new Static;
+                        $model->owner_id = $owner_id;
+                        $model->to_customer_id = $to_customer_id;
+                        $model->material_id = $material_id;
+                        $model->storeroom_id = $storeroom_id;
+                        $model->status = self::STATUS_IS_NORMAL;
+                        $model->created_uid = Yii::$app->user->id;
+                        $model->category = $cat_id;
+                        $model->property = $material->property;
+                        $model->save(false);
+                    }
+                }
             }
         }
+       
+
+        // $bigOwner = Owner::getBigOwnerByUid($owner_id);
+        // if($bigOwner){
+        //     $big_uid = $bigOwner->id;
+        //     $big_result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$big_uid,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
+        //     if(empty($big_result)){
+        //         $model = new Static;
+        //         $model->owner_id = $owner_id;
+        //         $model->to_customer_id = $big_uid;
+        //         $model->material_id = $material_id;
+        //         $model->storeroom_id = $storeroom_id;
+        //         $model->status = self::STATUS_IS_NORMAL;
+        //         $model->created_uid = Yii::$app->user->id;
+        //         $model->category = $cat_id;
+        //         $model->property = $material->property;
+        //         $model->save(false);
+        //     }
+        // }
+        // $result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$to_customer_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
+        // if(empty($result)){
+        //     $model = new Static;
+        //     $model->owner_id = $owner_id;
+        //     $model->to_customer_id = $to_customer_id;
+        //     $model->material_id = $material_id;
+        //     $model->storeroom_id = $storeroom_id;
+        //     $model->status = self::STATUS_IS_NORMAL;
+        //     $model->created_uid = Yii::$app->user->id;
+        //     $model->category = $cat_id;
+        //     $model->property = $material->property;
+        //     if($model->save(false)){
+        //         return true;
+        //     }
+        // }
     }
     public static function updateMaterial($uid,$category){
         $owner_ids = Owner::find()->select('id')->where(['category'=>$category])->column();

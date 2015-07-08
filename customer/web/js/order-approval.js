@@ -53,10 +53,10 @@ function agreeApproval(id,detail_id){
                     data:{"id":id,'detail_id':detail_id,'_csrf':safeCode.attr('content')},
                     success:function(json){
                         if(json == 0){
-                            $("#spprovalStatus").html("已同意审批人审批");
+                            $("#spprovalStatus"+detail_id).html("已同意审批人审批");
                             $("#oSt").html("审核通过");
                         }else if(json == 1){
-                            $("#spprovalStatus").html("已同意审批人审批");
+                            $("#spprovalStatus"+detail_id).html("已同意审批人审批");
                         }else{
                             alert(json);
                         }

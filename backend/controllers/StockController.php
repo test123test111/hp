@@ -59,7 +59,7 @@ class StockController extends BackendController {
             if ($model->validate()) {
                 $db = Stock::getDb();
                 $transaction = $db->beginTransaction();
-                try{
+                // try{
                     $material = Material::findOne($model->material_id);
                     $model->owner_id = $material->owner_id;
                     $model->save();
@@ -94,10 +94,10 @@ class StockController extends BackendController {
                     $sendEmail->created = date('Y-m-d H:i:s');
                     $sendEmail->save();
                     $this->redirect("/stocktotal/list");
-                }catch (\Exception $e) {
-                   $transaction->rollback();
-                   throw new \Exception($e->getMessage(), $e->getCode());
-                }
+                // }catch (\Exception $e) {
+                //    $transaction->rollback();
+                //    throw new \Exception($e->getMessage(), $e->getCode());
+                // }
             }
         }
         return $this->render('create', array(

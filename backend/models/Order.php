@@ -384,7 +384,7 @@ class Order extends BackendActiveRecord {
 
             // if($model->owner_id == $created_uid || $big_owner_id == $created_uid){
             
-            if($model->owner_id == $created_uid){
+            if($model->owner_id == $this->created_uid){
                 $model->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
                 $model->approval_uid = $created_uid;
                 $model->approval_date = strtotime($this->created);
