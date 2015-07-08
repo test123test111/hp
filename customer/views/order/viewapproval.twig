@@ -27,7 +27,7 @@
                                 {% if detail.is_owner_approval == 0 %}
                                 <a href="javascript:void(0);" data-id="{{ order.id }}" data-detail-id="{{ detail.id }}" class="blue agree-approval">同意</a>
                                 {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
-                                <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue disagree-approval">驳回</a>
+                                <a href="javascript:void(0);" data-id="{{ order.id }}" data-detail-id="{{ detail.id }}" class="blue disagree-approval">驳回</a>
                                 {% elseif detail.is_owner_approval == 1 %}
                                 已同意物料审批
                                 {% else %}
@@ -57,10 +57,11 @@
                         </li>
                         {% endif %}
                     {% endif %}
+                        {% if order.budget_uid == App.user.id %}
                         {% if order.created_uid != order.budget_uid %}
                             {% if order.budget_approval == constant('\\backend\\models\\Order::BUDGET_APPROVAL_NOT_PASS') %}
-                                {% if order.is_del == constant('\\backend\\models\\Order::ORDER_IS_NOT_DEL') %}
-                                    {% if order.checkBudgetApproval() %}
+                                {% if order.status != constant('\\backend\\models\\Order::ORDER_STATUS_IS_APPROVAL_FAIL') %}
+                                    {% if order.checkBudgetApproval() and order.budget_uid == App.user.id %}
                                     <li class="clearfix">
                                         <p>订单预算所有人为{{ order.getBudgetUser() }}，需要审批后方可发货</p>
                                         <span id="spprovalBudget">
@@ -87,7 +88,7 @@
                                 </li>
                             {% endif %}
                         {% endif %}
-
+                    {% endif %}
                 </ul>
             </dd>
         </dl>
