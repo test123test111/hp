@@ -1135,25 +1135,28 @@ class OrderController extends \yii\web\Controller {
 
             if(!empty($order)){
                 if($order->need_fee_approval == Order::ORDER_NEED_FEE_APPROVAL){
+                    if($order->status != Order::ORDER_STATUS_IS_APPROVAL_FAIL ){
+                        foreach($order->details as $detail){
+                            //lock stock total
+                            $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                            $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                            $stockTotal->total = $stockTotal->total - $detail->quantity;
+                            $stockTotal->update();
+                        }
+                    }
                     $order->status = Order::ORDER_STATUS_IS_APPROVAL_FAIL;
                     $order->fee_approval = Order::ORDER_REJECT_FEE_APPROVAL;
                     $order->fee_approval_uid = Yii::$app->user->id;
                     $order->update(false);
-
-                    foreach($order->details as $detail){
-                        //lock stock total
-                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
-                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
-                        $stockTotal->total = $stockTotal->total - $detail->quantity;
-                        $stockTotal->update();
-                    }
                 }
+                Approval::updateAll(['status'=>Approval::STATUS_IS_REJECT],['order_id'=>$order_id]);
+                echo 0;
             }
-            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_FEE,'owner_id'=>Yii::$app->user->id])->one();
-            $approval->status = Approval::STATUS_IS_PASS;
-            $approval->modified = date('Y-m-d H:i:s');
-            $approval->update();
-            echo 0;
+            // $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_FEE,'owner_id'=>Yii::$app->user->id])->one();
+            // $approval->status = Approval::STATUS_IS_PASS;
+            // $approval->modified = date('Y-m-d H:i:s');
+            // $approval->update();
+            
         }
     }
     /**
@@ -1165,28 +1168,27 @@ class OrderController extends \yii\web\Controller {
             $order_id = Yii::$app->request->post('id');
             $order = Order::findOne($order_id);
             if(!empty($order)){
-                $order->status = Order::ORDER_STATUS_IS_APPROVAL_FAIL;
-                $order->update(false);
+                
 
                 foreach($order->details as $detail){
                     //只解锁未被拒绝的订单
                     if($detail->is_owner_approval != OrderDetail::IS_REJECT_OWNER_APPROVAL){
                         //lock stock total
-                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
-                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
-                        $stockTotal->total = $stockTotal->total - $detail->quantity;
-                        $stockTotal->update();
-
+                        if($order->status != Order::ORDER_STATUS_IS_APPROVAL_FAIL){
+                            $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                            $num = 0 - $detail->quantity;
+                            $stockTotal->updateCounters(['lock_num' => $num]);
+                        }
                         $detail->is_owner_approval = OrderDetail::IS_REJECT_OWNER_APPROVAL;
                         $detail->update(false);
 
                     }
                     
                 }
-                $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL,'owner_id'=>Yii::$app->user->id])->one();
-                $approval->status = Approval::STATUS_IS_PASS;
-                $approval->modified = date('Y-m-d H:i:s');
-                $approval->update();
+                $order->status = Order::ORDER_STATUS_IS_APPROVAL_FAIL;
+                $order->update(false);
+
+                Approval::updateAll(['status'=>Approval::STATUS_IS_REJECT],['order_id'=>$order_id]);
             }
             echo 0;
         }

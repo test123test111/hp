@@ -1213,7 +1213,7 @@ class OrderController extends CustomerController {
             // $approval->status = Approval::STATUS_IS_PASS;
             // $approval->modified = date('Y-m-d H:i:s');
             // $approval->update();
-            Approval::updateAll(['status'=>Approval::STATUS_IS_PASS],['order_id'=>$order_id]);
+            Approval::updateAll(['status'=>Approval::STATUS_IS_REJECT],['order_id'=>$order_id]);
             echo 0;
         }
     }
@@ -1246,7 +1246,7 @@ class OrderController extends CustomerController {
             // $approval->modified = date('Y-m-d H:i:s');
             // $approval->update();
 
-            Approval::updateAll(['status'=>Approval::STATUS_IS_PASS],['order_id'=>$order_id]);
+            Approval::updateAll(['status'=>Approval::STATUS_IS_REJECT],['order_id'=>$order_id]);
         }
     }
     /**
