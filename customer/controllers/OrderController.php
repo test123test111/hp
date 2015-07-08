@@ -771,91 +771,92 @@ class OrderController extends CustomerController {
             $not_approval = OrderDetail::find()->where(['order_id'=>$order_id,'is_owner_approval'=>OrderDetail::IS_NOT_OWNER_APPROVAL])->count();
             if($not_approval == 0){
                 Order::updateAll(['owner_approval'=>Order::OWNER_PASS_APPROVAL],['id'=>$order_id]);
+                $orderInfo = Order::findOne($order_id);
                 if($orderInfo->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL){
-                if($orderInfo->can_formal == Order::IS_FORMAL){
-                    $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
-                    $orderInfo->update();
+                    if($orderInfo->can_formal == Order::IS_FORMAL){
+                        $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
+                        $orderInfo->update();
 
-                    //扣除库存
-                    foreach($details as $detail){
-                        $stock = new Stock;
-                        $stock->material_id = $detail->material->id;
-                        $stock->storeroom_id = $detail->storeroom_id;
-                        $stock->owner_id = $detail->owner_id;
-                        $stock->actual_quantity = 0 - $detail->quantity;
-                        $stock->stock_time = date('Y-m-d H:i:s');
-                        $stock->created = date('Y-m-d H:i:s');
-                        $stock->increase = Stock::IS_NOT_INCREASE;
-                        $stock->order_id = $detail->order_id;
-                        $stock->save(false);
+                        //扣除库存
+                        foreach($details as $detail){
+                            $stock = new Stock;
+                            $stock->material_id = $detail->material->id;
+                            $stock->storeroom_id = $detail->storeroom_id;
+                            $stock->owner_id = $detail->owner_id;
+                            $stock->actual_quantity = 0 - $detail->quantity;
+                            $stock->stock_time = date('Y-m-d H:i:s');
+                            $stock->created = date('Y-m-d H:i:s');
+                            $stock->increase = Stock::IS_NOT_INCREASE;
+                            $stock->order_id = $detail->order_id;
+                            $stock->save(false);
 
-                        //lock stock total
-                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
-                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
-                        $stockTotal->total = $stockTotal->total - $detail->quantity;
-                        $stockTotal->update();
+                            //lock stock total
+                            $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                            $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                            $stockTotal->total = $stockTotal->total - $detail->quantity;
+                            $stockTotal->update();
 
-                        if($stockTotal->total < $stockTotal->warning_quantity){
-                            //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
-                            $ret = [
-                                'code'=>$detail->material->code,
-                                'name'=>$detail->material->name,
-                                'email'=>$detail->owner->email,
-                                'total'=>$stockTotal->total,
-                                'type'=>'物料',
-                            ];
-                            $sendEmail = new SendEmail;
-                            $sendEmail->template = 'stock';
-                            $sendEmail->content = json_encode($ret);
-                            $sendEmail->created = date('Y-m-d H:i:s');
-                            $sendEmail->save();
+                            if($stockTotal->total < $stockTotal->warning_quantity){
+                                //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
+                                $ret = [
+                                    'code'=>$detail->material->code,
+                                    'name'=>$detail->material->name,
+                                    'email'=>$detail->owner->email,
+                                    'total'=>$stockTotal->total,
+                                    'type'=>'物料',
+                                ];
+                                $sendEmail = new SendEmail;
+                                $sendEmail->template = 'stock';
+                                $sendEmail->content = json_encode($ret);
+                                $sendEmail->created = date('Y-m-d H:i:s');
+                                $sendEmail->save();
+                            }
                         }
+                        $orderInfo->consume();
                     }
-                    $orderInfo->consume();
-                }
-            }else{
-                if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Order::IS_FORMAL){
-                    $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
-                    $orderInfo->update();
+                }else{
+                    if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Order::IS_FORMAL){
+                        $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
+                        $orderInfo->update();
 
-                    //扣除库存
-                    foreach($details as $detail){
-                        $stock = new Stock;
-                        $stock->material_id = $detail->material->id;
-                        $stock->storeroom_id = $detail->storeroom_id;
-                        $stock->owner_id = $detail->owner_id;
-                        $stock->actual_quantity = 0 - $detail->quantity;
-                        $stock->stock_time = date('Y-m-d H:i:s');
-                        $stock->created = date('Y-m-d H:i:s');
-                        $stock->increase = Stock::IS_NOT_INCREASE;
-                        $stock->order_id = $detail->order_id;
-                        $stock->save(false);
+                        //扣除库存
+                        foreach($details as $detail){
+                            $stock = new Stock;
+                            $stock->material_id = $detail->material->id;
+                            $stock->storeroom_id = $detail->storeroom_id;
+                            $stock->owner_id = $detail->owner_id;
+                            $stock->actual_quantity = 0 - $detail->quantity;
+                            $stock->stock_time = date('Y-m-d H:i:s');
+                            $stock->created = date('Y-m-d H:i:s');
+                            $stock->increase = Stock::IS_NOT_INCREASE;
+                            $stock->order_id = $detail->order_id;
+                            $stock->save(false);
 
-                        //lock stock total
-                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
-                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
-                        $stockTotal->total = $stockTotal->total - $detail->quantity;
-                        $stockTotal->update();
+                            //lock stock total
+                            $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                            $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                            $stockTotal->total = $stockTotal->total - $detail->quantity;
+                            $stockTotal->update();
 
-                        if($stockTotal->total < $stockTotal->warning_quantity){
-                            //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
-                            $ret = [
-                                'code'=>$detail->material->code,
-                                'name'=>$detail->material->name,
-                                'email'=>$detail->owner->email,
-                                'total'=>$stockTotal->total,
-                                'type'=>'物料',
-                            ];
-                            $sendEmail = new SendEmail;
-                            $sendEmail->template = 'stock';
-                            $sendEmail->content = json_encode($ret);
-                            $sendEmail->created = date('Y-m-d H:i:s');
-                            $sendEmail->save();
+                            if($stockTotal->total < $stockTotal->warning_quantity){
+                                //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
+                                $ret = [
+                                    'code'=>$detail->material->code,
+                                    'name'=>$detail->material->name,
+                                    'email'=>$detail->owner->email,
+                                    'total'=>$stockTotal->total,
+                                    'type'=>'物料',
+                                ];
+                                $sendEmail = new SendEmail;
+                                $sendEmail->template = 'stock';
+                                $sendEmail->content = json_encode($ret);
+                                $sendEmail->created = date('Y-m-d H:i:s');
+                                $sendEmail->save();
+                            }
                         }
+                        $orderInfo->consume();
                     }
-                    $orderInfo->consume();
                 }
-            }
             }
             
             if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){

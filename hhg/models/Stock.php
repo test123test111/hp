@@ -174,7 +174,7 @@ class Stock extends CustomerActiveRecord {
         //     'query' => $query,
         // ]);
         // if(isset($params['material_id']) && $params['material_id'] != ""){
-        //     $material = Material::find()->select('id')->where(['code'=>$params['material_id']])->column();
+        //     $material = Material::find()->select('id')->where(['like','code',$params['material_id']])->column();
         //     // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
         //     if(empty($material)){
         //         $material = Material::find()->where(['like','name',$params['material_id']])->column();
@@ -206,7 +206,7 @@ class Stock extends CustomerActiveRecord {
                                         }])
                                    ->orderBy(['modified'=>SORT_DESC]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
-            $material = Material::find()->select('id')->where(['code'=>$params['material_id']])->column();
+            $material = Material::find()->select('id')->where(['like','code',$params['material_id']])->column();
             // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
             if(empty($material)){
                 $material = Material::find()->where(['like','name',$params['material_id']])->column();
@@ -230,7 +230,7 @@ class Stock extends CustomerActiveRecord {
             }
             
         }
-        if(isset($params['property']) && $params['property'] !=""){
+        if(isset($params['property']) && $params['property'] !=0){
             $query->andWhere(['property'=>$params['property']]);
         }
         if(isset($params['storeroom_id']) && $params['storeroom_id'] !=""){
@@ -265,7 +265,7 @@ class Stock extends CustomerActiveRecord {
                                             return $query->with(['departments','categorys','productlines','producttwolines']);
                                         }]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
-            $material = Material::find()->select('id')->where(['code'=>$params['material_id']])->column();
+            $material = Material::find()->select('id')->where(['like','code',$params['material_id']])->column();
             // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
             if(empty($material)){
                 $material = Material::find()->where(['like','name',$params['material_id']])->column();
@@ -427,7 +427,7 @@ class Stock extends CustomerActiveRecord {
             'query' => $query,
         ]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
-            $material = Material::find()->where(['code'=>$params['material_id']])->one();
+            $material = Material::find()->where(['like','code',$params['material_id']])->one();
             if(!empty($material)){
                 $query->andWhere(['material_id'=>$material->id]);
             }else{
@@ -469,7 +469,7 @@ class Stock extends CustomerActiveRecord {
             'query' => $query,
         ]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
-            $material = Material::find()->where(['code'=>$params['material_id']])->one();
+            $material = Material::find()->where(['like','code',$params['material_id']])->one();
             if(!empty($material)){
                 $query->andWhere(['material_id'=>$params['material_id']]);
             }else{
