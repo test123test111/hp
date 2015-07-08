@@ -95,8 +95,8 @@ class StockController extends BackendController {
                     $sendEmail->save();
                     $this->redirect("/stocktotal/list");
                 }catch (\Exception $e) {
-                    $transaction->rollback();
-                    throw new \Exception($e->getMessage(), $e->getCode());
+                   $transaction->rollback();
+                   throw new \Exception($e->getMessage(), $e->getCode());
                 }
             }
         }

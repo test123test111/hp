@@ -35,13 +35,18 @@
         <table id="material_list" class="materiel_table">
             <thead>
                 <tr>
-                    <td>用户名</td>
-                    <td>email</td>
+                    <td>序号</td>
+                    <td>用户类型</td>
+                    <td>名字</td>
+                    <td width="200">邮箱</td>
+                    <td width="120">移动电话</td>
+                    <td>固定电话</td>
+                    <td>所在城市/库位</td>
                     {# <td>分享</td> #}
                     <td>部门</td>
                     <td>组别</td>
                     <td>一级产品线</td>
-                    <td>二级产品</td>
+                    <td>二级产品线</td>
                     {# <td>当前预算</td>
                     <td>操作</td> #}
                 </tr>
@@ -49,8 +54,13 @@
             <tbody>
                 {% for key,result in results %}
                 <tr>
+                    <td>{{ result.id }}</td>
+                    <td></td>
                     <td>{{ result.english_name }}</td>
                     <td>{{ result.email }}</td>
+                    <td>{{ result.phone }}</td>
+                    <td>{{ result.tell }}</td>
+                    <td></td>
                     <td>{{ result.departments.name }}</td>
                     <td>{{ result.categorys.name }}</td>
                     <td>{% if result.productlines is defined %}{{ result.productlines.name }}{% endif %}</td>

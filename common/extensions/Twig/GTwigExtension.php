@@ -46,6 +46,9 @@ class GTwigExtension extends \Twig_Extension
             "widget" => new \Twig_Function_Method($this, 'widget', array('is_safe'=>['html'])),
         );
     }
+    function formatnumber($number){
+        return sprintf("%01.2f", $number);
+    }
     /**
     * {@inheritdoc}
     */
@@ -55,6 +58,7 @@ class GTwigExtension extends \Twig_Extension
             "value_callback"=> new \Twig_Filter_Method($this,'eval_string',array()),
             "cut"=> new \Twig_Filter_Method($this,'cutstr',array()),
             "count"=> new \Twig_Filter_Method($this,'countArray',array()),
+            "sprintf"=> new \Twig_Filter_Method($this,'formatnumber',array()),
         );
     }
 

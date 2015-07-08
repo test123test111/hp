@@ -301,7 +301,7 @@ class Owner extends ActiveRecord implements IdentityInterface
             'product_line'=>'一级产品线',
             'product_two_line'=>'二级产品线',
             'created'=>'创建时间',
-            'big_owner'=>'是否大owner',
+            'big_owner'=>'是否管理员',
             'is_budget'=>'有无预算权',
             'budget'=>'预算金额',
         ];
