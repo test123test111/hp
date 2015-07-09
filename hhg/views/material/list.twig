@@ -66,7 +66,7 @@
                             <td>选择</td>
                             <td>物料编号</td>
                             <td>物料名称</td>
-                            {# <td>分享</td> #}
+                            <td>是否分享</td>
                             <td>属性</td>
                             <td>产品线</td>
                             <td>入库时间</td>
@@ -83,13 +83,13 @@
                             <td><input type="checkbox" name="" value="{{ key }}" data-id="{{ result.material.id }}" data-storeroom="{{ result.storeroom_id }}" data-stock="{{ result.total - result.lock_num }}" /></td>
                             <td>{{ result.material.code }}</td>
                             <td><a href="/material/view?id={{ result.material_id }}&sid={{ result.storeroom_id }}" class="blue">{{ result.material.name }}</a></td>
-                            {# <td>
-                                {% if result.owner_id == App.user.id %}
-                                <a href="javascript:void(0);" onclick="shareTo({{ result.material_id }},{{ result.storeroom_id }});">点击分享</a>
+                            <td>
+                                {% if result.material.checkShare(result.owner_id,result.storeroom_id) %}
+                                是
                                 {% else %}
-
+                                否
                                 {% endif %}
-                            </td> #}
+                            </td>
                             <td>{{ result.material.getMyPropertyName() }}</td>
                             <td>
                                 {% if result.owner.producttwolines is defined %}

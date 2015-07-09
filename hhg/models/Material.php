@@ -5,7 +5,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\BaseArrayHelper;
 use customer\components\CustomerActiveRecord;
-
+use common\models\Share;
 class Material extends CustomerActiveRecord {
     public $upload;
     const PROPERTY_IS_PRESSIE = 0;
@@ -172,5 +172,21 @@ class Material extends CustomerActiveRecord {
             'created'=>'添加时间',
             'created_uid'=>'创建人',
         ];
+    }
+    /**
+     * [checkShare description]
+     * @param  [type] $owner_id [description]
+     * @param  [type] $sid      [description]
+     * @return [type]           [description]
+     */
+    public function checkShare($owner_id,$sid){
+        $share = Share::find()->where(['material_id'=>$this->id,'storeroom_id'=>$sid,'owner_id'=>$owner_id])
+                              ->andWhere(['<>','to_customer_id',$owner_id])
+                              ->andWhere(['status'=>Share::STATUS_IS_NORMAL])
+                              ->one();
+        if(!empty($share)){
+            return true;
+        }
+        return false;
     }
 }
