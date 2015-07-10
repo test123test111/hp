@@ -80,7 +80,7 @@ class PackageController extends BackendController {
         if(empty($order)){
             throw new \Exception("Error Processing Request", 1);
         }
-        $model = Package::find()->where(['order_id'=>$order->id])->one();
+        $model = Package::find()->where(['order_view_id'=>$order->viewid])->one();
         // collect user input data
         if (isset($_POST['Package'])) {
             $model->load($_POST);

@@ -207,10 +207,10 @@ class OrderController extends BackendController {
         $order_package = OrderPackage::find()->where(['order_id'=>$id])->one();
         $detail = OrderDetail::find()->where(['order_id'=>$id])->all();
         $sign = OrderSign::findOne($id);
-        $package = [];
-        if(!empty($order_package)){
-            $package = Package::find()->where(['id'=>$order_package->package_id])->one();
-        }
+        // $package = [];
+        // if(!empty($order_package)){
+            $package = Package::find()->where(['order_view_id'=>$order->viewid])->one();
+        // }
         return $this->render('view', [
             'order' => $order,
             'package' => $package,

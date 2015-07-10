@@ -739,8 +739,9 @@ class OrderController extends \yii\web\Controller {
             
             if($not_approval == 0){
                 Order::updateAll(['owner_approval'=>Order::OWNER_PASS_APPROVAL],['id'=>$order_id]);
+                $orderInfo = Order::findOne($order_id);
                 if($orderInfo->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL){
-                if($orderInfo->can_formal == Order::IS_FORMAL){
+                if($orderInfo->can_formal == Order::IS_FORMAL && $orderInfo->budget_approval == Order::BUDGET_APPROVAL_PASS){
                     $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
                     $orderInfo->update();
 
@@ -782,7 +783,7 @@ class OrderController extends \yii\web\Controller {
                     $orderInfo->consume();
                 }
             }else{
-                if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Order::IS_FORMAL){
+                if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Order::IS_FORMAL && $orderInfo->budget_approval == Order::BUDGET_APPROVAL_PASS){
                     $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
                     $orderInfo->update();
 
@@ -849,7 +850,7 @@ class OrderController extends \yii\web\Controller {
             $approval->modified = date('Y-m-d H:i:s');
             $approval->update();
 
-            if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Order::IS_FORMAL){
+            if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Order::IS_FORMAL && $order->budget_approval == Order::BUDGET_APPROVAL_PASS ){
                 $order->status = Order::ORDER_STATUS_IS_APPROVALED;
                 $order->update();
 

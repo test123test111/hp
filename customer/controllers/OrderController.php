@@ -35,7 +35,7 @@ class OrderController extends CustomerController {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','sendbudgetapproval','agreeapprovalbudget','disagreeapprovalbudget'],
+                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','sendbudgetapproval','agreeapprovalbudget','disagreeapprovalbudget','settlement'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -1385,5 +1385,22 @@ class OrderController extends CustomerController {
                 echo 0;
             }
         }
+    }
+    /**
+     * action for settlement report
+     * @return [type] [description]
+     */
+    public function actionSettlement(){
+        $params = Yii::$app->request->getQueryParams();
+        list($data,$pages,$count) = OrderSearch::getDoneData(Yii::$app->request->getQueryParams());
+        $sidebar_name = '订单报告';
+        return $this->render('report', [
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
+             'sidebar_name'=>$sidebar_name,
+             'menu_name'=>'report',
+        ]);
     }
 }
