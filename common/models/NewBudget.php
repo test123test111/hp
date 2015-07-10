@@ -77,7 +77,7 @@ class NewBudget extends ActiveRecord
      */
     public function checkOwnerYear(){
         if($this->isNewRecord){
-            $result = static::find()->where(['owner_id'=>$this->owner_id,'year'=>$this->year,'time'=>$this->time])->one();
+            $result = static::find()->where(['owner_id'=>$this->owner_id,'storeroom_id'=>$this->storeroom_id,'year'=>$this->year,'time'=>$this->time])->one();
             if($result){
                   $this->addError('year', '本季度/月份该所有人已经存在预算,请勿重复添加');
             }

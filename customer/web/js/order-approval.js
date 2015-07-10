@@ -53,10 +53,10 @@ function agreeApproval(id,detail_id){
                     type:"POST",
                     data:{"id":id,'detail_id':detail_id,'_csrf':safeCode.attr('content')},
                     success:function(json){
-                        if(json == 0){
+                        if(json == 1){
                             $("#spprovalStatus"+detail_id).html("已同意审批人审批");
                             $("#oSt").html("审核通过");
-                        }else if(json == 1){
+                        }else if(json == 0){
                             $("#spprovalStatus"+detail_id).html("已同意审批人审批");
                         }else{
                             alert(json);
@@ -88,7 +88,11 @@ function agreeBudgetApproval(id){
                     type:"POST",
                     data:{"id":id,'_csrf':safeCode.attr('content')},
                     success:function(json){
-                        if(json == 0){
+                        if(json == 1){
+                            $("#spprovalBudget").html("已同意审批人审批");
+                            $("#oSt").html("审核通过");
+                        }
+                        else if(json == 0){
                             $("#spprovalBudget").html("已同意审批人审批");
                         }else{
                             alert(json);
@@ -152,7 +156,10 @@ function agreeFee(id){
                     type:"POST",
                     data:{"id":id,'_csrf':safeCode.attr('content')},
                     success:function(json){
-                        if(json == 0){
+                        if(json == 1){
+                            $("#spprovalfeeStatus").html("预算审批已通过");
+                            $("#oSt").html("审核通过");
+                        }else if(json == 0){
                             $("#spprovalfeeStatus").html("预算审批已通过");
                         }else{
                             alert(json);

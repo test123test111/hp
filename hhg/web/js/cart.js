@@ -13,7 +13,7 @@ $(function(){
     $(".cart_list .decrease").click(function(){
         var cart_id = $(this).attr("data-cart-id");
         var cur_qty = parseInt($("#cart_"+cart_id).find(".amount_input").val());
-        if(cur_qty < 99){
+        if(cur_qty < 999999){
             $("#cart_"+cart_id).find(".amount_input").val(cur_qty +1); 
         }
         error_stock(cart_id); // is show error

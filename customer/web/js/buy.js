@@ -281,14 +281,14 @@ function verifyAddress(){
     }
     // verify zip
     var reg_zip = /^[0-9]\d{5}$/;
-    if(!(reg_zip.test($("#addr_zip").val()))){
-        $("#error_zip").show();
-        $("#addr_zip").addClass('error');
-        allow = false;
-    }else{
-        $("#error_zip").hide();
-        $("#addr_zip").removeClass('error');
-    }
+    // if(!(reg_zip.test($("#addr_zip").val()))){
+    //     $("#error_zip").show();
+    //     $("#addr_zip").addClass('error');
+    //     allow = false;
+    // }else{
+    //     $("#error_zip").hide();
+    //     $("#addr_zip").removeClass('error');
+    // }
     // verify company
     if($.trim($("#addr_company").val()) == ""){
         $("#error_company").show();
@@ -321,44 +321,49 @@ function verifyAddress(){
     var reg_area = /^([0-9]{3,6})$/;
     var reg_tel = /^([0-9]{5,10})$/;
     var reg_ext = /^([0-9]{0,6})$/;
-    if($.trim($("#addr_area").val()) !="" || $.trim($("#addr_tel").val()) !="" || $.trim($("#addr_ext").val()) !=""){
-        if(!(reg_area.test($("#addr_area").val()))){
-            $("#error_tel").show().html("请输入3-6位数字的区号！");
-            $("#addr_area").addClass('error');
-            allow = false;
-        }else if(!(reg_tel.test($("#addr_tel").val()))){
-            $("#error_tel").show().html("请输入5-10位数字的电话号码！");
-            $("#addr_tel").addClass('error');
-            $("#addr_area").removeClass('error');
-            allow = false;
-        }else if(!(reg_ext.test($("#addr_ext").val()))){
-            $("#error_tel").show().html("请输入少于6位数字的分机号！");
-            $("#addr_ext").addClass('error');
-            $("#addr_tel").removeClass('error');
-            allow = false;
-        }else{
-            $("#error_tel").hide();
-            $("#addr_area").removeClass('error');
-            $("#addr_tel").removeClass('error');
-            $("#addr_ext").removeClass('error');
-        }
-    }else{
-        $("#error_tel").hide();
-        $("#addr_area").removeClass('error');
-        $("#addr_tel").removeClass('error');
-        $("#addr_ext").removeClass('error');
-        if($.trim($("#addr_phone").val()) == ""){
-            $("#error_phone").show();
-            $("#addr_phone").addClass('error');
-            allow = false;
-        }else if(!(reg_phone.test($("#addr_phone").val()))){
-            $("#error_phone").show().html("错误的手机号码！");
-            $("#addr_phone").addClass('error');
-            allow = false;
-        }else{
-            $("#error_phone").hide();
-            $("#addr_phone").removeClass('error');
-        }
+    if($.trim($("#addr_phone").val()) == ""){
+        $("#error_phone").show().html("错误的手机号码！");
+        $("#addr_phone").addClass('error');
+        allow = false;
     }
+    // if($.trim($("#addr_area").val()) !="" || $.trim($("#addr_tel").val()) !="" || $.trim($("#addr_ext").val()) !=""){
+    //     if(!(reg_area.test($("#addr_area").val()))){
+    //         $("#error_tel").show().html("请输入3-6位数字的区号！");
+    //         $("#addr_area").addClass('error');
+    //         allow = false;
+    //     }else if(!(reg_tel.test($("#addr_tel").val()))){
+    //         $("#error_tel").show().html("请输入5-10位数字的电话号码！");
+    //         $("#addr_tel").addClass('error');
+    //         $("#addr_area").removeClass('error');
+    //         allow = false;
+    //     }else if(!(reg_ext.test($("#addr_ext").val()))){
+    //         $("#error_tel").show().html("请输入少于6位数字的分机号！");
+    //         $("#addr_ext").addClass('error');
+    //         $("#addr_tel").removeClass('error');
+    //         allow = false;
+    //     }else{
+    //         $("#error_tel").hide();
+    //         $("#addr_area").removeClass('error');
+    //         $("#addr_tel").removeClass('error');
+    //         $("#addr_ext").removeClass('error');
+    //     }
+    // }else{
+    //     $("#error_tel").hide();
+    //     $("#addr_area").removeClass('error');
+    //     $("#addr_tel").removeClass('error');
+    //     $("#addr_ext").removeClass('error');
+    //     if($.trim($("#addr_phone").val()) == ""){
+    //         $("#error_phone").show();
+    //         $("#addr_phone").addClass('error');
+    //         allow = false;
+    //     }else if(!(reg_phone.test($("#addr_phone").val()))){
+    //         $("#error_phone").show().html("错误的手机号码！");
+    //         $("#addr_phone").addClass('error');
+    //         allow = false;
+    //     }else{
+    //         $("#error_phone").hide();
+    //         $("#addr_phone").removeClass('error');
+    //     }
+    // }
     return allow;
 }

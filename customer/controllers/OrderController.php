@@ -776,7 +776,7 @@ class OrderController extends CustomerController {
                 Order::updateAll(['owner_approval'=>Order::OWNER_PASS_APPROVAL],['id'=>$order_id]);
                 $orderInfo = Order::findOne($order_id);
                 if($orderInfo->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL){
-                    if($orderInfo->can_formal == Order::IS_FORMAL){
+                    if($orderInfo->can_formal == Order::IS_FORMAL && $orderInfo->budget_approval == Order::BUDGET_APPROVAL_PASS){
                         $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
                         $orderInfo->update();
 
@@ -818,7 +818,8 @@ class OrderController extends CustomerController {
                         $orderInfo->consume();
                     }
                 }else{
-                    if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Order::IS_FORMAL){
+                    // if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $orderInfo->can_formal == Order::IS_FORMAL && $orderInfo->budget_approval == Order::BUDGET_APPROVAL_PASS){
+                    if($orderInfo->owner_approval == Order::OWNER_PASS_APPROVAL && $orderInfo->can_formal == Order::IS_FORMAL && $orderInfo->budget_approval == Order::BUDGET_APPROVAL_PASS){
                         $orderInfo->status = Order::ORDER_STATUS_IS_APPROVALED;
                         $orderInfo->update();
 
@@ -924,7 +925,11 @@ class OrderController extends CustomerController {
                 }
                 $order->consume();
             }
-            echo 0;
+            if($order->status == Order::ORDER_STATUS_IS_APPROVALED){
+                echo 1;
+            }else{
+                echo 0;
+            }
         }
     }
     /**
@@ -1261,51 +1266,58 @@ class OrderController extends CustomerController {
                 if($order->budget_approval == Order::BUDGET_APPROVAL_NOT_PASS){
                     $order->budget_approval = Order::BUDGET_APPROVAL_PASS;
                     if($order->update(false)){
-                        if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Order::IS_FORMAL && $order->budget_approval == Order::BUDGET_APPROVAL_PASS){
-                            $order->status = Order::ORDER_STATUS_IS_APPROVALED;
-                            $order->update();
+                        // if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL && $order->can_formal == Order::IS_FORMAL && $order->budget_approval == Order::BUDGET_APPROVAL_PASS){
+                        if($order->owner_approval == Order::OWNER_PASS_APPROVAL && $order->can_formal == Order::IS_FORMAL && $order->budget_approval == Order::BUDGET_APPROVAL_PASS){
+                            if($order->need_fee_approval == Order::ORDER_NOT_NEED_FEE_APPROVAL || $order->fee_approval == Order::ORDER_PASS_FEE_APPROVAL){
+                                $order->status = Order::ORDER_STATUS_IS_APPROVALED;
+                                $order->update();
 
-                            foreach($order->details as $detail){
-                                $stock = new Stock;
-                                $stock->material_id = $detail->material->id;
-                                $stock->storeroom_id = $detail->storeroom_id;
-                                $stock->owner_id = $detail->owner_id;
-                                $stock->actual_quantity = 0 - $detail->quantity;
-                                $stock->stock_time = date('Y-m-d H:i:s');
-                                $stock->created = date('Y-m-d H:i:s');
-                                $stock->increase = Stock::IS_NOT_INCREASE;
-                                $stock->order_id = $detail->order_id;
-                                $stock->save(false);
+                                foreach($order->details as $detail){
+                                    $stock = new Stock;
+                                    $stock->material_id = $detail->material->id;
+                                    $stock->storeroom_id = $detail->storeroom_id;
+                                    $stock->owner_id = $detail->owner_id;
+                                    $stock->actual_quantity = 0 - $detail->quantity;
+                                    $stock->stock_time = date('Y-m-d H:i:s');
+                                    $stock->created = date('Y-m-d H:i:s');
+                                    $stock->increase = Stock::IS_NOT_INCREASE;
+                                    $stock->order_id = $detail->order_id;
+                                    $stock->save(false);
 
-                                //lock stock total
-                                $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
-                                $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
-                                $stockTotal->total = $stockTotal->total - $detail->quantity;
-                                $stockTotal->update();
+                                    //lock stock total
+                                    $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                                    $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                                    $stockTotal->total = $stockTotal->total - $detail->quantity;
+                                    $stockTotal->update();
 
-                                if($stockTotal->total < $stockTotal->warning_quantity){
-                                    //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
-                                    $ret = [
-                                        'code'=>$detail->material->code,
-                                        'name'=>$detail->material->name,
-                                        'email'=>$detail->owner->email,
-                                        'type'=>'物料',
-                                    ];
-                                    $sendEmail = new SendEmail;
-                                    $sendEmail->template = 'stock';
-                                    $sendEmail->content = json_encode($ret);
-                                    $sendEmail->created = date('Y-m-d H:i:s');
-                                    $sendEmail->save();
+                                    if($stockTotal->total < $stockTotal->warning_quantity){
+                                        //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
+                                        $ret = [
+                                            'code'=>$detail->material->code,
+                                            'name'=>$detail->material->name,
+                                            'email'=>$detail->owner->email,
+                                            'type'=>'物料',
+                                        ];
+                                        $sendEmail = new SendEmail;
+                                        $sendEmail->template = 'stock';
+                                        $sendEmail->content = json_encode($ret);
+                                        $sendEmail->created = date('Y-m-d H:i:s');
+                                        $sendEmail->save();
+                                    }
+
                                 }
-
+                                $order->consume();
                             }
-                            $order->consume();
                         }
                         $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_BUDGET,'owner_id'=>Yii::$app->user->id])->one();
                         $approval->status = Approval::STATUS_IS_PASS;
                         $approval->modified = date('Y-m-d H:i:s');
                         $approval->update();
-                        echo 0;
+                        if($order->status == Order::ORDER_STATUS_IS_APPROVALED){
+                            echo 1;
+                        }else{
+                            echo 0;
+                        }
                     }
                 }
             }

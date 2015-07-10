@@ -7,10 +7,12 @@
   <div class="order_view">
     <div class="mt">订单信息</div>
     <div class="mc">
+        {% set budget_user = order.getBudgetUser() %}
         <dl>
             <dt>预定单号：{{ order.viewid }}</dt>
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
             <dt>下单人：{{ order.createduser.english_name }}</dt>
+            <dt>预算费用所属人：{{ budget_user }}</dt>
             <dt>订单预估报价：{{ ship_fee + fenjian_fee }}RMB</dt>
             <dt>订单状态：<span id="oSt">{{ order.getOrderStatus()|raw }}</span></dt>
         </dl>
@@ -63,7 +65,7 @@
                                 {% if order.status != constant('\\backend\\models\\Order::ORDER_STATUS_IS_APPROVAL_FAIL') %}
                                     {% if order.checkBudgetApproval() and order.budget_uid == App.user.id %}
                                     <li class="clearfix">
-                                        <p>订单预算所有人为{{ order.getBudgetUser() }}，需要审批后方可发货</p>
+                                        <p>订单预算所有人为{{ budget_user }}，需要审批后方可发货</p>
                                         <span id="spprovalBudget">
                                             <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue agree-budget-approval">同意</a>
                                             {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
@@ -73,7 +75,7 @@
                                     {% endif %}
                                 {% else %}
                                     <li class="clearfix">
-                                        <p>订单预算所有人为{{ order.getBudgetUser() }}，需要审批后方可发货</p>
+                                        <p>订单预算所有人为{{ budget_user }}，需要审批后方可发货</p>
                                         <span id="spprovalBudget">
                                             已驳回预算审批
                                         </span>
@@ -81,7 +83,7 @@
                                 {% endif %}
                             {% else %}
                                 <li class="clearfix">
-                                    <p>订单预算所有人为{{ order.getBudgetUser() }}，需要审批后方可发货</p>
+                                    <p>订单预算所有人为{{ budget_user }}，需要审批后方可发货</p>
                                     <span id="spprovalBudget">
                                         已通过预算审批
                                     </span>
