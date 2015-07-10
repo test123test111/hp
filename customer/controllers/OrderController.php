@@ -35,7 +35,7 @@ class OrderController extends CustomerController {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','sendbudgetapproval','agreeapprovalbudget','disagreeapprovalbudget','settlement'],
+                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','sendbudgetapproval','agreeapprovalbudget','disagreeapprovalbudget','settlement','exportsettlement'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -1392,9 +1392,9 @@ class OrderController extends CustomerController {
      */
     public function actionSettlement(){
         $params = Yii::$app->request->getQueryParams();
-        list($data,$pages,$count) = OrderSearch::getDoneData(Yii::$app->request->getQueryParams());
-        $sidebar_name = '订单报告';
-        return $this->render('report', [
+        list($data,$pages,$count) = OrderSearch::getSettlementData(Yii::$app->request->getQueryParams(),Yii::$app->user->id);
+        $sidebar_name = '结算报告';
+        return $this->render('settlement', [
              'results' => $data,
              'pages' => $pages,
              'count'=>$count,
@@ -1402,5 +1402,20 @@ class OrderController extends CustomerController {
              'sidebar_name'=>$sidebar_name,
              'menu_name'=>'report',
         ]);
+    }
+    /**
+     * 已完成订单列表
+     * @return [type] [description]
+     */
+    public function actionExportsettlement(){
+        $result = OrderSearch::getExportSettlementData(Yii::$app->request->getQueryParams(),Yii::$app->user->id);
+        $filename = '结算报表.csv';
+        header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
     }
 }

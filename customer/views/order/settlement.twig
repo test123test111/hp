@@ -1,0 +1,102 @@
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+  <div class="main">
+        <div class="order_search">
+                <form>
+                    <ul>
+                        {# <li class="clearfix">
+                            <label>订单编号：</label>
+                            <input type="text" name="order_id" value="{% if params.order_id is defined %}{{ params.order_id }}{% endif %}" class="search_ipt" placeholder="" />
+                        </li>
+                        <li class="clearfix">
+                            
+                        </li> #}
+                        <li class="clearfix">
+                            <label>开始日期：</label>
+                            <input type="text" name="begin_time" class="search_ipt date_input" value="{% if params.begin_time is defined %}{{ params.begin_time }}{% endif %}" placeholder="点击选择开始日期" />
+                        </li>
+                        <li class="clearfix">
+                            <label>结束日期：</label>
+                            <input type="text" name="end_time" class="search_ipt date_input" value="{% if params.end_time is defined %}{{ params.end_time }}{% endif %}" placeholder="点击选择结束日期" />
+                        </li>
+                        <li class="clearfix">
+                            <label>&nbsp;</label>
+                            <input type="submit" name="" class="search_btn" value="搜索" />
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        <div class="material_cart clearfix">
+            <a href="javascript:;" class="export_btn">导出结算报表</a>
+        </div>
+        <div class="materiel_box">
+                <table id="material_list" class="materiel_table">
+                    <thead>
+                        <tr>
+                            <td>序号</td>
+                            <td>订单类型</td>
+                            <td>库房位置</td>
+                            <td>申请人</td>
+                            <td>申请订单日期</td>
+                            <td>预算所有人</td>
+                            <td>起运城市</td>
+                            <td>收货城市</td>
+                            <td>运输时效</td>
+                            <td>运输类别</td>
+                            <td>重量</td>
+                            <td>包装数量</td>
+                            <td>分拣费</td>
+                            <td>运费</td>
+                            <td>保险费</td>
+                            <td>包装材料费</td>
+                            <td>其他费用</td>
+                            <td>总计</td>
+                            <td>发货日期</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key,result in results %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{% if result.type == 0 %}日常订单{% else %}大发放{% endif %}</td>
+                            <td>{{ result.storeroom.name }}</td>
+                            <td>{{ result.createduser.english_name }}</td>
+                            <td>{{ result.created|date('Y-m-d H:i')}}</td>
+                            <td>{{ result.tbudgetuser.english_name }}</td>
+                            <td>{{ result.storeroom.city }}</td>
+                            <td>{{ result.to_city }}</td>
+                            <td>{{ result.getMyTransportType() }}</td>
+                            <td></td>
+                            <td>{{ result.getDetailWeight() }}</td>
+                            <td>{{ result.package.num }}</td>
+                            <td>{{ result.fenjian_fee }}</td>
+                            <td>{{ result.ship_fee }}</td>
+                            <td>{{ result.insurance_price }}</td>
+                            <td>{{ result.package.package_fee }}</td>
+                            <td>{{ result.package.other_fee }}</td>
+                            <td>{{ result.fenjian_fee + result.ship_fee + result.insurance_price + result.package.package_fee + result.package.other_fee }}</td>
+                            <td>{% if result.st_send_date !=0 %}{{ result.st_send_date|date('Y-m-d H:i')}}{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>      
+            </div>
+            <div class="pages clearfix">
+                <div class="fr">
+                    {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
+                </div>
+            </div>
+      </div>
+      </div>
+<script type='text/javascript' src='/js/date_input.js'></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.date_input').date_input();
+        });
+        $(function(){
+            var url = window.location.search;
+            $(".export_btn").attr("href","/order/exportsettlement"+url);
+        });
+    </script>
+{% endblock %}

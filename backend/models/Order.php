@@ -312,7 +312,7 @@ class Order extends BackendActiveRecord {
      * @return [type] [description]
      */
     public function getPackage(){
-        return $this->hasOne(Package::className(),['order_id'=>'id']);
+        return $this->hasOne(Package::className(),['order_view_id'=>'viewid']);
     }
     public function getMethodText(){
         $methods = (new Package())->getMethod();
@@ -633,6 +633,9 @@ class Order extends BackendActiveRecord {
     public function getCreateduser(){
         return $this->hasOne(Owner::className(), ['id' => 'created_uid']);
     }
+    public function getTbudgetuser(){
+        return $this->hasOne(Owner::className(), ['id' => 'budget_uid']);
+    }
     public function getModifieduser(){
         if($this->source == self::ORDER_SOURCE_CUSTOMER){
             return $this->hasOne(Owner::className(), ['id' => 'modified_uid']);
@@ -776,5 +779,15 @@ class Order extends BackendActiveRecord {
             return true;
         }
         return false;
+    }
+    public function getDetailWeight(){
+        $storeroom_id = $this->storeroom_id;
+        $weight = 0;
+        foreach($this->details as $detail){
+            $material = Material::findOne($detail->material_id);
+            $materialWeight = $detail->quantity * $material->weight;
+            $weight += $materialWeight;
+        }
+        return ceil($weight * self::BUDGET_RATIO);
     }
 }

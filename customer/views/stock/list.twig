@@ -70,7 +70,7 @@
                                 {% endif %}
                             </td> #}
                             <td>{{ result.materials.getMyPropertyName() }}</td>
-                            <td>{{ result.owners.producttwolines.name }}</td>
+                            <td>{% if result.owners.producttwolines is defined %}{{ result.owners.producttwolines.name }}{% endif %}</td>
                             <td>{{ result.created|date('Y-m-d H:i') }}</td>
                             <td>{{ result.storerooms.name }}</td>
                             <td>{{ result.owners.english_name }}

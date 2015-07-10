@@ -23,6 +23,7 @@ class AjaxController extends BackendController {
         if($order->status != Order::ORDER_STATUS_IS_PACKAGE){
             echo 1;
         }else{
+            $order->st_send_date = time();
             $order->status = Order::ORDER_STATUS_IS_TRUCK;
             $order->save(false);
             echo 2;

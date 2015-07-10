@@ -37,4 +37,5 @@ class OrderDetail extends BackendActiveRecord {
     public function getOwner(){
         return $this->hasOne(Owner::className(),['id'=>'owner_id']);
     }
+    
 }
