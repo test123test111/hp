@@ -13,7 +13,7 @@
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
             <dt>下单人：{{ order.createduser.english_name }}</dt>
             <dt>预算费用所属人：{{ budget_user }}</dt>
-            <dt>订单预估报价：{{ ship_fee + fenjian_fee }}RMB</dt>
+            <dt>订单预估报价：{{ order.ship_fee + order.fenjian_fee }}RMB</dt>
             <dt>订单状态：<span id="oSt">{{ order.getOrderStatus()|raw }}</span></dt>
         </dl>
         <dl>

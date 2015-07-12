@@ -218,6 +218,9 @@ class Order extends BackendActiveRecord {
     public function getCreateuser(){
         return $this->hasOne(Owner::className(),['id'=>'created_uid']);
     }
+    public function getUnsign(){
+        return $this->hasOne(OrderSign::className(),['order_id'=>'id'])->where(['type'=>OrderSign::ORDER_IS_NOT_SIGNED])->orderBy(['id'=>SORT_DESC])->limit(1);
+    }
     /**
      * [getConsume description]
      * @return [type] [description]
@@ -283,7 +286,7 @@ class Order extends BackendActiveRecord {
             }elseif($model->status == 4){
                 return \yii\helpers\Html::a("标记签收<br />","#",["onclick"=>"marksign($model->id)"]).\yii\helpers\Html::a("标记未签收","#",["onclick"=>"markunsign($model->id)"]);
             }elseif($model->status == 6){
-                return "异常原因：未签收";
+                return "状态：未签收</br>原因：".$model->unsign->info;
             }
             else{
                 return "";

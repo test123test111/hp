@@ -304,11 +304,8 @@ class OrderController extends \yii\web\Controller {
     public function actionView($id)
     {   
         $order = Order::find()->with('details')->where(['id'=>$id])->one();
-        list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($order->id);
         return $this->render('view', [
             'order' => $order,
-            'ship_fee'=>$ship_fee,
-            'fenjian_fee'=>$fenjian_fee,
         ]);
     }
     /**
@@ -319,11 +316,8 @@ class OrderController extends \yii\web\Controller {
     public function actionViewapproval($id)
     {   
         $order = Order::find()->with('details')->where(['id'=>$id])->one();
-        list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($order->id);
         return $this->render('viewapproval', [
             'order' => $order,
-            'ship_fee'=>$ship_fee,
-            'fenjian_fee'=>$fenjian_fee,
         ]);
     }
     public function actionChange(){

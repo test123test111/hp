@@ -31,7 +31,16 @@
             <dt>预定单号：{{ order.viewid }}</dt>
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
             <dt>下单人：{{ order.createduser.english_name }}</dt>
-            <dt>订单预估报价：{{ ship_fee + fenjian_fee }}RMB</dt>
+            <dt>预算费用所属人：{{ order.tbudgetuser.english_name }}</dt>
+            <dt>订单运费：{{ order.ship_fee }}RMB</dt>
+            <dt>订单分拣费：{{ order.fenjian_fee }}RMB</dt>
+            <dt>保险费：{{ order.insurance_price }}RMB</dt>
+            <dt>包装材料费：{% if order.package is defined %}{{ order.package.package_fee }}RMB{% endif %}</dt>
+            <dt>其他费用：{% if order.package is defined %}{{ order.package.other_fee }}RMB{% endif %}</dt>
+            <dt>订单预估报价：{{ order.ship_fee + order.fenjian_fee }}RMB</dt>
+            {% if order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_PACKAGE") or order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_TRUCK") or order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_SIGN") or order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_UNSIGN") %}
+            <dt>订单实际价格：{{ order.ship_fee + order.fenjian_fee + order.insurance_price + order.package.package_fee + order.package.other_fee }}RMB</dt>
+            {% endif %}
             <dt>订单状态：{% if order.can_formal == constant("\\backend\\models\\Order::IS_FORMAL") %}{{ order.getOrderStatus()|raw }}{% else %}由于超出费用未能生成正式订单{% endif %}</dt>
         </dl>
         <dl>

@@ -89,6 +89,7 @@
                                 {% else %}
                                 否
                                 {% endif %}
+                                <a href="javascript:void(0);" class="blue" onclick="shareTo({{ result.material.id }},{{ result.storeroom.id }});">更改</a>
                             </td>
                             <td>{{ result.material.getMyPropertyName() }}</td>
                             <td>

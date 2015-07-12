@@ -43,7 +43,7 @@
                 <table id="material_list" class="materiel_table">
                     <thead>
                         <tr>
-                            <td>物料编号</td>
+                            <td width="100">物料编号</td>
                             <td>物料名称</td>
                             <td>所属人</td>
                             <td>部门</td>
@@ -69,7 +69,7 @@
                             <td>{{ result.owners.departments.name }}</td>
                             <td>{{ result.owners.categorys.name }}</td>
                             <td>{{ result.owners.productlines.name }}</td>
-                            <td>{{ result.owners.producttwolines.name }}</td>
+                            <td>{% if result.owners.producttwolines is defined %}{{ result.owners.producttwolines.name }}{% endif %}</td>
                             <td>{{ result.material.getMyPropertyName() }}</td>
                             <td>{{ result.storeroom.name }}</td>
                             <td>{% if result.increase == 0 %}{{ result.stock_time|date('Y-m-d H:i') }}{% else %}{% endif %}</td>

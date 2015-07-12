@@ -38,13 +38,13 @@
                             <td>订单类型</td>
                             <td>库房位置</td>
                             <td>申请人</td>
-                            <td>申请订单日期</td>
+                            <td width="100">申请订单日期</td>
                             <td>预算所有人</td>
                             <td>起运城市</td>
                             <td>收货城市</td>
                             <td>运输时效</td>
                             <td>运输类别</td>
-                            <td>重量</td>
+                            <td>重量(KG)</td>
                             <td>包装数量</td>
                             <td>分拣费</td>
                             <td>运费</td>
@@ -68,7 +68,7 @@
                             <td>{{ result.to_city }}</td>
                             <td>{{ result.getMyTransportType() }}</td>
                             <td></td>
-                            <td>{{ result.getDetailWeight() }}</td>
+                            <td>{{ result.getDetailWeight() / 1000}}</td>
                             <td>{{ result.package.num }}</td>
                             <td>{{ result.fenjian_fee }}</td>
                             <td>{{ result.ship_fee }}</td>

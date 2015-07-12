@@ -174,7 +174,7 @@ class OrderSearch extends Order
      * @return [type] [description]
      */
     public static function getExcepetData($params){
-        $query = Order::find()->with(['details'])
+        $query = Order::find()->with(['details','unsign'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>Yii::$app->user->id])
                               ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_UNSIGN,':c_status'=>self::ORDER_STATUS_IS_APPROVAL_FAIL])
                               ->orderBy(['id'=>SORT_DESC]);
@@ -416,7 +416,7 @@ class OrderSearch extends Order
                     $data[$i]['storeroom_city'] = $result->storeroom->city;
                     $data[$i]['transporttype'] = $result->getMyTransportType();
                     $data[$i]['transport'] = "";
-                    $data[$i]['weight'] = $result->getDetailWeight();
+                    $data[$i]['weight'] = ($result->getDetailWeight()) / 1000;
                     $data[$i]['package_num'] = $result->package->num;
                     $data[$i]['fee'] = "";
                     $data[$i]['fenjian_fee'] = $result->fenjian_fee;

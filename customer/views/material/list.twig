@@ -70,7 +70,8 @@
                             <td>物料名称</td>
                             {# <td>分享</td> #}
                             <td>属性</td>
-                            <td>产品线</td>
+                            <td>一级产品线</td>
+                            <td>二级产品线</td>
                             <td>入库时间</td>
                             <td>库房地址</td>
                             <td>所属人</td>
@@ -95,6 +96,7 @@
                             </td> #}
                             <td>{{ result.materials.getMyPropertyName() }}</td>
 
+                            <td>{% if result.owners.productlines is defined %}{{ result.owners.productlines.name }}{% endif %}</td>
                             <td>{% if result.owners.producttwolines is defined %}{{ result.owners.producttwolines.name }}{% endif %}</td>
                             <td>{{ result.created }}</td>
                             <td>{{ result.storerooms.name }}</td>
