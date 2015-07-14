@@ -4,6 +4,7 @@
 {% endblock%}
 {% block content %}
     <link rel="stylesheet" href="/css/jquery.auto-complete.css">
+    <link href="/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
 	<div class="view_wrap">
         <div class="o_box">
         	{% set form = activeform.begin({'action':'/order/buy','id':'buyForm'}) %}
@@ -13,12 +14,12 @@
                     <div class="dd">
                         <input type="text" name="Order[send_date]" value="{{ "now"|date("Y-m-d") }}" class="active_input date_input" />
                     </div>
-                    <div class="dt">1 送达日期</div>
+                    <div class="dt">2 送达日期</div>
                     <div class="dd">
                         <input type="text" name="Order[arrive_date]" class="active_input date_input" />
                     </div>
                     <input type="hidden" value="{{ results.0.info.storeroom_id }}" id="storeType" name="Order[storeroom_id]" />
-                    <div class="dt">2 收货人信息</div>
+                    <div class="dt">3 收货人信息</div>
                     <input type="hidden" value="0" name="Order[to_type]" id="orderType" />
                     <div class="dd">
                         <ul class="type_tab clearfix">
@@ -45,7 +46,12 @@
                         </div>
                       
                     </div>
-                    <div class="dt">3 到货需求</div>
+                    <div class="dt">4 预算所属人</div>
+                    <div class="dd">
+                        <input type="text" id="autocompleteCreate" class="active_input" />
+                        <input type="hidden" name="Order[budget_uid]" value="{{ App.user.id }}" id="createUsert" />
+                    </div>
+                    <div class="dt">5 到货需求</div>
                     <div class="dd">
                         <ul id="delivery_time" class="delivery_time clearfix">
                             <li class="selected">
@@ -68,7 +74,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="dt">3 是否保险</div>
+                    <div class="dt">6 是否保险</div>
                     <div class="dd">
                         <ul id="safe_label" class="delivery_time clearfix">
                             <li data-show="1">
@@ -80,7 +86,7 @@
                         </ul>
                         <input type="text" placeholder="输入保险金额" name="Order[insurance_price]" class="memo_input none" id="safe_price" />
                     </div>
-                    <div class="dt">4 物料信息</div>
+                    <div class="dt">7 物料信息</div>
                     <div class="dd">
                         <div class="buy_goods">
                             <div class="cart_tt clearfix">
@@ -122,11 +128,7 @@
                         <input type="text" placeholder="输入用途" name="Order[purpose]" class="memo_input" />
                         <input type="text" placeholder="输入备注信息" name="Order[info]" class="memo_input" />
                     </div>
-                    <div class="dt">5 预算所属人</div>
-                    <div class="dd">
-                        <input type="text" id="autocompleteCreate" class="active_input" />
-                        <input type="hidden" name="Order[budget_uid]" value="{{ App.user.id }}" id="createUsert" />
-                    </div>
+                    
                     <div class="cart_submit clearfix">
                         <a href="javascript:;" class="buy_btn">确认订单</a>
                         <div class="amount">共<span class="red" id="selectedCount">{{ quantity }}</span> 件商品</div>
@@ -136,6 +138,7 @@
             {{ void(form.end()) }}
         </div>
     </div>
+    <script src="/js/jquery-ui.min.js"></script>
     <script type='text/javascript' src='/js/jquery.auto-complete.min.js'></script>
     <script type='text/javascript' src='/js/buy.js'></script>
     <script type='text/javascript' src='/js/province.js'></script>
@@ -148,58 +151,102 @@
         })
     </script>
     <script type="text/javascript">
-    $(function(){
+    $(document).ready(function () { 
         var data1 = {{ company|raw }}; 
-        $('#autocompleteName').autoComplete({
-            minChars: 0,
-            source: function(term, suggest){
-                term = term.toLowerCase();
-                var choices = data1;
-                var suggestions = [];
-                for (i=0;i<choices.length;i++)
-                    if (~(choices[i][0]+' '+choices[i][1]).toLowerCase().indexOf(term)) suggestions.push(choices[i]);
-                suggest(suggestions);
-            },
-            renderItem: function (item, search){
-                var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
-                return '<div class="autocomplete-suggestion" data-langname="'+item[0]+'" data-lang="'+item[1]+'" data-val="'+search+'"> '+item[0].replace(re, "<b>$1</b>")+'</div>';
-            },
-            onSelect: function(e, term, item){
-                 $.ajax({
-                    url:item.data('lang'),
+        $("#autocompleteName").autocomplete({
+            source:data1,
+            minLength:0,
+            scroll:true,
+            select:function(event,ui){
+                $.ajax({
+                    url:ui.item.vsa,
                     dataType:"html",
                     type:"GET",
                     success:function(json){
                         $("#address_area").html(json);
                         $(".buy_btn").removeClass("btn_order_undefined");
-                        layer.closeAll();
                     }
                 });
-                $('#autocompleteName').val(item.data('langname')+'');
-                $('#company_box').val(item.data('lang'));
+                $('#company_box').val(ui.item.vsa);
             }
+        }).focus(function (event,ui) { 
+            $(this).autocomplete("search", "");
         });
 
         var data = {{ createusers|raw }}; 
-        $('#autocompleteCreate').autoComplete({
-            minChars: 0,
-            source: function(term, suggest){
-                term = term.toLowerCase();
-                var choices = data;
-                var suggestions = [];
-                for (i=0;i<choices.length;i++)
-                    if (~(choices[i][0]+' '+choices[i][1]).toLowerCase().indexOf(term)) suggestions.push(choices[i]);
-                suggest(suggestions);
-            },
-            renderItem: function (item, search){
-                var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
-                return '<div class="autocomplete-suggestion" data-langname="'+item[0]+'" data-lang="'+item[1]+'" data-val="'+search+'"> '+item[0].replace(re, "<b>$1</b>")+'</div>';
-            },
-            onSelect: function(e, term, item){
-                $('#autocompleteCreate').val(item.data('langname')+'');
-                $('#createUsert').val(item.data('lang'));
+        $("#autocompleteCreate").autocomplete({
+            source:data,
+            minLength:0,
+            scroll:true,
+            select:function(event,ui){
+                $('#createUsert').val(ui.item.vsa);
             }
+        }).focus(function (event,ui) { 
+            $(this).autocomplete("search", "");
         });
-    })
+    }); 
+   
+
+
+    // $(function(){
+    //     var data1 = {{ company|raw }}; 
+    //     $('#autocompleteName').autoComplete({
+    //         minChars: 1,
+    //         source: function(term, suggest){
+    //             term = term.toLowerCase();
+    //             var choices = data1;
+    //             var suggestions = [];
+    //             for (i=0;i<choices.length;i++)
+    //                 if (~(choices[i][0]+' '+choices[i][1]).toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+    //             suggest(suggestions);
+    //         },
+    //         renderItem: function (item, search){
+    //             var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
+    //             return '<div class="autocomplete-suggestion" data-langname="'+item[0]+'" data-lang="'+item[1]+'" data-val="'+search+'"> '+item[0].replace(re, "<b>$1</b>")+'</div>';
+    //         },
+    //         onSelect: function(e, term, item){
+    //              $.ajax({
+    //                 url:item.data('lang'),
+    //                 dataType:"html",
+    //                 type:"GET",
+    //                 success:function(json){
+    //                     $("#address_area").html(json);
+    //                     $(".buy_btn").removeClass("btn_order_undefined");
+    //                     layer.closeAll();
+    //                 }
+    //             });
+    //             $('#autocompleteName').val(item.data('langname')+'');
+    //             $('#company_box').val(item.data('lang'));
+    //         }
+    //     });
+
+    //     var data = {{ createusers|raw }}; 
+    //     $('#autocompleteCreate').autoComplete({
+    //         minChars: 1,
+    //         source: function(term, suggest){
+    //             term = term.toLowerCase();
+    //             var choices = data;
+    //             var suggestions = [];
+    //             for (i=0;i<choices.length;i++)
+    //                 if (~(choices[i][0]+' '+choices[i][1]).toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+    //             suggest(suggestions);
+    //         },
+    //         renderItem: function (item, search){
+    //             var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
+    //             return '<div class="autocomplete-suggestion" data-langname="'+item[0]+'" data-lang="'+item[1]+'" data-val="'+search+'"> '+item[0].replace(re, "<b>$1</b>")+'</div>';
+    //         },
+    //         onSelect: function(e, term, item){
+    //             // var origEvent = event;
+    //             // while (origEvent.originalEvent !== undefined)
+    //             //     origEvent = origEvent.originalEvent;
+    //             // if (origEvent.type == 'keydown')
+    //             //     $("#reportfind").click();
+    //             //alert('Item "'+item.data('langname')+' ('+item.data('lang')+')" selected by '+(e.type == 'keydown' ? 'pressing enter' : 'mouse click')+'.');
+
+    //             $('#autocompleteCreate').val(item.data('langname')+'');
+    //             $('#createUsert').val(item.data('lang'));
+    //         }
+    //     });
+    // })
     </script>
 {% endblock %}

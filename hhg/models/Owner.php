@@ -30,8 +30,7 @@ class Owner extends \customer\models\Owner
     	$results = static::find()->all();
         $ret = [];
         foreach($results as $result){
-            $array = [$result->english_name, $result->id];
-            array_push($ret,$array);
+            $ret[] = ['label'=>$result->english_name,'vsa'=>$result->id];
         }
         return json_encode($ret);
     }

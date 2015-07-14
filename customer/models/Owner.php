@@ -239,8 +239,9 @@ class Owner extends ActiveRecord implements IdentityInterface
         $results = static::find()->where(['category'=>$owner->category])->all();
         $ret = [];
         foreach($results as $result){
-            $array = [$result->english_name, $result->id];
-            array_push($ret,$array);
+            // $array = [$result->english_name, $result->id];
+            // array_push($ret,$array);
+            $ret[] = ['label'=>$result->english_name,'vsa'=>$result->id];
         }
         return json_encode($ret);
     }

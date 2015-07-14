@@ -52,6 +52,7 @@
                             <td>包装材料费</td>
                             <td>其他费用</td>
                             <td>总计</td>
+                            <td width="100">订单号</td>
                             <td>发货日期</td>
                         </tr>
                     </thead>
@@ -69,13 +70,18 @@
                             <td>{{ result.getMyTransportType() }}</td>
                             <td></td>
                             <td>{{ result.getDetailWeight() / 1000}}</td>
-                            <td>{{ result.package.num }}</td>
+                            <td>{% if result.package is defined %}{{ result.package.num }}{% endif %}</td>
                             <td>{{ result.fenjian_fee }}</td>
                             <td>{{ result.ship_fee }}</td>
                             <td>{{ result.insurance_price }}</td>
-                            <td>{{ result.package.package_fee }}</td>
-                            <td>{{ result.package.other_fee }}</td>
-                            <td>{{ result.fenjian_fee + result.ship_fee + result.insurance_price + result.package.package_fee + result.package.other_fee }}</td>
+                            <td>{% if result.package is defined %}{{ result.package.package_fee }}{% endif %}</td>
+                            <td>{% if result.package is defined %}{{ result.package.other_fee }}{% endif %}</td>
+                            <td>
+                                {% if result.package is defined %}
+                                {{ result.fenjian_fee + result.ship_fee + result.insurance_price + result.package.package_fee + result.package.other_fee }}
+                                {% endif %}
+                            </td>
+                            <td>{{ result.viewid }}</td>
                             <td>{% if result.st_send_date !=0 %}{{ result.st_send_date|date('Y-m-d H:i')}}{% endif %}</td>
                         </tr>
                         {% endfor %}

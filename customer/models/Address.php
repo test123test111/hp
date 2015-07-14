@@ -58,8 +58,7 @@ class Address extends CustomerActiveRecord {
         $results = static::find()->where(['uid' => $uid])->orderBy(['status' => SORT_DESC])->all();
         $ret = [];
         foreach($results as $result){
-            $array = [$result->company,'/cart/addressinfo/'.$result->id];
-            array_push($ret,$array);
+            $ret[] = ['label'=>$result->company,'vsa'=>'/cart/addressinfo/'.$result->id];
         }
         return json_encode($ret);
     }

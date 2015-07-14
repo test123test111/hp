@@ -92,7 +92,9 @@
                             </td>
                             <td>
                                 {% if result.total is defined %}
-                                    {{ ( 1 - ((result.total.price / result.price)))|sprintf * 100 }}%
+                                    {% if price != 0 %}
+                                    {{ ( 1 - ((result.total.price / price)))|sprintf * 100 }}%
+                                    {% endif %}
                                 {% endif %}</td>
                             <td><a href="/budget/adjust/{{ result.id }}" class="blue">调整</a> </td>
                         </tr>

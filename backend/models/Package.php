@@ -29,9 +29,11 @@ class Package extends BackendActiveRecord {
      */
     public function rules() {
         return [
-            [['num','actual_weight','throw_weight','method','trunk','delivery','order_view_id'],'required'],
+            // [['num','actual_weight','throw_weight','method','trunk','delivery','order_view_id'],'required'],
+            [['num','actual_weight','throw_weight','method','order_view_id'],'required'],
             [['box','info','volume','package_fee','other_fee'],'safe'],
-            [['actual_weight','throw_weight','height','width','length'],'integer']
+            // [['actual_weight','throw_weight','height','width','length'],'integer']
+            [['actual_weight','throw_weight'],'integer']
         ];
     }
     public function behaviors()
@@ -91,10 +93,10 @@ class Package extends BackendActiveRecord {
             }
         }
     }
-    public function beforeSave($insert){
-        $this->volume = ($this->length * $this->width * $this->height)/(100*100*100);
-        return parent::beforeSave($insert);
-    }
+    // public function beforeSave($insert){
+    //     $this->volume = ($this->length * $this->width * $this->height)/(100*100*100);
+    //     return parent::beforeSave($insert);
+    // }
     /**
      * [getCanUseStorerooms description]
      * @return [type] [description]

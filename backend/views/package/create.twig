@@ -55,14 +55,14 @@
                           {{ form.field(model,'num',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                           {{ form.field(model,'actual_weight',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                           {{ form.field(model,'throw_weight',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
-                          {{ form.field(model,'length',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
+                          {# {{ form.field(model,'length',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                           {{ form.field(model,'width',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
-                          {{ form.field(model,'height',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
+                          {{ form.field(model,'height',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}} #}
                           {{ form.field(model,'package_fee',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                           {{ form.field(model,'other_fee',{'inputOptions':{'class':'form-control'}}).label(null,{'class':'control-label col-lg-2'})|raw}}
                           {{ form.field(model,'method').dropDownList(model.getMethod()).label(null,{'class':'control-label col-lg-2'})|raw }} 
 
-                          <div class="form-group">
+                          {# <div class="form-group">
                               <label class="col-lg-2 control-label">干线</label>
                               <div class="col-lg-5">
                                 {{ 
@@ -90,7 +90,7 @@
                                  })
                              }}
                               </div>
-                            </div>
+                            </div> #}
                           {{ form.field(model,'box').dropDownList(model.getBox()).label(null,{'class':'control-label col-lg-2'})|raw }}
                           {{ form.field(model,'info').textArea({'row':2}).label(null,{'class':'control-label col-lg-2'})|raw }}
                                     <hr />
