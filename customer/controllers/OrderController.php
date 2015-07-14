@@ -35,7 +35,7 @@ class OrderController extends CustomerController {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','sendbudgetapproval','agreeapprovalbudget','disagreeapprovalbudget','settlement','exportsettlement'],
+                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','sendbudgetapproval','agreeapprovalbudget','disagreeapprovalbudget','settlement','exportsettlement','budget','exportbudget'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -204,6 +204,7 @@ class OrderController extends CustomerController {
             $transaction = $db->beginTransaction();
             try{
                 $owner = Owner::findOne(Yii::$app->user->id);
+                $storeroom = Yii::$app->request->post('storeroom');
                 if(empty($owner) || $owner->category == 0){
                     throw new \Exception("下单人不属于任何部门，不具备下订单权限", 1);
                 }
@@ -219,7 +220,6 @@ class OrderController extends CustomerController {
                     $model->recipients = $address->name;
                     $model->contact = $address->address;
                 }else{
-                    $storeroom = Yii::$app->request->post('storeroom');
                     $record = Storeroom::findOne($storeroom);
                     $province = HpCity::findOne($record->province);
                     $model->to_province = $province->name;
@@ -244,9 +244,13 @@ class OrderController extends CustomerController {
                 }else{
                     $model->arrive_date = 0;
                 }
-                if($model->budget_uid == Yii::$app->user->id){
+                if($model->storeroom_id == Storeroom::STOREROOM_LEVEL_IS_CENTER){
                     $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
                 }
+                // if($model->budget_uid == Yii::$app->user->id){
+                //     $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
+                // }
+                
                 $model->save();
                 $model->viewid = date('Ymd')."-".$model->id;
                 $model->update();
@@ -1105,6 +1109,7 @@ class OrderController extends CustomerController {
     public function actionExportdone(){
         $result = OrderSearch::getExportDoneData(Yii::$app->request->getQueryParams());
         $filename = '订单报表.csv';
+        $filename = iconv('utf-8', 'GB2312', $filename );
         header("Content-type:text/csv;charset=utf-8");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
@@ -1404,6 +1409,42 @@ class OrderController extends CustomerController {
     public function actionExportsettlement(){
         $result = OrderSearch::getExportSettlementData(Yii::$app->request->getQueryParams(),Yii::$app->user->id);
         $filename = '结算报表.csv';
+        $filename = iconv('utf-8', 'GB2312', $filename );
+        header("Content-type:text/csv;charset=utf-8");
+        header("Content-Disposition:attachment;filename=".$filename);
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0');
+        header('Pragma:public');
+        print(chr(0xEF).chr(0xBB).chr(0xBF));
+        echo $result;
+    }
+    /**
+     * action for settlement report
+     * @return [type] [description]
+     */
+    public function actionBudget(){
+        $budget_users = Owner::getBudgetUsers(Yii::$app->user->id);
+        $uids = array_map(function($ret){ return $ret->id;},$budget_users);
+        list($data,$pages,$count) = NewBudget::getOwnerBudgetByUids(Yii::$app->request->getQueryParams(),$uids);
+        return $this->render('budget',[
+            'results'=>$data,
+            'pages'=>$pages,
+            'count'=>$count,
+            'storerooms'=>Storeroom::find()->all(),
+            'owners'=>$budget_users,
+            'params'=>Yii::$app->request->getQueryParams()
+        ]);
+    }
+    /**
+     * 导出预算报表
+     * @return [type] [description]
+     */
+    public function actionExportbudget(){
+        $budget_users = Owner::getBudgetUsers(Yii::$app->user->id);
+        $uids = array_map(function($ret){ return $ret->id;},$budget_users);
+        $result = NewBudget::getExportOwnerBudgetByUids(Yii::$app->request->getQueryParams(),$uids);
+        $filename = '预算报表.csv';
+        $filename = iconv('utf-8', 'GB2312', $filename );
         header("Content-type:text/csv;charset=utf-8");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');

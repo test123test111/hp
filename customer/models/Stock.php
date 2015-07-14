@@ -600,70 +600,74 @@ class Stock extends CustomerActiveRecord {
                                      }]);
         $materials_ids = Share::find()->select('material_id')->where(['to_customer_id'=>Yii::$app->user->id])->column();
         $query->andWhere(['material_id'=>$materials_ids]);
-        
-        if(isset($params['material_id']) && $params['material_id'] != ""){
-            if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
-                $material = Material::find()->where(['like','code',$params['material_id']])->one();
-                if(!empty($material)){
-                    $material_id = $material->id;
-                    $owner_id = $material->owner_id;
-                }else{
-                    $material = Material::find()->where(['like','name',$params['material_id']])->one();
-                    if(!empty($material)){
-                        $material_id = $material->id;
-                        $owner_id = $material->owner_id;
-                    }else{
-                        $material_id = -1;
-                        $owner_id = -1;
-                    }
-                }
-                $share = Share::find()->where(['material_id'=>$material_id,'storeroom_id'=>$params['storeroom_id'],'owner_id'=>$owner_id,'to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->one();
-                if(!empty($share)){
-                    $query->andWhere(['material_id'=>$share->material_id,'storeroom_id'=>$share->storeroom_id]);
-                }else{
-                    $query->andWhere(['material_id'=> -1,'storeroom_id'=> -1]);
-                }
-            }else{
-                $material = Material::find()->where(['like','code',$params['material_id']])->one();
-                if(!empty($material)){
-                    $material_id = $material->id;
-                    $owner_id = $material->owner_id;
-                }else{
-                    $material = Material::find()->where(['like','name',$params['material_id']])->one();
-                    if(!empty($material)){
-                        $material_id = $material->id;
-                        $owner_id = $material->owner_id;
-                    }else{
-                        $material_id = -1;
-                        $owner_id = -1;
-                    }
-                }
-                $storeroom_ids = Share::find()->select('storeroom_id')->where(['material_id'=>$material_id,'owner_id'=>$owner_id,'to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->column();
-                if(!empty($storeroom_ids)){
-                    $query->andWhere(['material_id'=>$material_id,'storeroom_id'=>$storeroom_ids]);
-                }
-            }   
-            if(isset($params['begin_time']) && $params['begin_time'] != ""){
-                if(isset($params['end_time']) && $params['end_time'] != ""){
-                    $query->andWhere('stock_time >= :begin_time AND stock_time <= :end_time',[':begin_time'=>$params['begin_time'],'end_time'=>$params['end_time']]);
-                }
-            }
-        }else{
-            if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
-                $materia_ids = Share::find()->select('material_id')->where(['storeroom_id'=>$params['storeroom_id'],'to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->column();
-                if(!empty($materia_ids)){
-                    $query->andWhere(['material_id'=>$materia_ids,'storeroom_id'=>$params['storeroom_id']]);
-                }else{
-                    $query->andWhere(['material_id'=> -1,'storeroom_id'=> -1]);
-                }
-
-                if(isset($params['begin_time']) && $params['begin_time'] != ""){
-                    if(isset($params['end_time']) && $params['end_time'] != ""){
-                        $query->andWhere('stock_time >= :begin_time AND stock_time <= :end_time',[':begin_time'=>$params['begin_time'],'end_time'=>$params['end_time']]);
-                    }
-                }
+        if(isset($params['begin_time']) && $params['begin_time'] != ""){
+            if(isset($params['end_time']) && $params['end_time'] != ""){
+                $query->andWhere('stock_time >= :begin_time AND stock_time <= :end_time',[':begin_time'=>$params['begin_time'],'end_time'=>$params['end_time']]);
             }
         }
+        // if(isset($params['material_id']) && $params['material_id'] != ""){
+        //     if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
+        //         $material = Material::find()->where(['like','code',$params['material_id']])->one();
+        //         if(!empty($material)){
+        //             $material_id = $material->id;
+        //             $owner_id = $material->owner_id;
+        //         }else{
+        //             $material = Material::find()->where(['like','name',$params['material_id']])->one();
+        //             if(!empty($material)){
+        //                 $material_id = $material->id;
+        //                 $owner_id = $material->owner_id;
+        //             }else{
+        //                 $material_id = -1;
+        //                 $owner_id = -1;
+        //             }
+        //         }
+        //         $share = Share::find()->where(['material_id'=>$material_id,'storeroom_id'=>$params['storeroom_id'],'owner_id'=>$owner_id,'to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->one();
+        //         if(!empty($share)){
+        //             $query->andWhere(['material_id'=>$share->material_id,'storeroom_id'=>$share->storeroom_id]);
+        //         }else{
+        //             $query->andWhere(['material_id'=> -1,'storeroom_id'=> -1]);
+        //         }
+        //     }else{
+        //         $material = Material::find()->where(['like','code',$params['material_id']])->one();
+        //         if(!empty($material)){
+        //             $material_id = $material->id;
+        //             $owner_id = $material->owner_id;
+        //         }else{
+        //             $material = Material::find()->where(['like','name',$params['material_id']])->one();
+        //             if(!empty($material)){
+        //                 $material_id = $material->id;
+        //                 $owner_id = $material->owner_id;
+        //             }else{
+        //                 $material_id = -1;
+        //                 $owner_id = -1;
+        //             }
+        //         }
+        //         $storeroom_ids = Share::find()->select('storeroom_id')->where(['material_id'=>$material_id,'owner_id'=>$owner_id,'to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->column();
+        //         if(!empty($storeroom_ids)){
+        //             $query->andWhere(['material_id'=>$material_id,'storeroom_id'=>$storeroom_ids]);
+        //         }
+        //     }   
+        //     if(isset($params['begin_time']) && $params['begin_time'] != ""){
+        //         if(isset($params['end_time']) && $params['end_time'] != ""){
+        //             $query->andWhere('stock_time >= :begin_time AND stock_time <= :end_time',[':begin_time'=>$params['begin_time'],'end_time'=>$params['end_time']]);
+        //         }
+        //     }
+        // }else{
+        //     if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
+        //         $materia_ids = Share::find()->select('material_id')->where(['storeroom_id'=>$params['storeroom_id'],'to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->column();
+        //         if(!empty($materia_ids)){
+        //             $query->andWhere(['material_id'=>$materia_ids,'storeroom_id'=>$params['storeroom_id']]);
+        //         }else{
+        //             $query->andWhere(['material_id'=> -1,'storeroom_id'=> -1]);
+        //         }
+
+        //         if(isset($params['begin_time']) && $params['begin_time'] != ""){
+        //             if(isset($params['end_time']) && $params['end_time'] != ""){
+        //                 $query->andWhere('stock_time >= :begin_time AND stock_time <= :end_time',[':begin_time'=>$params['begin_time'],'end_time'=>$params['end_time']]);
+        //             }
+        //         }
+        //     }
+        // }
         
         $count = $query->count();
         $str = "序号,物料编号,物料名称,所属人,部门,组别,一级产品线,二级产品线,物料类别,库房位置,入库时间,入库数量,出库时间,出库数量,出库至,申请人\n";

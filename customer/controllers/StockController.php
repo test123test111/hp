@@ -68,6 +68,7 @@ class StockController extends CustomerController {
     public function actionImport(){
         $result = Stock::getImportData(Yii::$app->request->getQueryParams());
         $filename = '库存报表.csv';
+        $filename = iconv('utf-8', 'GB2312', $filename );
         header("Content-type:text/csv;charset=utf-8");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
@@ -101,6 +102,7 @@ class StockController extends CustomerController {
     public function actionExportdetail(){
         $result = Stock::getExportDetail(Yii::$app->request->getQueryParams());
         $filename = '出入库报表.csv';
+        $filename = iconv('utf-8', 'GB2312', $filename );
         header("Content-type:text/csv;charset=utf-8");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');

@@ -1,0 +1,115 @@
+{% set sidebar_name = "预算报告" %}
+{% set menu_name = "report" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+  {% include '@app/views/layouts/base_with_sidebar.twig' %}
+  <div class="main">
+        <div class="order_search">
+          <form>
+            <ul class="clearfix">
+                <li>
+                    <label>&nbsp;&nbsp;&nbsp;预算年：</label>
+                    <input type="text" name="year" value="{% if params.year is defined %}{{ params.year }}{% endif %}" class="search_input" placeholder="输入年进行查询例如2015" />
+                </li>
+                <li>
+                    <label>季度月份：</label>
+                    <input type="text" name="time" value="{% if params.time is defined %}{{ params.time }}{% endif %}" class="search_input" placeholder="输入季度或者月份" />
+                </li>
+                <li>
+                    <label>选择仓库：</label>
+                    <select name="storeroom_id">
+                        <option value="">请选择仓库</option>
+                        {% for storeroom in storerooms %}
+                        <option {% if params.storeroom_id is defined and params.storeroom_id == storeroom.id %}selected="selected"{% endif %} value="{{ storeroom.id }}">{{ storeroom.name }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>
+                    <label>所&nbsp;属&nbsp;人&nbsp;：</label>
+                    <select name="owner_id">
+                        <option value="">请选择所属人</option>
+                        {% for owner in owners %}
+                        <option {% if params.owner_id is defined and params.owner_id == owner.id %}selected="selected"{% endif %} value="{{ owner.id }}">{{ owner.english_name }}</option>
+                        {% endfor %}
+                        {# <option value="1">周星星</option>
+                        <option value="1">张学友</option> #}
+                    </select>
+                </li>
+            </ul>
+            
+            <input type="submit" value="搜索" class="search_btn" />
+          </form>
+        </div>
+        <div class="material_cart clearfix">
+            <a href="javascript:void(0);" class="export_btn">导出预算报表</a>
+        </div>
+        <div class="materiel_box">
+                <table id="material_list" class="materiel_table">
+                    <thead>
+                        <tr>
+                            <td>客户名</td>
+                            <td>库房名称</td>
+                            <td>年</td>
+                            {# <td>分享</td> #}
+                            <td>月份/季度</td>
+                            <td>预算费用</td>
+                            <td>可用费用</td>
+                            <td>剩余百分比</td>
+                            <td>已使用百分比</td>
+                            {# <td>查看调整记录</td> #}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key,result in results %}
+                        <tr>
+                            <td>{{ result.owner.english_name }}</td>
+                            <td>{{ result.storeroom.name }}</td>
+                            <td>{{ result.year }}</td>
+                            <td>{{ result.time }}</td>
+                            <td>
+                                {% set price = result.price %}
+                                {% if result.adjusts is defined %}
+                                    {% for adjust in result.adjusts %}
+                                        {% set price = price + adjust.price %}
+                                    {% endfor %}
+                                    {{ price }}
+                                {% else %}
+                                    {{ price }}
+                                {% endif %}
+                            </td>
+                            <td>{% if result.total is defined %}{{ result.total.price }}{% endif %}</td>
+                            <td>
+                                {% if result.total is defined %}
+                                    {% if price != 0 %}
+                                    {{ ((result.total.price / price)|sprintf) * 100 }}%
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if result.total is defined %}
+                                    {% if price != 0 %}
+                                    {{ ( 1 - ((result.total.price / price)))|sprintf * 100 }}%
+                                    {% endif %}
+                                {% endif %}</td>
+                            {# <td><a href="/budget/adjust/{{ result.id }}" class="blue">调整</a> </td> #}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>      
+            </div>
+            <div class="pages clearfix">
+                <div class="fr">
+                    {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
+                </div>
+            </div>
+      </div>
+<script type="text/javascript">
+$(function(){
+    var url = window.location.search;
+    $(".export_btn").attr("href","/order/exportbudget"+url);
+});
+</script>
+{% endblock %}
+
+
+

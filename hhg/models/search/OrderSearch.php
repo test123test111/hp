@@ -339,7 +339,8 @@ class OrderSearch extends Order
                                     return $query->with('citydata');
                                 },'createduser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
-                              ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_PACKAGE,":c_status"=>self::ORDER_STATUS_IS_UNSIGN])
+                              //->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_PACKAGE,":c_status"=>self::ORDER_STATUS_IS_UNSIGN])
+                              ->andWhere(['status'=>Order::ORDER_STATUS_IS_SIGN])
                               ->orderBy(['id'=>SORT_DESC]);
 
         if(isset($params['created_uid']) && $params['created_uid'] != ""){
@@ -409,11 +410,11 @@ class OrderSearch extends Order
                 $data[$i]['package_num'] = isset($result->package) ? $result->package->num : 0;
                 $data[$i]['tariff'] = $result->tariff;
                 $data[$i]['fenjian'] = $result->fenjian_fee;
-                $data[$i]['ship_fee'] = $result->ship_fee;
+                $data[$i]['ship_fee'] = $result->real_ship_fee;
                 $data[$i]['insurance_price'] = $result->insurance_price;
                 $data[$i]['package_fee'] = isset($result->package) ? $result->package->package_fee : 0;
                 $data[$i]['other_fee'] = isset($result->package) ? $result->package->other_fee : 0;
-                $data[$i]['total_fee'] = $result->fenjian_fee + $result->ship_fee + $result->insurance_price + $data[$i]['package_fee'] + $data[$i]['other_fee'];
+                $data[$i]['total_fee'] = $result->fenjian_fee + $result->real_ship_fee + $result->insurance_price + $data[$i]['package_fee'] + $data[$i]['other_fee'];
                 $data[$i]['budget_fee'] = $result->fenjian_fee + $result->ship_fee;
                 if($result->st_send_date != 0){
                     $data[$i]['send_date'] = date('Y-m-d H:i',$result->st_send_date);

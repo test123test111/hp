@@ -353,5 +353,19 @@ class Owner extends ActiveRecord implements IdentityInterface
             return $user;
         }
         return false;
-    }   
+    }
+    /**
+     * [getBudgetUsers description]
+     * @param  [type] $uid [description]
+     * @return [type]      [description]
+     */
+    public static function getBudgetUsers($uid){
+        $owner = static::findOne($uid);
+        $category = $owner->category;
+        if($owner->big_owner == self::IS_BIG_OWNER){
+            return static::find()->where(['category'=>$category])->all();
+        }else{
+            return static::find()->where(['id'=>$uid])->all();
+        }
+    }
 }

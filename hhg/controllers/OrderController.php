@@ -223,12 +223,13 @@ class OrderController extends \yii\web\Controller {
                 }
                 $model->detachBehavior('attributeStamp');
                 $model->modified_uid = $model->created_uid;
+                $model->budget_uid = $model->created_uid;
                 $model->hhg_uid = Yii::$app->user->id;
                 $model->save();
                 $model->viewid = date('Ymd')."-".$model->id;
                 $model->update();
                 //create order detail 
-                $model->createOrderDetail($_POST['Carts'],$model->created_uid);
+                $model->createOrderDetail($_POST['Carts'],$model->budget_uid);
                 $transaction->commit();
                 $this->redirect("/order/success?id={$model->viewid}");
             // }catch (\Exception $e) {
@@ -713,7 +714,7 @@ class OrderController extends \yii\web\Controller {
             //     $orderInfo->consume();
             // }
             $flag = 0;
-            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL,'owner_id'=>Yii::$app->user->id])->one();
+            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL])->one();
             $details = OrderDetail::find()->where(['order_id'=>$order_id])->all();
             if(!empty($details)){
                 foreach($details as $detail){
@@ -1039,6 +1040,7 @@ class OrderController extends \yii\web\Controller {
     public function actionExportdone(){
         $result = OrderSearch::getExportDoneData(Yii::$app->request->getQueryParams());
         $filename = '订单报表.csv';
+        $filename = iconv('utf-8', 'GB2312', $filename );
         header("Content-type:text/csv;charset=utf-8");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
@@ -1237,6 +1239,7 @@ class OrderController extends \yii\web\Controller {
     public function actionExportsettlement(){
         $result = OrderSearch::getConsumeData(Yii::$app->request->getQueryParams());
         $filename = '结算报告.csv';
+        $filename = iconv('utf-8', 'GB2312', $filename );
         header("Content-type:text/csv;charset=utf-8");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');

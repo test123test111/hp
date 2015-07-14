@@ -13,7 +13,7 @@ use backend\models\Upload;
 use backend\models\search\OrderSearch;
 use backend\models\search\OrderStockSearch;
 use backend\components\BackendController;
-
+use common\models\ShippmentCost;
 class OrderController extends BackendController {
     public $enableCsrfValidation;
     /**
@@ -278,8 +278,20 @@ class OrderController extends BackendController {
             $model->sign_date = $_POST['sign_date-ordersign-sign_date'];
             if($model->validate()){
                 if($model->save()){
+                    $fee = 0;
+                    if(isset($order->package)){
+                        if($order->package->throw_weight > $order->package->actual_weight){
+                            $weight = $order->package->throw_weight;
+                        }else{
+                            $weight = $order->package->actual_weight;
+                        }
+                        list($result,$fee,$return_code,$tariff) = ShippmentCost::getFeeByProperty($order->storeroom_id,$order->to_district,$weight,$order->transport_type,$order->to_type);
+                    }
+                    $order->real_ship_fee = $fee;
                     $order->status = Order::ORDER_STATUS_IS_SIGN;
                     $order->save(false);
+                    //扣除真正用户预算
+                    $order->redecareConsume();
                     //create queue to send email
                     //Yii::$app->gqueue->createJob('send_email','gcommon\components\gqueue\workers\SendEmail',["type"=>Order::SIGN_ORDER,'id'=>$order->id]);
                 }

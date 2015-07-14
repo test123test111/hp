@@ -682,7 +682,7 @@ class Order extends BackendActiveRecord {
      */
     public function consume(){
         list($ship_fee,$fenjian_fee,$tariff) = Yii::$app->budget->reckon($this->id);
-        $price = $ship_fee + $fenjian_fee;
+        $price = ($ship_fee + $fenjian_fee) * self::BUDGET_RATIO;
         $owner = Owner::findOne($this->budget_uid);
         $budget_id = NewBudget::getCurrentIdByUid($this->budget_uid,$this->storeroom_id);
         $model = new NewBudgetConsume;
@@ -792,5 +792,26 @@ class Order extends BackendActiveRecord {
             $weight += $materialWeight;
         }
         return ceil($weight * self::BUDGET_RATIO);
+    }
+    /**
+     * 重新扣除预算，之前扣除的是预估的预算
+     * @return [type] [description]
+     */
+    public function redecareConsume(){
+        $budgetConsume = NewBudgetConsume::find()->where(['order_id'=>$this->id])->one();
+        if(!empty($budgetConsume)){
+            $price = $this->real_ship_fee + $this->fenjian_fee + $this->insurance_price + $this->package->package_fee + $this->package->other_fee;
+            $old_price = $budgetConsume->price;
+            $budgetConsume->price = $price;
+            if($budgetConsume->update(false)){
+                $total = NewBudgetTotal::find()->where(['budget_id'=>$budgetConsume->id])->one();
+                if($total){
+                    $total->price = $total->price + $old_price - $price;
+                    $total->update(false);
+                    return true;
+                }
+                
+            }
+        }
     }
 }

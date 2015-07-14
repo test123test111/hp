@@ -117,11 +117,100 @@ class NewBudget extends ActiveRecord
      * @param  [type] $params [description]
      * @return [type]         [description]
      */
+    public static function getOwnerBudgetByUids($params,$uids){
+        $query = static::find()->with(['owner','total'])->orderBy(['id'=>SORT_DESC]);
+        if(isset($params['owner_id']) && $params['owner_id'] != "" && in_array($params['owner_id'], $uids)){
+            $query->andWhere(['owner_id'=>$params['owner_id']]);
+        }else{
+            $query->andWhere(['owner_id'=>$uids]);
+        }
+
+
+        if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
+            $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);
+        }
+        if(isset($params['year']) && $params['year'] != ""){
+            $query->andWhere(['year'=>$params['year']]);
+        }
+        if(isset($params['time']) && $params['time'] != ""){
+            $query->andWhere(['time'=>$params['time']]);
+        }
+        
+        $count = $query->count();
+        $pages = new \yii\data\Pagination(['totalCount' => $count]);
+        $ret = [];
+        $query->offset($pages->offset)->limit(20);
+
+        $data = $query->all();
+        return [$data,$pages,$count];
+    }
+    /**
+     * get all owner who have budget 
+     * @param  [type] $params [description]
+     * @return [type]         [description]
+     */
     public static function getExportData($params){
         $query = static::find()->with(['owner','total'])->orderBy(['id'=>SORT_DESC]);
 
         if(isset($params['owner_id']) && $params['owner_id'] != ""){
             $query->andWhere(['owner_id'=>$params['owner_id']]);
+        }
+        if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
+            $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);
+        }
+        if(isset($params['year']) && $params['year'] != ""){
+            $query->andWhere(['year'=>$params['year']]);
+        }
+        if(isset($params['time']) && $params['time'] != ""){
+            $query->andWhere(['time'=>$params['time']]);
+        }
+        $count = $query->count();
+        $str = "序号,预算所有人,库房位置,月份/季度,预算金额,变动,已使用金额,剩余金额,使用百分比,备注\n";
+        $offset = 0;
+        $limit = 100;
+        $data = [];
+        $i = 1;
+        while(true){
+            $results = $query->limit($limit)->offset($offset)->all();
+            if(empty($results)){
+                break;
+            }
+            foreach($results as $key =>$result){
+                $data[$i]['id'] = $i;
+                $adjust = NewBudgetAdjust::find()->select('price')->where(['budget_id'=>$result->id])->sum('price');
+                $consume = NewBudgetConsume::find()->select('price')->where(['budget_id'=>$result->id])->sum('price');
+                $data[$i]['name'] = $result->owner->english_name;
+                $data[$i]['storeroom'] = $result->storeroom->name;
+                $data[$i]['time'] = $result->time;
+                $data[$i]['price'] = $result->price;
+                $data[$i]['change'] = $adjust;
+                $data[$i]['used'] = $consume;
+                $data[$i]['canuse'] = $result->price + $adjust - $consume;
+                $data[$i]['usepercent'] = round(($consume / ($result->price + $adjust))) * 100;
+                $data[$i]['info'] = "";
+                $str .= $data[$i]['id'].",".$data[$i]['name'].",".$data[$i]['storeroom'].",".$data[$i]['time'].",".$data[$i]['price'].",".$data[$i]['change'].",".$data[$i]['used'].",".$data[$i]['canuse'].",".$data[$i]['usepercent'].",".$data[$i]['info']."\r\n"; //用引文逗号分开
+                $i++;
+            }
+           
+            $offset += $limit;
+            if ($offset > $count) {
+                break;
+            }
+        }
+        return $str;
+    }
+    /**
+     * get all owner who have budget 
+     * @param  [type] $params [description]
+     * @return [type]         [description]
+     */
+    public static function getExportOwnerBudgetByUids($params,$uids){
+        $query = static::find()->with(['owner','total'])->orderBy(['id'=>SORT_DESC]);
+
+        if(isset($params['owner_id']) && $params['owner_id'] != "" && in_array($params['owner_id'], $uids)){
+            $query->andWhere(['owner_id'=>$params['owner_id']]);
+        }else{
+            $query->andWhere(['owner_id'=>$uids]);
         }
         if(isset($params['storeroom_id']) && $params['storeroom_id'] != ""){
             $query->andWhere(['storeroom_id'=>$params['storeroom_id']]);

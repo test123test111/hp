@@ -420,7 +420,7 @@ class OrderSearch extends Order
                     $data[$i]['package_num'] = $result->package->num;
                     $data[$i]['fee'] = "";
                     $data[$i]['fenjian_fee'] = $result->fenjian_fee;
-                    $data[$i]['ship_fee'] = $result->ship_fee;
+                    $data[$i]['ship_fee'] = $result->real_ship_fee;
                     $data[$i]['insurance_price'] = $result->insurance_price;
                     $data[$i]['package_fee'] = $result->package->package_fee;
                     $data[$i]['other_fee'] = $result->package->other_fee;
