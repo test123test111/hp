@@ -73,7 +73,7 @@ class OwnerController extends \yii\web\Controller {
     public function actionExport(){
         $result = OwnerSearch::getImportData(Yii::$app->request->getQueryParams());
         $filename = '用户信息.csv';
-        header("Content-type:text/csv");
+        header("Content-type:text/csv;charset=utf-8");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
         header('Expires:0');

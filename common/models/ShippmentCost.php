@@ -69,6 +69,10 @@ class ShippmentCost extends ActiveRecord
             $fee = 76.00;
         }
         //5.2 is box fee
-        return $fee + 5.2;
+        if($count >= 10){
+            return $fee + 5.2;
+        }else{
+            return 0;
+        }
     }
 }

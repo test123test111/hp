@@ -1039,7 +1039,7 @@ class OrderController extends \yii\web\Controller {
     public function actionExportdone(){
         $result = OrderSearch::getExportDoneData(Yii::$app->request->getQueryParams());
         $filename = '订单报表.csv';
-        header("Content-type:text/csv");
+        header("Content-type:text/csv;charset=utf-8");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
         header('Expires:0');
@@ -1237,7 +1237,7 @@ class OrderController extends \yii\web\Controller {
     public function actionExportsettlement(){
         $result = OrderSearch::getConsumeData(Yii::$app->request->getQueryParams());
         $filename = '结算报告.csv';
-        header("Content-type:text/csv");
+        header("Content-type:text/csv;charset=utf-8");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
         header('Expires:0');
