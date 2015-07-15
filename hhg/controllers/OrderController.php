@@ -22,6 +22,7 @@ use common\models\Approval;
 use common\models\ShippmentCost;
 use common\models\SendEmail;
 use common\models\NewBudget;
+use common\models\Share;
 
 class OrderController extends \yii\web\Controller {
     public $layout = false;
@@ -179,7 +180,7 @@ class OrderController extends \yii\web\Controller {
             $model->load(Yii::$app->request->post());
             $db = Order::getDb();
             $transaction = $db->beginTransaction();
-            // try{
+            try{
                 $owner = Owner::findOne($model->created_uid);
                 if(empty($owner) || $owner->category == 0){
                     throw new \Exception("下单人不属于任何部门，不具备下订单权限", 1);
@@ -221,9 +222,27 @@ class OrderController extends \yii\web\Controller {
                 }else{
                     $model->arrive_date = 0;
                 }
+                foreach($_POST['Carts'] as $key=>$value){
+                    $share = Share::find()->where(['to_customer_id'=>$model->created_uid,'material_id'=>$value['material_id'],'storeroom_id'=>$value['storeroom_id']])->one();
+                    if(empty($share)){
+                        return $this->redirect("/order/success?id=JIXJksjs9");
+                    }
+                }
                 $model->detachBehavior('attributeStamp');
                 $model->modified_uid = $model->created_uid;
-                $model->budget_uid = $model->created_uid;
+
+                $sto = Storeroom::findOne($model->storeroom_id);
+                if($sto->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+                    $big_owner = Owner::find()->where(['storeroom_id'=>$sto->id,'big_owner'=>Owner::IS_BIG_OWNER])->one();
+                    if(empty($big_owner)){
+                        throw new \Exception('不存在中央库管理员请先创建',500);
+                    }
+                    $model->budget_uid = $big_owner->id;
+                    $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
+                }else{
+                    $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
+                }
+
                 $model->hhg_uid = Yii::$app->user->id;
                 $model->save();
                 $model->viewid = date('Ymd')."-".$model->id;
@@ -232,10 +251,10 @@ class OrderController extends \yii\web\Controller {
                 $model->createOrderDetail($_POST['Carts'],$model->budget_uid);
                 $transaction->commit();
                 $this->redirect("/order/success?id={$model->viewid}");
-            // }catch (\Exception $e) {
-            //     $transaction->rollback();
-            //     throw new \Exception($e->getMessage(), $e->getCode());
-            // }
+            }catch (\Exception $e) {
+                $transaction->rollback();
+                throw new \Exception($e->getMessage(), $e->getCode());
+            }
                 
         }
     }
@@ -573,6 +592,9 @@ class OrderController extends \yii\web\Controller {
     public function actionSuccess(){
         $id = Yii::$app->request->get('id');
         $order = Order::find()->where(['viewid'=>$id])->one();
+        if(empty($order)){
+            return $this->render('success',['id'=>$id,'order'=>$order]);
+        }
         list($total,$consume) = NewBudget::getPriceTotalAndConsume($order->created_uid,$order->storeroom_id);
         $usefee = $total - $consume;
         return $this->render('success',['id'=>$id,'order'=>$order,'usefee'=>$usefee]);
@@ -885,7 +907,11 @@ class OrderController extends \yii\web\Controller {
                 }
                 $order->consume();
             }
-            echo 0;
+            if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
+                echo 1;
+            }else{
+                echo 0;
+            }
         }
     }
     /**

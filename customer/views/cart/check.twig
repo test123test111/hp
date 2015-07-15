@@ -46,12 +46,8 @@
                         </div>
                       
                     </div>
-                    <div class="dt">4 预算所属人</div>
-                    <div class="dd">
-                        <input type="text" id="autocompleteCreate" class="active_input" />
-                        <input type="hidden" name="Order[budget_uid]" value="{{ App.user.id }}" id="createUsert" />
-                    </div>
-                    <div class="dt">5 到货需求</div>
+                   
+                    <div class="dt">4 到货需求</div>
                     <div class="dd">
                         <ul id="delivery_time" class="delivery_time clearfix">
                             <li class="selected">
@@ -74,7 +70,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="dt">6 是否保险</div>
+                    <div class="dt">5 是否保险</div>
                     <div class="dd">
                         <ul id="safe_label" class="delivery_time clearfix">
                             <li data-show="1">
@@ -86,7 +82,8 @@
                         </ul>
                         <input type="text" placeholder="输入保险金额" name="Order[insurance_price]" class="memo_input none" id="safe_price" />
                     </div>
-                    <div class="dt">7 物料信息</div>
+
+                    <div class="dt">6 物料信息</div>
                     <div class="dd">
                         <div class="buy_goods">
                             <div class="cart_tt clearfix">
@@ -128,7 +125,17 @@
                         <input type="text" placeholder="输入用途" name="Order[purpose]" class="memo_input" />
                         <input type="text" placeholder="输入备注信息" name="Order[info]" class="memo_input" />
                     </div>
-                    
+                    {% if results.0.info.storeroom_id != 1 %}
+                        {% if budget.checkUserBudget(App.user.id,results.0.info.storeroom_id) != 0 %}
+                            <input type="hidden" name="Order[budget_uid]" value="{{ App.user.id }}" id="createUsert" />
+                        {% else %}
+                        <div class="dt">7 预算所属人</div>
+                        <div class="dd">
+                            <input type="text" id="autocompleteCreate" class="active_input" />
+                            <input type="hidden" name="Order[budget_uid]" value="{{ App.user.id }}" id="createUsert" />
+                        </div>
+                        {% endif %}
+                    {% endif %}
                     <div class="cart_submit clearfix">
                         <a href="javascript:;" class="buy_btn">确认订单</a>
                         <div class="amount">共<span class="red" id="selectedCount">{{ quantity }}</span> 件商品</div>

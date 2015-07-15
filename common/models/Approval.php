@@ -67,7 +67,7 @@ class Approval extends ActiveRecord
      * @return [type] [description]
      */
     public static function getHhgData($params){
-        $query = Static::find()->with(['orders'])->where(['status'=>self::STATUS_IS_UNHANDLE])->orderBy(['id'=>SORT_DESC]);
+        $query = Static::find()->with(['orders'])->where(['status'=>self::STATUS_IS_UNHANDLE,'type'=>self::TYPE_IS_MATERIAL])->orderBy(['id'=>SORT_DESC]);
 
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $order = Order::find()->where(['viewid'=>$params['order_id']])->one;
@@ -97,7 +97,7 @@ class Approval extends ActiveRecord
      * @return [type]           [description]
      */
     public static function getNewArroval($owner_id = ""){
-        $query = static::find()->where(['status'=>self::STATUS_IS_UNHANDLE]);
+        $query = static::find()->where(['status'=>self::STATUS_IS_UNHANDLE,'type'=>self::TYPE_IS_MATERIAL]);
         if($owner_id){
             $query->andWhere(['owner_id'=>$owner_id]);
         }

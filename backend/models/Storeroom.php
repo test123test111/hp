@@ -123,4 +123,13 @@ class Storeroom extends ActiveRecord {
             'district'=>'所在区县',
         ];
     }
+    public static function getStoreroomByOid($owner_id){
+        $owner = Owner::findOne($owner_id);
+        $city = static::find()->where(['id'=>$owner->storeroom_id])->asArray()->all();
+        $ret = [];
+        return array_map(function($a) use ($ret){
+            $ret = ['id'=>$a['id'],'name'=>$a['name']];
+            return $ret;
+        },$city);
+    }
 }

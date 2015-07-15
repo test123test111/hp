@@ -62,6 +62,9 @@ class MaterialController extends BackendController {
         // collect user input data
         if (isset($_POST['Material'])) {
             $model->load($_POST);
+            if($model->expire == null){
+                $model->expire = 0;
+            }
             if ($model->validate()) {
                 $model->save();
                 $owner = Owner::findOne($model->owner_id);

@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\Stock;
+use backend\models\Owner;
+use backend\models\Storeroom;
 use backend\models\Material;
 use backend\models\Share;
 use backend\models\StockTotal;
@@ -59,7 +61,7 @@ class StockController extends BackendController {
             if ($model->validate()) {
                 $db = Stock::getDb();
                 $transaction = $db->beginTransaction();
-                // try{
+                try{
                     $material = Material::findOne($model->material_id);
                     $model->owner_id = $material->owner_id;
                     $model->save();
@@ -94,10 +96,10 @@ class StockController extends BackendController {
                     $sendEmail->created = date('Y-m-d H:i:s');
                     $sendEmail->save();
                     $this->redirect("/stocktotal/list");
-                // }catch (\Exception $e) {
-                //    $transaction->rollback();
-                //    throw new \Exception($e->getMessage(), $e->getCode());
-                // }
+                }catch (\Exception $e) {
+                   $transaction->rollback();
+                   throw new \Exception($e->getMessage(), $e->getCode());
+                }
             }
         }
         return $this->render('create', array(
@@ -297,5 +299,79 @@ EOF;
 EOF;
             }
         }
+    }
+    public function actionOwner(){
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $material_id = $parents[0];
+                $param1 = null;
+                $param2 = null;
+                if (!empty($_POST['depdrop_params'])) {
+                    $params = $_POST['depdrop_params'];
+                    $param1 = $params[0]; // get the value of input-type-1
+                    $param2 = $params[1]; // get the value of input-type-2
+                }
+     
+                // $out = self::getSubCatList1($cat_id, $param1, $param2); 
+                // the getSubCatList1 function will query the database based on the
+                // cat_id, param1, param2 and return an array like below:
+                $out = Owner::getOwnerByMid($material_id);
+                // var_dump($out);exit;
+                // var_dump($out);exit;
+                // $out = [
+                //        ['id'=>'20', 'name'=>'a'],
+                //        ['id'=>'21', 'name'=>'b'],
+                //        ['id'=>'22', 'name'=>'c'], 
+                //        ['id'=>'23', 'name'=>'d'],
+                // ];
+                
+                
+                // $selected = self::getDefaultSubCat($cat_id);
+                // the getDefaultSubCat function will query the database
+                // and return the default sub cat for the cat_id
+                echo json_encode(['output'=>$out, 'selected'=>$out[0]['id']]);
+                return;
+            }
+        }
+        echo json_encode(['output'=>'', 'selected'=>'']);
+    }
+    public function actionStoreroom(){
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $owner_id = $parents[0];
+                $param1 = null;
+                $param2 = null;
+                if (!empty($_POST['depdrop_params'])) {
+                    $params = $_POST['depdrop_params'];
+                    $param1 = $params[0]; // get the value of input-type-1
+                    $param2 = $params[1]; // get the value of input-type-2
+                }
+     
+                // $out = self::getSubCatList1($cat_id, $param1, $param2); 
+                // the getSubCatList1 function will query the database based on the
+                // cat_id, param1, param2 and return an array like below:
+                $out = Storeroom::getStoreroomByOid($owner_id);
+                // var_dump($out);exit;
+                // var_dump($out);exit;
+                // $out = [
+                //        ['id'=>'20', 'name'=>'a'],
+                //        ['id'=>'21', 'name'=>'b'],
+                //        ['id'=>'22', 'name'=>'c'], 
+                //        ['id'=>'23', 'name'=>'d'],
+                // ];
+                
+                
+                // $selected = self::getDefaultSubCat($cat_id);
+                // the getDefaultSubCat function will query the database
+                // and return the default sub cat for the cat_id
+                echo json_encode(['output'=>$out, 'selected'=>$out[0]['id']]);
+                return;
+            }
+        }
+        echo json_encode(['output'=>'', 'selected'=>'']);
     }
 }

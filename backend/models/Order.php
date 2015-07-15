@@ -20,7 +20,7 @@ use common\models\NewBudgetConsume;
 use common\models\NewBudgetTotal;
 class Order extends BackendActiveRecord {
 
-    const BUDGET_RATIO = 1.05;
+    const BUDGET_RATIO = 1.1;
     const ORDER_IS_DEL = 1;
     const ORDER_IS_NOT_DEL = 0;
 
@@ -499,6 +499,7 @@ class Order extends BackendActiveRecord {
         // $consume = BudgetConsume::getConsumePriceByOwner($this->created_uid);
 
         list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->budget_uid,$this->storeroom_id);
+
         if($department->id == Department::IS_COMERCIAL){
             //中央库规则
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
@@ -535,6 +536,11 @@ class Order extends BackendActiveRecord {
                         $stockTotal->update();
                     }
                 }
+                // else{
+                //     $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+                //     $this->warning_fee_price = 999999;
+                //     $this->update();
+                // }
             }
         }
         if($department->id == Department::IS_CONSUMER){
@@ -548,6 +554,11 @@ class Order extends BackendActiveRecord {
                     $stockTotal->update();
                 }
             }
+            // else{
+            //     $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+            //     $this->warning_fee_price = 999999;
+            //     $this->update();
+            // }
         }
 
         // $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
@@ -685,14 +696,17 @@ class Order extends BackendActiveRecord {
         $price = ($ship_fee + $fenjian_fee) * self::BUDGET_RATIO;
         $owner = Owner::findOne($this->budget_uid);
         $budget_id = NewBudget::getCurrentIdByUid($this->budget_uid,$this->storeroom_id);
-        $model = new NewBudgetConsume;
-        $model->owner_id = $this->budget_uid;
-        $model->budget_id = $budget_id;
-        $model->price = $price;
-        $model->order_id = $this->id;
-        if($model->save()){
-            // BudgetTotal::updateBudgetPrice($model->owner_id,$price);
-            NewBudgetTotal::updateBudgetPrice($budget_id,$price);
+        $budgetConsume = NewBudgetConsume::find()->where(['budget_id'=>$budget_id,'order_id'=>$this->id])->one();
+        if(empty($budgetConsume)){
+            $model = new NewBudgetConsume;
+            $model->owner_id = $this->budget_uid;
+            $model->budget_id = $budget_id;
+            $model->price = $price;
+            $model->order_id = $this->id;
+            if($model->save()){
+                // BudgetTotal::updateBudgetPrice($model->owner_id,$price);
+                NewBudgetTotal::updateBudgetPrice($budget_id,$price);
+            }
         }
         //send warning email
         // $total = BudgetTotal::getPriceTotalByCategory($this->budget_uid);
@@ -803,14 +817,13 @@ class Order extends BackendActiveRecord {
             $price = $this->real_ship_fee + $this->fenjian_fee + $this->insurance_price + $this->package->package_fee + $this->package->other_fee;
             $old_price = $budgetConsume->price;
             $budgetConsume->price = $price;
-            if($budgetConsume->update(false)){
-                $total = NewBudgetTotal::find()->where(['budget_id'=>$budgetConsume->id])->one();
-                if($total){
-                    $total->price = $total->price + $old_price - $price;
-                    $total->update(false);
-                    return true;
-                }
-                
+            $budgetConsume->update(false);
+            $total = NewBudgetTotal::find()->where(['budget_id'=>$budgetConsume->budget_id])->one();
+            if($total){
+                $new_price = $old_price - $price;
+                $total->updateCounters(['price' => $new_price]);
+
+                return true;
             }
         }
     }

@@ -52,6 +52,9 @@ class OwnerController extends BackendController {
         if (isset($_POST['Owner'])) {
             // $model->setScenario('signup');
             $model->load($_POST);
+            if($model->big_owner == null){
+                $model->big_owner = Owner::IS_NOT_BIG_OWNER;
+            }
             if ($model->validate()) {
                 $model->save();
                 if($model->big_owner == Owner::IS_BIG_OWNER){

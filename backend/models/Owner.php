@@ -139,6 +139,7 @@ class Owner extends ActiveRecord implements IdentityInterface
 
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
+            ['storeroom_id', 'required'],
             ['email', 'unique'],
             ['email', 'email'],
             [['department','category','phone','tell','product_line','product_two_line','big_owner','is_budget','budget'],'safe'],
@@ -270,6 +271,9 @@ class Owner extends ActiveRecord implements IdentityInterface
     public function getDepartments(){
         return $this->hasOne(Department::className(),['id'=>'department']);
     }
+    public function getStoreroom(){
+        return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']);
+    }
     public function getCategorys(){
         return $this->hasOne(Category::className(),['id'=>'category']);
     }
@@ -304,6 +308,7 @@ class Owner extends ActiveRecord implements IdentityInterface
             'big_owner'=>'是否管理员',
             'is_budget'=>'有无预算权',
             'budget'=>'预算金额',
+            'storeroom_id'=>'所在库房'
         ];
     }
     /**
@@ -367,5 +372,32 @@ class Owner extends ActiveRecord implements IdentityInterface
         }else{
             return static::find()->where(['id'=>$uid])->all();
         }
+    }
+    /**
+     * [getCanUseStorerooms description]
+     * @return [type] [description]
+     */
+    public function getCanUseStorerooms(){
+        $rs = Storeroom::find()->all();
+        $arr = [];
+        if($rs){
+            foreach($rs as $key=>$v){
+                $arr[$v['id']]=$v['name'];
+            }
+
+        }
+        return $arr;
+    }
+    public static function getOwnerByMid($material_id){
+        $material = Material::findOne($material_id);
+        if($material){
+            $owner = Owner::find()->where(['id'=>$material->owner_id])->all();
+            $ret = [];
+            return array_map(function($a) use ($ret){
+                $ret = ['id'=>$a['id'],'name'=>$a['english_name']];
+                return $ret;
+            },$owner);
+        }
+        
     }
 }

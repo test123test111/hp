@@ -12,8 +12,9 @@
             <dt>预定单号：{{ order.viewid }}</dt>
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
             <dt>下单人：{{ order.createduser.english_name }}</dt>
+            <dt>库房：{{ order.storeroom.name }}</dt>
             <dt>预算费用所属人：{{ budget_user }}</dt>
-            <dt>订单预估报价：{{ order.ship_fee + order.fenjian_fee }}RMB</dt>
+            <dt>订单预估报价：{{ (order.ship_fee + order.fenjian_fee) * 1.1 }}RMB</dt>
             <dt>订单状态：<span id="oSt">{{ order.getOrderStatus()|raw }}</span></dt>
         </dl>
         <dl>
@@ -43,7 +44,11 @@
                     {% if order.checkSendFeeApproval() and (order.getApprovalFeeUid() == App.user.id) %}
                         {% if order.fee_approval == 0 %}
                         <li class="clearfix">
-                            <p>订单预估报价超过{{ order.warning_fee_price }}RMB，需要您审批方可发货</p>
+                            {% if order.warning_fee_price == 999999 %}
+                                <p>订单为平台库物资发放，需要管理员审批方可发货</p>
+                                {% else %}
+                                <p>订单预估报价超过{{ order.warning_fee_price }}RMB，需要费用审批方可发货</p>
+                                {% endif %}
                             <span id="spprovalfeeStatus">
                                 <a href="javascript:void(0);" data-id="{{ order.id }}" class="blue agree-fee">同意</a>
                                 {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
@@ -52,7 +57,11 @@
                         </li>
                         {% else %}
                         <li class="clearfix">
-                            <p>订单预估报价超过{{ order.warning_fee_price }}RMB，需要您审批方可发货</p>
+                            {% if order.warning_fee_price == 999999 %}
+                                <p>订单为平台库物资发放，需要管理员审批方可发货</p>
+                                {% else %}
+                                <p>订单预估报价超过{{ order.warning_fee_price }}RMB，需要费用审批方可发货</p>
+                                {% endif %}
                             <span id="spprovalfeeStatus">
                                已同意预算审批
                             </span>

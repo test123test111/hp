@@ -45,7 +45,6 @@
                     <br />
                     <!-- Form starts.  -->
                      {% set form = activeform.begin({'id':'create-form','layout':'horizontal','fieldConfig':{'horizontalCssClasses':{'wrapper':'col-lg-5'} } }) %}
-                          {{ form.field(model,'storeroom_id').dropDownList(model.getCanUseStorerooms()).label(null,{'class':'control-label col-lg-2'})|raw }} 
                           <div class="form-group">
                               <label class="col-lg-2 control-label">物料</label>
                               <div class="col-lg-5">
@@ -54,12 +53,36 @@
                                     'model':model,
                                     'attribute':'material_id',
                                     'data':model.getCanUseMaterial(),
-                                    'options':{'placeholder':'Select a material ...'},
+                                    'options':{'placeholder':'Select a material ...','id':'dep_id'},
                                     'pluginOptions':{'allowClear':true},
                                  })
                              }}
                               </div>
                             </div>
+                            {{ form.field(model,'owner_id').widget('\\kartik\\depdrop\\DepDrop',{
+                                      'type':2,
+                                      'data':model.getDefaultOwner(),
+                                      'options':{'id':'owner_id'},
+                                      'select2Options':{'pluginOptions':{'allowClear':true}},
+                                      'pluginOptions':{
+                                          'depends':{'0':'dep_id'},
+                                          'url':'/stock/owner',
+                                          'params':{'0':'input-type-1','1':'input-type-2'}
+                                      }
+                                }).label(null,{'class':'control-label col-lg-2'})|raw 
+                              }}
+                              {{ form.field(model,'storeroom_id').widget('\\kartik\\depdrop\\DepDrop',{
+                                      'type':2,
+                                      'data':model.getDefaultStoreroom(),
+                                      'options':{'id':'storeroom_id'},
+                                      'select2Options':{'pluginOptions':{'allowClear':true}},
+                                      'pluginOptions':{
+                                          'depends':{'0':'owner_id'},
+                                          'url':'/stock/storeroom',
+                                          'params':{'0':'input-type-1','1':'input-type-2'}
+                                      }
+                                }).label(null,{'class':'control-label col-lg-2'})|raw 
+                              }}
                             {# <div class="form-group">
                               <label class="col-lg-2 control-label">所属人</label>
                               <div class="col-lg-5">

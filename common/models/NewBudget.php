@@ -243,7 +243,12 @@ class NewBudget extends ActiveRecord
                 $data[$i]['change'] = $adjust;
                 $data[$i]['used'] = $consume;
                 $data[$i]['canuse'] = $result->price + $adjust - $consume;
-                $data[$i]['usepercent'] = round(($consume / ($result->price + $adjust))) * 100;
+                if($result->price + $adjust != 0){
+                    $data[$i]['usepercent'] = round(($consume / ($result->price + $adjust))) * 100;
+                }else{
+                    $data[$i]['usepercent'] = 0;
+                }
+                
                 $data[$i]['info'] = "";
                 $str .= $data[$i]['id'].",".$data[$i]['name'].",".$data[$i]['storeroom'].",".$data[$i]['time'].",".$data[$i]['price'].",".$data[$i]['change'].",".$data[$i]['used'].",".$data[$i]['canuse'].",".$data[$i]['usepercent'].",".$data[$i]['info']."\r\n"; //用引文逗号分开
                 $i++;
@@ -360,5 +365,27 @@ class NewBudget extends ActiveRecord
             'owner_id'=>'所属人',
             'price'=>'预算金额',
         ];
+    }
+    /**
+     * [getCurrentIdByUid description]
+     * @param  [type] $uid [description]
+     * @return [type]      [description]
+     */
+    public function checkUserBudget($uid,$storeroom_id){
+        $storeroom = Storeroom::findOne($storeroom_id);
+        $year = date('Y');
+        if(!empty($storeroom)){
+            if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+                $time = date('m');
+            }else{
+                $time = ceil((date('n'))/3);
+            }
+            $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
+            if(!empty($budget)){
+                return $budget->id;
+            }
+            return 0;
+        }
+        return 0;
     }
 }

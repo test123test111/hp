@@ -7,6 +7,8 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\Order;
 use backend\models\Owner;
+use backend\models\Storeroom;
+use common\models\Category;
 /**
  * PostSearch represents the model behind the search form about `backend\models\Post`.
  */
@@ -335,11 +337,34 @@ class OrderSearch extends Order
     public static function getSettlementData($params,$uid){
         $owner = Owner::findOne($uid);
         if($owner){
-            $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+            if($owner->storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+                $category = Category::findOne($owner->category);
+                $category_ids = Category::find()->select('id')->where(['department_id'=>$category->department_id])->column();
+                if($owner->big_owner == Owner::IS_BIG_OWNER){
+                    $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+                                  ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                                  ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
+                                  ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                                  ->andWhere(['budget_uid'=>$uid])
+                                  ->andWhere(['category_id'=>$category_ids])
+                                  ->orderBy(['id'=>SORT_DESC]);
+                }else{
+                    $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+                                  ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                                  ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
+                                  ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                                  ->andWhere(['created_uid'=>$uid])
+                                  ->orderBy(['id'=>SORT_DESC]);
+                }
+            }else{
+                $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
-                              ->andWhere(['category_id'=>$owner->category])
+                              ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                              ->andWhere(['budget_uid'=>$uid])
                               ->orderBy(['id'=>SORT_DESC]);
+            }
+            
 
             if(isset($params['order_id']) && $params['order_id'] != ""){
                 $query->andWhere(['viewid'=>$params['order_id']]);
@@ -372,12 +397,34 @@ class OrderSearch extends Order
     public static function getExportSettlementData($params,$uid){
         $owner = Owner::findOne($uid);
         if($owner){
-            $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+            if($owner->storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+                $category = Category::findOne($owner->category);
+                $category_ids = Category::find()->select('id')->where(['department_id'=>$category->department_id])->column();
+                if($owner->big_owner == Owner::IS_BIG_OWNER){
+                    $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+                                  ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                                  ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
+                                  ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                                  ->andWhere(['budget_uid'=>$uid])
+                                  ->andWhere(['category_id'=>$category_ids])
+                                  ->orderBy(['id'=>SORT_DESC]);
+                }else{
+                    $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+                                  ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                                  ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
+                                  ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                                  ->andWhere(['created_uid'=>$uid])
+                                  ->orderBy(['id'=>SORT_DESC]);
+                }
+            }else{
+                $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
-                              ->andWhere(['category_id'=>$owner->category])
+                              ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                              ->andWhere(['budget_uid'=>$uid])
                               ->orderBy(['id'=>SORT_DESC]);
-
+            }
+            
             if(isset($params['order_id']) && $params['order_id'] != ""){
                 $query->andWhere(['viewid'=>$params['order_id']]);
             }
@@ -416,7 +463,16 @@ class OrderSearch extends Order
                     $data[$i]['storeroom_city'] = $result->storeroom->city;
                     $data[$i]['transporttype'] = $result->getMyTransportType();
                     $data[$i]['transport'] = "";
-                    $data[$i]['weight'] = ($result->getDetailWeight()) / 1000;
+                    if(isset($result->package)){
+                        if($result->package->actual_weight > $result->package->throw_weight){
+                            $data[$i]['weight'] = $result->package->actual_weight;
+                        }else{
+                            $data[$i]['weight'] = $result->package->throw_weight;
+                        }
+                    }else{
+                        $data[$i]['weight'] = 0;
+                    }
+                    
                     $data[$i]['package_num'] = $result->package->num;
                     $data[$i]['fee'] = "";
                     $data[$i]['fenjian_fee'] = $result->fenjian_fee;
@@ -424,7 +480,7 @@ class OrderSearch extends Order
                     $data[$i]['insurance_price'] = $result->insurance_price;
                     $data[$i]['package_fee'] = $result->package->package_fee;
                     $data[$i]['other_fee'] = $result->package->other_fee;
-                    $data[$i]['total'] = $result->fenjian_fee + $result->ship_fee + $result->insurance_price + $result->package->package_fee + $result->package->other_fee;
+                    $data[$i]['total'] = $result->fenjian_fee + $result->real_ship_fee + $result->insurance_price + $result->package->package_fee + $result->package->other_fee;
                     $data[$i]['pre_fee'] = $result->ship_fee + $result->fenjian_fee;
                     $data[$i]['send_time'] = date('Y-m-d H:i',$result->st_send_date);
                     $owner_ids = [];

@@ -56,7 +56,7 @@ class Share extends ActiveRecord
         if($owner->category != 0){
             $category = Category::findOne($owner->category);
             $cat_id = $category->id;
-            $to_customer_ids = Owner::find()->select('id')->where(['category'=>$cat_id])->column();
+            $to_customer_ids = Owner::find()->select('id')->where(['category'=>$cat_id,'storeroom_id'=>$storeroom_id])->column();
         }
         $material = Material::findOne($material_id);
         //only insert herself

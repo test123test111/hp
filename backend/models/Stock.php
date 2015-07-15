@@ -232,5 +232,18 @@ class Stock extends BackendActiveRecord {
         }
         return $ret;
     }
+    public function getDefaultOwner(){
+        $material = Material::findOne($this->material_id);
+        if(!empty($material)){
+            return \yii\helpers\ArrayHelper::map(Owner::find()->where(['id' => $material->owner_id])->all(),'id','english_name');
+        }
+    }
+    public function getDefaultStoreroom(){
+        $material = Material::findOne($this->material_id);
+        if(!empty($material)){
+            $owner = Owner::findOne($material->owner_id);
+            return \yii\helpers\ArrayHelper::map(Storeroom::find()->where(['id' => $owner->storeroom_id])->all(),'id','name');
+        }
+    }
 
 }

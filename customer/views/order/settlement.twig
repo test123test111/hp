@@ -69,16 +69,24 @@
                             <td>{{ result.to_city }}</td>
                             <td>{{ result.getMyTransportType() }}</td>
                             <td></td>
-                            <td>{{ result.getDetailWeight() / 1000}}</td>
+                            {# <td>{{ result.getDetailWeight() / 1000}}</td> #}
+                            <td>
+                            {% if result.package is defined %}
+                                {% if result.package.actual_weight > result.package.throw_weight %}
+                                    {{ result.package.actual_weight }}
+                                {% else %}
+                                    {{ result.package.throw_weight }}
+                                {% endif %}
+                            {% endif %}</td>
                             <td>{% if result.package is defined %}{{ result.package.num }}{% endif %}</td>
                             <td>{{ result.fenjian_fee }}</td>
-                            <td>{{ result.ship_fee }}</td>
+                            <td>{{ result.real_ship_fee }}</td>
                             <td>{{ result.insurance_price }}</td>
                             <td>{% if result.package is defined %}{{ result.package.package_fee }}{% endif %}</td>
                             <td>{% if result.package is defined %}{{ result.package.other_fee }}{% endif %}</td>
                             <td>
                                 {% if result.package is defined %}
-                                {{ result.fenjian_fee + result.ship_fee + result.insurance_price + result.package.package_fee + result.package.other_fee }}
+                                {{ result.fenjian_fee + result.real_ship_fee + result.insurance_price + result.package.package_fee + result.package.other_fee }}
                                 {% endif %}
                             </td>
                             <td>{{ result.viewid }}</td>

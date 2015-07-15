@@ -204,7 +204,6 @@ class OrderController extends CustomerController {
             $transaction = $db->beginTransaction();
             try{
                 $owner = Owner::findOne(Yii::$app->user->id);
-                $storeroom = Yii::$app->request->post('storeroom');
                 if(empty($owner) || $owner->category == 0){
                     throw new \Exception("下单人不属于任何部门，不具备下订单权限", 1);
                 }
@@ -220,6 +219,7 @@ class OrderController extends CustomerController {
                     $model->recipients = $address->name;
                     $model->contact = $address->address;
                 }else{
+                    $storeroom = Yii::$app->request->post('storeroom');
                     $record = Storeroom::findOne($storeroom);
                     $province = HpCity::findOne($record->province);
                     $model->to_province = $province->name;
@@ -244,13 +244,19 @@ class OrderController extends CustomerController {
                 }else{
                     $model->arrive_date = 0;
                 }
-                if($model->storeroom_id == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+                $sto = Storeroom::findOne($model->storeroom_id);
+                if($sto->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+                    $big_owner = Owner::find()->where(['storeroom_id'=>$sto->id,'big_owner'=>Owner::IS_BIG_OWNER])->one();
+                    if(empty($big_owner)){
+                        throw new \Exception('不存在中央库管理员请先创建',500);
+                    }
+                    $model->budget_uid = $big_owner->id;
                     $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
+                }else{
+                    if($model->budget_uid == Yii::$app->user->id){
+                        $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
+                    }
                 }
-                // if($model->budget_uid == Yii::$app->user->id){
-                //     $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
-                // }
-                
                 $model->save();
                 $model->viewid = date('Ymd')."-".$model->id;
                 $model->update();
@@ -862,9 +868,9 @@ class OrderController extends CustomerController {
             }
             
             if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
-                echo 0;
-            }else{
                 echo 1;
+            }else{
+                echo 0;
             }
             Yii::$app->end();
         }

@@ -11,6 +11,7 @@ use backend\models\Order;
 use customer\models\Address;
 use customer\models\Storeroom;
 use customer\models\Owner;
+use common\models\NewBudget;
 class CartController extends CustomerController {
     public $layout = false;
     public $enableCsrfValidation;
@@ -116,7 +117,8 @@ class CartController extends CustomerController {
                 // 'address'=>$userAddress,
                 'company'=>$company,
                 'storerooms'=>$storerooms,
-                'createusers'=>Owner::getBudgetUsers(Yii::$app->user->id),
+                'createusers'=>Owner::getBudgetUsers(Yii::$app->user->id,true),
+                'budget' => new NewBudget,
             )); 
         }
     }
