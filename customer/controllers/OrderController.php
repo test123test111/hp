@@ -753,6 +753,14 @@ class OrderController extends CustomerController {
             // }
             $flag = 0;
             $approval = Approval::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id,'type'=>Approval::TYPE_IS_MATERIAL])->one();
+            if($approval->status == Approval::STATUS_IS_PASS){
+                if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
+                    echo 1;
+                }else{
+                    echo 0;
+                }
+                Yii::$app->end();
+            }
             $details = OrderDetail::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id])->all();
             if(!empty($details)){
                 foreach($details as $detail){
@@ -796,6 +804,7 @@ class OrderController extends CustomerController {
                             $stock->increase = Stock::IS_NOT_INCREASE;
                             $stock->order_id = $detail->order_id;
                             $stock->save(false);
+
 
                             //lock stock total
                             $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
@@ -886,6 +895,14 @@ class OrderController extends CustomerController {
                 $order->update();
             }
             $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_FEE,'owner_id'=>Yii::$app->user->id])->one();
+            if($approval->status == Approval::STATUS_IS_PASS){
+                if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
+                    echo 1;
+                }else{
+                    echo 0;
+                }
+                Yii::$app->end();
+            }
             $approval->status = Approval::STATUS_IS_PASS;
             $approval->modified = date('Y-m-d H:i:s');
             $approval->update();
@@ -1314,10 +1331,7 @@ class OrderController extends CustomerController {
                                 $order->consume();
                             }
                         }
-                        $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_BUDGET,'owner_id'=>Yii::$app->user->id])->one();
-                        $approval->status = Approval::STATUS_IS_PASS;
-                        $approval->modified = date('Y-m-d H:i:s');
-                        $approval->update();
+                        
                         if($order->status == Order::ORDER_STATUS_IS_APPROVALED){
                             echo 1;
                         }else{

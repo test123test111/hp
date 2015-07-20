@@ -9,6 +9,7 @@ use backend\models\Order;
 use backend\models\Owner;
 use backend\models\Storeroom;
 use common\models\Category;
+use common\models\Department;
 /**
  * PostSearch represents the model behind the search form about `backend\models\Post`.
  */
@@ -114,10 +115,24 @@ class OrderSearch extends Order
      * @return [type] [description]
      */
     public static function getDoingData($params){
-        $query = Order::find()->with(['details'])
-                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL,'created_uid'=>Yii::$app->user->id])
+        $uid = Yii::$app->user->id;
+        $owner = Owner::findOne($uid);
+        if($owner->big_owner == Owner::IS_BIG_OWNER){
+            $category = Category::findOne($owner->category);
+            $department = Department::findOne($category->department_id);
+            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            $query = Order::find()->with(['details'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere(['category_id'=>$category_ids])
                               ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_APPROVALED,':c_status'=>self::ORDER_STATUS_IS_TRUCK])
                               ->orderBy(['id'=>SORT_DESC]);
+        }else{
+            $query = Order::find()->with(['details'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere(['created_uid'=>$uid])
+                              ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_APPROVALED,':c_status'=>self::ORDER_STATUS_IS_TRUCK])
+                              ->orderBy(['id'=>SORT_DESC]);
+        }
 
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $query->andWhere(['viewid'=>$params['order_id']]);
@@ -145,10 +160,24 @@ class OrderSearch extends Order
      * @return [type] [description]
      */
     public static function getDoneData($params){
-        $query = Order::find()->with(['details'])
-                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL,'created_uid'=>Yii::$app->user->id])
+        $uid = Yii::$app->user->id;
+        $owner = Owner::findOne($uid);
+        if($owner->big_owner == Owner::IS_BIG_OWNER){
+            $category = Category::findOne($owner->category);
+            $department = Department::findOne($category->department_id);
+            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            $query = Order::find()->with(['details'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere(['category_id'=>$category_ids])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                               ->orderBy(['id'=>SORT_DESC]);
+        }else{
+            $query = Order::find()->with(['details'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere(['created_uid'=>$uid])
+                              ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
+                              ->orderBy(['id'=>SORT_DESC]);
+        }
 
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $query->andWhere(['viewid'=>$params['order_id']]);
@@ -176,10 +205,24 @@ class OrderSearch extends Order
      * @return [type] [description]
      */
     public static function getExcepetData($params){
-        $query = Order::find()->with(['details','unsign'])
-                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'created_uid'=>Yii::$app->user->id])
+        $uid = Yii::$app->user->id;
+        $owner = Owner::findOne($uid);
+        if($owner->big_owner == Owner::IS_BIG_OWNER){
+            $category = Category::findOne($owner->category);
+            $department = Department::findOne($category->department_id);
+            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            $query = Order::find()->with(['details'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere(['category_id'=>$category_ids])
                               ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_UNSIGN,':c_status'=>self::ORDER_STATUS_IS_APPROVAL_FAIL])
                               ->orderBy(['id'=>SORT_DESC]);
+        }else{
+            $query = Order::find()->with(['details'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere(['created_uid'=>$uid])
+                              ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_UNSIGN,':c_status'=>self::ORDER_STATUS_IS_APPROVAL_FAIL])
+                              ->orderBy(['id'=>SORT_DESC]);
+        }
 
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $query->andWhere(['viewid'=>$params['order_id']]);
@@ -207,7 +250,23 @@ class OrderSearch extends Order
      * @return [type] [description]
      */
     public static function getNeedapprovalData($params){
-        $query = Order::find()->with(['details'])->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL,'created_uid'=>Yii::$app->user->id,'status'=>self::ORDER_STATUS_IS_NEED_APPROVAL])->orderBy(['id'=>SORT_DESC]);
+        $uid = Yii::$app->user->id;
+        $owner = Owner::findOne($uid);
+        if($owner->big_owner == Owner::IS_BIG_OWNER){
+            $category = Category::findOne($owner->category);
+            $department = Department::findOne($category->department_id);
+            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            $query = Order::find()->with(['details'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL,'status'=>self::ORDER_STATUS_IS_NEED_APPROVAL])
+                              ->andWhere(['category_id'=>$category_ids])
+                              ->orderBy(['id'=>SORT_DESC]);
+        }else{
+            $query = Order::find()->with(['details'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL,'status'=>self::ORDER_STATUS_IS_NEED_APPROVAL])
+                              ->andWhere(['created_uid'=>$uid])
+                              ->orderBy(['id'=>SORT_DESC]);
+        }
+        
 
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $query->andWhere(['viewid'=>$params['order_id']]);
@@ -242,7 +301,28 @@ class OrderSearch extends Order
      * @return [type]         [description]
      */
     public static function getExportDoneData($params){
-        $query = Order::find()->with([
+        $uid = Yii::$app->user->id;
+        $owner = Owner::findOne($uid);
+        if($owner->big_owner == Owner::IS_BIG_OWNER){
+            $category = Category::findOne($owner->category);
+            $department = Department::findOne($category->department_id);
+            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            $query = Order::find()->with([
+                              'details'=>function($query){
+                                  return $query->with(['owner'=>function($query){
+                                        return $query->with(['departments','categorys','productlines','producttwolines']);
+                                  }]);
+                              },
+                              'createuser',
+                              'storeroom'=>function($query){
+                                return $query->with('citydata');
+                              }])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
+                              ->andWhere(['category_id'=>$category_ids])
+                              ->orderBy(['id'=>SORT_DESC]);
+        }else{
+            $query = Order::find()->with([
                               'details'=>function($query){
                                   return $query->with(['owner'=>function($query){
                                         return $query->with(['departments','categorys','productlines','producttwolines']);
@@ -255,7 +335,8 @@ class OrderSearch extends Order
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL,'created_uid'=>Yii::$app->user->id])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                               ->orderBy(['id'=>SORT_DESC]);
-
+        }
+        
         if(isset($params['order_id']) && $params['order_id'] != ""){
             $query->andWhere(['viewid'=>$params['order_id']]);
         }

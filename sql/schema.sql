@@ -676,6 +676,17 @@ CREATE TABLE `new_budget_consume` (
   KEY `owner_id`(`owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `stock_locknum_record`;
+CREATE TABLE `stock_locaknum_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `material_id` int(11) NOT NULL,
+  `storeroom_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `lock_num` int(11) NOT NULL,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 

@@ -737,6 +737,14 @@ class OrderController extends \yii\web\Controller {
             // }
             $flag = 0;
             $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL])->one();
+            if($approval->status == Approval::STATUS_IS_PASS){
+                if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
+                    echo 0;
+                }else{
+                    echo 1;
+                }
+                Yii::$app->end();
+            }
             $details = OrderDetail::find()->where(['order_id'=>$order_id])->all();
             if(!empty($details)){
                 foreach($details as $detail){
@@ -776,26 +784,37 @@ class OrderController extends \yii\web\Controller {
                         $stock->save(false);
 
                         //lock stock total
-                        $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
-                        $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
-                        $stockTotal->total = $stockTotal->total - $detail->quantity;
-                        $stockTotal->update();
+                        //$locknum_record = LocknumRecord::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id,'order_id'=>$detail->order_id])->one();
+                        //if(empty($locknum_record)){
+                            // $lockrecord = new LocknumRecord;
+                            // $lockrecord->material_id = $detail->material_id;
+                            // $lockrecord->storeroom_id = $detail->storeroom_id;
+                            // $lockrecord->order_id = $detail->order_id;
+                            // $lockrecord->lock_num = $detail->quantity;
+                            // $lockrecord->save();
 
-                        if($stockTotal->total < $stockTotal->warning_quantity){
-                            //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
-                            $ret = [
-                                'code'=>$detail->material->code,
-                                'name'=>$detail->material->name,
-                                'email'=>$detail->owner->email,
-                                'total'=>$stockTotal->total,
-                                'type'=>'物料',
-                            ];
-                            $sendEmail = new SendEmail;
-                            $sendEmail->template = 'stock';
-                            $sendEmail->content = json_encode($ret);
-                            $sendEmail->created = date('Y-m-d H:i:s');
-                            $sendEmail->save();
-                        }
+                            $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+                            $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+                            $stockTotal->total = $stockTotal->total - $detail->quantity;
+                            $stockTotal->update();
+
+                            if($stockTotal->total < $stockTotal->warning_quantity){
+                                //您的物料（物料编号+物料名称）剩余库存为**，已达预警值，请您知悉，谢谢。
+                                $ret = [
+                                    'code'=>$detail->material->code,
+                                    'name'=>$detail->material->name,
+                                    'email'=>$detail->owner->email,
+                                    'total'=>$stockTotal->total,
+                                    'type'=>'物料',
+                                ];
+                                $sendEmail = new SendEmail;
+                                $sendEmail->template = 'stock';
+                                $sendEmail->content = json_encode($ret);
+                                $sendEmail->created = date('Y-m-d H:i:s');
+                                $sendEmail->save();
+                            }
+                        // }
+                        
                     }
                     $orderInfo->consume();
                 }
@@ -863,6 +882,14 @@ class OrderController extends \yii\web\Controller {
                 $order->update();
             }
             $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_FEE,'owner_id'=>Yii::$app->user->id])->one();
+            if($approval->status == Approval::STATUS_IS_PASS){
+                if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
+                    echo 1;
+                }else{
+                    echo 0;
+                }
+                Yii::$app->end();
+            }
             $approval->status = Approval::STATUS_IS_PASS;
             $approval->modified = date('Y-m-d H:i:s');
             $approval->update();
