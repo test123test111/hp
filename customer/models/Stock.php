@@ -744,5 +744,17 @@ class Stock extends CustomerActiveRecord {
         }
         return $str;
     }
+    /**
+     * get 4 month record 
+     * @param  [type] $storeroom_id [description]
+     * @param  [type] $material_id  [description]
+     * @return [type]               [description]
+     */
+    public static function getStockRecord4Month($storeroom_id,$material_id){
+        $date = date('Y-m-d',strtotime("-3 month"));
+        $begin_time = $date." 00:00:00";
+        $end_time = date('Y-m-d H:i:s');
 
+        return static::find()->where(['storeroom_id'=>$storeroom_id,'material_id'=>$material_id])->andWhere('stock_time >= :begin_time AND stock_time <= :end_time',[":begin_time"=>$begin_time,":end_time"=>$end_time])->orderBy(['stock_time'=>SORT_DESC])->all();
+    }
 }

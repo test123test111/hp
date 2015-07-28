@@ -152,7 +152,7 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 
 /* view style */
 .view_wrap{border-top:1px solid #dadada;padding-top:15px;}
-.view_box{width:1172px;margin:0 auto;text-align:left;}
+.view_box{width:1172px;margin:0 auto;text-align:left;padding-bottom: 80px;}
 .view_left{float:left;width:970px;}
 .view_right{float:right;width:170px;border-left:1px solid #dadada;}
 .view_left .pic{float:left;}

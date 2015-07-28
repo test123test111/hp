@@ -162,7 +162,6 @@ class MaterialController extends \yii\web\Controller {
     public function actionDetail(){
         $searchModel = new StockSearch;
         $dataProvider = $searchModel->searchDetail(Yii::$app->request->getQueryParams());
-
         return $this->render('detail', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
@@ -221,6 +220,7 @@ class MaterialController extends \yii\web\Controller {
         }
         $uid = Yii::$app->user->id;
         $material = Material::findOne($id);
+        $stockRecord = Stock::getStockRecord4Month($params['sid'],$id);
         return $this->render('view', [
             'material' => $material,
             'storerooms'=>Stock::getStockByUidAndMaterialId($uid,$id),
@@ -228,6 +228,7 @@ class MaterialController extends \yii\web\Controller {
             'stocktotal'=>StockTotal::find()->where(['material_id'=>$material->id,'storeroom_id'=>$params['sid']])->one(),
             'owner'=>Owner::findOne($material->owner_id),
             'sid'=>$params['sid'],
+            'stockRecord' => $stockRecord,
         ]);
     }
     /**

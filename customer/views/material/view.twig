@@ -164,8 +164,57 @@
                             <em></em>
                         </p>
                     </div>
-                    <div class="views">
-                        
+                </div>
+                <div class="detail_box" style="padding:10px 0;">
+                    <h3>近4月出入库记录</h3>
+                    <div class="intro">
+                        <table id="material_list" class="materiel_table">
+                        <thead>
+                            <tr>
+                                <td>物料编号</td>
+                                <td>物料名称</td>
+                                <td>所属人</td>
+                                <td>物料类型</td>
+                                <td>库房位置</td>
+                                <td>入库时间</td>
+                                <td>入库数量</td>
+                                <td>出库时间</td>
+                                <td>出库数量</td>
+                                <td>出库至</td>
+                                <td>申请人</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key,result in stockRecord %}
+                            <tr>
+                                <td>{{ result.material.code }}</td>
+                                <td>{{ result.material.name }}</td>
+                                <td>{{ result.owners.english_name }}</td>
+                                <td>{{ result.material.getMyPropertyName() }}</td>
+                                <td>{{ result.storeroom.name }}</td>
+                                <td>{% if result.increase == 0 %}{{ result.stock_time|date('Y-m-d H:i') }}{% else %}{% endif %}</td>
+                                <td>{% if result.increase == 0 %}{{ result.actual_quantity }}{% else %}{% endif %}</td>
+                                <td>{% if result.increase == 1 %}{{ result.stock_time|date('Y-m-d H:i') }}{% else %}{% endif %}</td>
+                                <td>{% if result.increase == 1 %}{{ 0 - result.actual_quantity }}{% else %}{% endif %}</td>
+                                <td>{% if result.increase == 1 %}
+                                        {% if result.order is defined %}
+                                        {% if result.order.to_type == 0 %}
+                                        收件人 {{ result.order.to_city }} {{ result.order.contact }}
+                                        {% else %}
+                                        平台库 {{ result.order.to_city }} {{ result.order.contact }}
+                                        {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td>{% if result.increase == 1 %}
+                                    {% if result.order is defined %}
+                                    {{ result.order.createuser.english_name }}
+                                    {% endif %}
+                                {% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table> 
                     </div>
                 </div>
             </div>
