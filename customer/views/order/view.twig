@@ -35,6 +35,7 @@
             <dt>下单日期：{{ order.created|date('Y-m-d H:i') }}</dt>
             <dt>下单人：{{ order.createduser.english_name }}</dt>
              <dt>库房：{{ order.storeroom.name }}</dt>
+             <dt>是否借用：{% if order.is_borrow == 0 %}否{% else %}是{% endif %}</dt>
             <dt>预算费用所属人：{{ budget_user }}</dt>
             {# <dt>订单运费：{{ order.ship_fee }}RMB</dt>
             <dt>订单分拣费：{{ order.fenjian_fee }}RMB</dt> #}

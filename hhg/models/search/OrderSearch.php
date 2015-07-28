@@ -205,7 +205,7 @@ class OrderSearch extends Order
             $query->andWhere(['type'=>$params['type']]);
         }
         $count = $query->count();
-        $str = "序号,申请人,申请订单日期,订单号,库房位置,起运城市,收货城市,收货地址,收货人,运输方式,发货日期,订单状态,所属人,部门,组别,一级产品线,二级产品线,备注信息\n";
+        $str = "序号,申请人,申请订单日期,订单号,是否借用,库房位置,起运城市,收货城市,收货地址,收货人,运输方式,发货日期,订单状态,所属人,部门,组别,一级产品线,二级产品线,备注信息\n";
         $offset = 0;
         $limit = 100;
         $data = [];
@@ -217,6 +217,11 @@ class OrderSearch extends Order
             }
             foreach($results as $key =>$result){
                 $data[$i]['id'] = $i;
+                if($result->is_borrow == 0 ){
+                    $data[$i]['is_borrow'] = '否';
+                }else{
+                    $data[$i]['is_borrow'] = '是';
+                }
                 $data[$i]['createuser'] = $result->createuser->english_name;
                 $data[$i]['created'] = date('Y-m-d H:i',strtotime($result->created));
                 $data[$i]['viewid'] = $result->viewid;
@@ -254,7 +259,7 @@ class OrderSearch extends Order
                     $data[$i]['producttwoline'] = "";
                 }
                 $data[$i]['info'] = $result->info;
-                $str .= $data[$i]['id'].",".$data[$i]['createuser'].",".$data[$i]['created'].",".$data[$i]['viewid'].",".$data[$i]['storeroom'].",".$data[$i]['send_city'].",".$data[$i]['to_city'].",".$data[$i]['address'].",".$data[$i]['user'].",".$data[$i]['transporttype'].",".$data[$i]['send_date'].",".$data[$i]['status'].",".$data[$i]['owner'].",".$data[$i]['department'].",".$data[$i]['category'].",".$data[$i]['productline'].",".$data[$i]['producttwoline'].",".$data[$i]['info']."\r\n"; //用引文逗号分开
+                $str .= $data[$i]['id'].",".$data[$i]['createuser'].",".$data[$i]['created'].",".$data[$i]['viewid'].",".$data[$i]['is_borrow'].','.$data[$i]['storeroom'].",".$data[$i]['send_city'].",".$data[$i]['to_city'].",".$data[$i]['address'].",".$data[$i]['user'].",".$data[$i]['transporttype'].",".$data[$i]['send_date'].",".$data[$i]['status'].",".$data[$i]['owner'].",".$data[$i]['department'].",".$data[$i]['category'].",".$data[$i]['productline'].",".$data[$i]['producttwoline'].",".$data[$i]['info']."\r\n"; //用引文逗号分开
                 $i++;
             }
            
