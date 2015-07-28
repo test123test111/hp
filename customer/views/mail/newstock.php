@@ -3,7 +3,7 @@ $url = "http://customer.yltd.com/order/list";
 ?>
 <html>
 	<body>
-		<p>尊敬的<b><?php echo $record['email']; ?></b>:</p>
+		<p>尊敬的<b><?php echo $record[0]['email']; ?></b>:</p>
 		<br><br>
 		有您如下物料入库，请您知悉，欢迎随时登录系统查阅详情。
 		<br><br>
@@ -22,17 +22,21 @@ $url = "http://customer.yltd.com/order/list";
                 </tr>
             </thead>
             <tbody>
-                <tr bg="#fff">
-                    <td>1</td>
-                    <td><?php echo $record['code']; ?></td>
-                    <td><?php echo $record['name']; ?></td>
-                    <td><?php echo $record['stock_time']; ?></td>
-                    <td><?php echo $record['quantity']; ?></td>
-                    <td><?php echo $record['property']; ?></td>
-                    <td><?php echo $record['share']; ?></td>
-                    <td><?php echo $record['delivery']; ?></td>
-                    <td><?php echo $record['info']; ?></td>
+                <?php $i = 0; ?>
+                <?php foreach($record as $value):?>
+                <tr <?php if($i % 2 ==0 ): ?>bg="#fff"<?php endif ?> >
+                    <td><?php echo $i + 1; ?></td>
+                    <td><?php echo $value['code']; ?></td>
+                    <td><?php echo $value['name']; ?></td>
+                    <td><?php echo $value['stock_time']; ?></td>
+                    <td><?php echo $value['quantity']; ?></td>
+                    <td><?php echo $value['property']; ?></td>
+                    <td><?php echo $value['share']; ?></td>
+                    <td><?php echo $value['delivery']; ?></td>
+                    <td><?php echo $value['info']; ?></td>
                 </tr>
+                <?php $i++; ?>
+                <?php endforeach ?>
             </tbody>
         </table>
 		<br>
