@@ -18,6 +18,7 @@ class Material extends BackendActiveRecord {
 
     const DATASOURCE_IS_IMPORT = 0;
     const DATASOURCE_IS_ADD = 1;
+    const DATASOURCE_IS_RETURN = 2;
     /**
      * function_description
      *
@@ -130,6 +131,7 @@ class Material extends BackendActiveRecord {
         return [
             self::DATASOURCE_IS_ADD => '添加',
             self::DATASOURCE_IS_IMPORT =>'导入',
+            self::DATASOURCE_IS_RETURN => '归还',
         ];
     }
     /**

@@ -244,6 +244,11 @@ class OrderController extends \yii\web\Controller {
                 }
 
                 $model->hhg_uid = Yii::$app->user->id;
+                if($model->purpose == 1){
+                    $model->purpose = "借用";
+                }else{
+                    $model->purpose = "";
+                }
                 $model->save();
                 $model->viewid = date('Ymd')."-".$model->id;
                 $model->update();

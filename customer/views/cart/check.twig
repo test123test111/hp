@@ -83,7 +83,20 @@
                         <input type="text" placeholder="输入保险金额" name="Order[insurance_price]" class="memo_input none" id="safe_price" />
                     </div>
 
-                    <div class="dt">6 物料信息</div>
+                    <div class="dt">6 是否借用</div>
+                    <div class="dd">
+                        <ul class="delivery_time clearfix">
+                            <li data-show="1">
+                                <label><input type="radio" class="hookbox" value="1" name="Order[purpose]">是</label>
+                            </li>
+                            <li class="selected" data-show="0">
+                                <label><input type="radio" class="hookbox" checked="checked" value="0" name="Order[purpose]">否</label>
+                            </li>
+                        </ul>
+                        <input type="text" placeholder="输入保险金额" name="Order[insurance_price]" class="memo_input none" id="safe_price" />
+                    </div>
+
+                    <div class="dt">7 物料信息</div>
                     <div class="dd">
                         <div class="buy_goods">
                             <div class="cart_tt clearfix">
@@ -122,7 +135,6 @@
                             </ul>
                         </div>
                         <input type="hidden" id="shipResult" />
-                        <input type="text" placeholder="输入用途" name="Order[purpose]" class="memo_input" />
                         <input type="text" placeholder="输入备注信息" name="Order[info]" class="memo_input" />
                     </div>
                     {% if results.0.info.storeroom_id != 1 %}
