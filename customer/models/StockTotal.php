@@ -59,4 +59,18 @@ class StockTotal extends CustomerActiveRecord {
         }
         return true;
     }
+    /**
+     * [getTotalNum description]
+     * @param  [type] $material_id  [description]
+     * @param  [type] $stororoom_id [description]
+     * @return [type]               [description]
+     */
+    public static function getTotalNum($material_id,$storeroom_id)
+    {
+        $total = static::find()->where(['material_id'=>$material_id,'storeroom_id'=>$storeroom_id])->one();
+        if(empty($total)){
+            return 0;
+        }
+        return $total->warning_quantity;
+    }
 }

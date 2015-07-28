@@ -498,7 +498,7 @@ class Stock extends CustomerActiveRecord {
         // return 0;
         $total = StockTotal::find()->where(['storeroom_id'=>$storeroom_id,'material_id'=>$material_id])->one();
         if(!empty($total)){
-            return $total->total;
+            return $total->total - $total->lock_num;
         }
         return 0;
     }

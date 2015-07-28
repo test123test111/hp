@@ -121,7 +121,9 @@
                                     {{ result.stockTotals.total - result.stockTotals.lock_num }}
                                 {% endif %}
                             </td>
-                            <td>{{ result.stockTotals.warning_quantity }}</td>
+                            <td>
+                                {{ result.stockTotals.warning_quantity }}
+                            </td>
                             <td><input type="text" value="" name="" class="m_amount" id="amount_{{ key }}" /></td>
                         </tr>
                         {% endfor %}
@@ -247,6 +249,8 @@
                     }
                 });
             }
+
+            
         </script>
 {% endblock %}
 

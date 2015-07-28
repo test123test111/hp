@@ -48,6 +48,20 @@ class StockTotal extends CustomerActiveRecord {
             'total'=>'现有库存',
         ];
     }
+    /**
+     * [getTotalNum description]
+     * @param  [type] $material_id  [description]
+     * @param  [type] $stororoom_id [description]
+     * @return [type]               [description]
+     */
+    public static function getTotalNum($material_id,$storeroom_id)
+    {
+        $total = static::find()->where(['material_id'=>$material_id,'storeroom_id'=>$storeroom_id])->one();
+        if(empty($total)){
+            return 0;
+        }
+        return $total->warning_quantity;
+    }
     //check quantity is enough 
     public static function checkQuantity($material_id,$stororoom_id,$quantity){
         $stock = static::find()->where(['material_id'=>$material_id,'stororoom_id'=>$stororoom_id])->one();

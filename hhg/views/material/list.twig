@@ -108,7 +108,10 @@
                                     {{ result.total - result.lock_num }}
                                 {% endif %}
                             </td>
-                            <td>{{ result.warning_quantity }}</td>
+                            <td>
+                                {{ result.warning_quantity }}
+                                <a href="javascript:void(0);" class="blue" onclick="changeWarning({{ result.material_id }},{{ result.storeroom_id }});">更改</a>
+                            </td>
                             <td><input type="text" value="" name="" class="m_amount" id="amount_{{ key }}" /></td>
                         </tr>
                         {% endfor %}
@@ -208,7 +211,7 @@
                         $.layer({
                             type: 1,
                             shade: [0.5, '#000'],
-                            area: ['500', '450'],
+                            area: ['200', '150'],
                             title: '分享',
                             btns: 2,
                             btn: ['确定', '取消'],
@@ -226,6 +229,42 @@
                                     success : function(json){
                                         $("#succShare").show();
                                         window.setTimeout("$('#succShare').fadeOut()",2000)
+                                    }
+                                });
+                            },
+                            page: {html:json}
+                        });
+                    }
+                });
+            }
+
+            function changeWarning(mid,rid){
+                var safeCode = $('meta[name=csrf-token]');
+                $.ajax({
+                    url : "/material/change",
+                    type : "POST",
+                    dataType : "html",
+                    data : {"material_id":mid,"storeroom_id":rid,"_csrf":safeCode.attr('content')},
+                    success : function(json){
+                        $.layer({
+                            type: 1,
+                            shade: [0.5, '#000'],
+                            area: ['250', '200'],
+                            title: '修改报警数量',
+                            btns: 2,
+                            btn: ['确定', '取消'],
+                            border: [5, 0.2, '#000'],
+                            yes: function(){
+                                var num = $("#warning-num").val();
+                                $.ajax({
+                                    url : "/material/changewarning",
+                                    type : "POST",
+                                    dataType : "json",
+                                    data : {"material_id":mid,"storeroom_id":rid,"num":num,"_csrf":safeCode.attr('content')},
+                                    success : function(json){
+                                        $("#succShare").show();
+                                        window.setTimeout("$('#succShare').fadeOut()",2000)
+                                        window.location.reload();
                                     }
                                 });
                             },

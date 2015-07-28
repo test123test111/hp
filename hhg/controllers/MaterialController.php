@@ -22,7 +22,7 @@ class MaterialController extends \yii\web\Controller {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'list','detail','export','view','share','updateshare'],
+                        'actions' => ['index', 'list','detail','export','view','share','updateshare','change','changewarning'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -87,6 +87,31 @@ class MaterialController extends \yii\web\Controller {
                 $shares = Share::find()->select('to_customer_id')->where(['material_id'=>$material_id,'owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'status'=>Share::STATUS_IS_NORMAL])->andWhere(['<>','to_customer_id',$uid])->column();
                 echo $this->renderPartial('share',['users'=>$users,'shares'=>$shares,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id]);
             }
+        }
+    }
+    /**
+     * [actionShare description]
+     * @return [type] [description]
+     */
+    public function actionChange(){
+        if(Yii::$app->request->isPost){
+            $material_id = Yii::$app->request->post('material_id');
+            $storeroom_id = Yii::$app->request->post('storeroom_id');
+            $quantity = StockTotal::getTotalNum($material_id,$storeroom_id);
+            echo $this->renderPartial('change',['material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'quantity'=>$quantity]);
+        }
+    }
+    /**
+     * [actionShare description]
+     * @return [type] [description]
+     */
+    public function actionChangewarning(){
+        if(Yii::$app->request->isPost){
+            $material_id = Yii::$app->request->post('material_id');
+            $storeroom_id = Yii::$app->request->post('storeroom_id');
+            $num = Yii::$app->request->post('num');
+            StockTotal::updateAll(['warning_quantity'=>$num],['storeroom_id'=>$storeroom_id,'material_id'=>$material_id]);
+            echo 1;
         }
     }
     /**
