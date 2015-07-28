@@ -21,7 +21,7 @@ class Address extends CustomerActiveRecord {
     {
         return [
             [['name', 'address','company'], 'required'],
-            [['phone', 'province', 'city', 'area', 'address', 'zip', 'tel_area_code', 'tel', 'tel_ext'], 'safe'],
+            [['phone', 'province', 'city', 'area', 'address', 'zip', 'tel_area_code', 'tel', 'tel_ext','info'], 'safe'],
         ];
     }
 

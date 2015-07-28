@@ -142,7 +142,7 @@ function editAddress(id){
             $.layer({
                 type: 1,
                 shade: [0.5, '#000'],
-                area: ['900', '430'],
+                area: ['900', '460'],
                 title: '地址',
                 btns: 2,
                 btn: ['确定', '取消'],
@@ -175,12 +175,13 @@ function postAddressData(){
     var addr_tel = $("#addr_tel").val();
     var addr_ext = $("#addr_ext").val();
     var addr_phone = $("#addr_phone").val();
+    var addr_info = $("#addr_info").val();
     var addr_url = "/order/address";
     $.ajax({
         url:addr_url,
         dataType:"html",
         type:"POST",
-        data:{"id":addr_id,"Address":{"name":addr_name,'company':addr_company,"phone":addr_phone,"province":addr_province,"city":addr_city,"area":addr_district,"address":addr_address,"zip":addr_zip,"tel":addr_tel,"tel_area_code":addr_area,"addr_ext":addr_ext}},
+        data:{"id":addr_id,"Address":{"name":addr_name,'company':addr_company,"phone":addr_phone,"province":addr_province,"city":addr_city,"area":addr_district,"address":addr_address,"zip":addr_zip,"tel":addr_tel,"tel_area_code":addr_area,"addr_ext":addr_ext,'info':addr_info}},
         success:function(json){
             if(json != 0){
                 $("#address_area").html(json);

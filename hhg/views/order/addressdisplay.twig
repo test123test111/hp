@@ -63,6 +63,12 @@
                         <span class="tip">电话和手机请至少填写一个</span><span class="error_tip" id="error_phone">电话和手机请至少填写一个</span>
                     </td>
                 </tr>
+                 <tr>
+                    <th>包装要求：<em></em></th>
+                    <td>
+                        <input type="text" id="addr_info" class="tc-text" {% if isNew == false %}value="{{ model.info }}"{% endif %} id="ammobi">
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
