@@ -123,7 +123,7 @@ class Address extends CustomerActiveRecord {
                 $data[$i]['address'] = $result->province.$result->city.$result->area.$result->address;
                 $data[$i]['city'] = $result->city;
                 $data[$i]['created'] = $result->created;
-                $data[$i]['info'] = "";
+                $data[$i]['info'] = $result->info;
                 $str .= $data[$i]['id'].",".$data[$i]['uid'].",".$data[$i]['company'].",".$data[$i]['name'].",".$data[$i]['phone'].",".$data[$i]['address'].",".$data[$i]['city'].",".$data[$i]['created'].",".$data[$i]['info']."\r\n"; //用引文逗号分开
                 $i++;
             }

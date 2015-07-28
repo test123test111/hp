@@ -218,6 +218,7 @@ class OrderController extends CustomerController {
                     $model->phone = $address->phone;
                     $model->recipients = $address->name;
                     $model->contact = $address->address;
+                    $model->addr_info = $address->info;
                 }else{
                     $storeroom = Yii::$app->request->post('storeroom');
                     $record = Storeroom::findOne($storeroom);
