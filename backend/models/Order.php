@@ -500,7 +500,7 @@ class Order extends BackendActiveRecord {
 
         list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->budget_uid,$this->storeroom_id);
 
-        if($department->id == Department::IS_COMERCIAL){
+        // if($department->id == Department::IS_COMERCIAL){
             //中央库规则
             if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
                 // if($budget_fee > ($total - $consume)){
@@ -514,12 +514,12 @@ class Order extends BackendActiveRecord {
                         $stockTotal->update();
                     }
                 }else{
-                    if(($consume / $total) < 0.85 && $budget_fee >= 1000){
+                    if(($consume / $total) < 0.80 && $budget_fee >= 1000){
                         $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
                         $this->warning_fee_price = 1000;
                         $this->update();
                     }
-                    if(($consume / $total) >= 0.85 && $budget_fee >= 500){
+                    if(($consume / $total) >= 0.80 && $budget_fee >= 500){
                         $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
                         $this->warning_fee_price = 500;
                         $this->update();
@@ -542,24 +542,24 @@ class Order extends BackendActiveRecord {
                 //     $this->update();
                 // }
             }
-        }
-        if($department->id == Department::IS_CONSUMER){
-            if($budget_fee > ($total - $consume)){
-                $this->can_formal = self::IS_NOT_FORMAL;
-                $this->update();
-                foreach($this->details as $detail){
-                    //lock stock total
-                    $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
-                    $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
-                    $stockTotal->update();
-                }
-            }
-            // else{
-            //     $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
-            //     $this->warning_fee_price = 999999;
-            //     $this->update();
-            // }
-        }
+        // }
+        // if($department->id == Department::IS_CONSUMER){
+        //     if($budget_fee > ($total - $consume)){
+        //         $this->can_formal = self::IS_NOT_FORMAL;
+        //         $this->update();
+        //         foreach($this->details as $detail){
+        //             //lock stock total
+        //             $stockTotal = StockTotal::find()->where(['material_id'=>$detail->material_id,'storeroom_id'=>$detail->storeroom_id])->one();
+        //             $stockTotal->lock_num = $stockTotal->lock_num - $detail->quantity;
+        //             $stockTotal->update();
+        //         }
+        //     }
+        //     // else{
+        //     //     $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
+        //     //     $this->warning_fee_price = 999999;
+        //     //     $this->update();
+        //     // }
+        // }
 
         // $this->need_fee_approval = self::ORDER_NEED_FEE_APPROVAL;
         // $this->warning_fee_price = 500;
@@ -714,7 +714,7 @@ class Order extends BackendActiveRecord {
 
         list($total,$consume) = NewBudget::getPriceTotalAndConsume($this->budget_uid,$this->storeroom_id);
         if($total != 0){
-            if($consume / $total >= 0.5 && $consume / $total < 0.85){
+            if($consume / $total >= 0.5 && $consume / $total < 0.80){
                 $warning_price = '50%';
                 $ret = [
                     'price'=>$warning_price,
@@ -727,7 +727,7 @@ class Order extends BackendActiveRecord {
                 $sendEmail->created = date('Y-m-d H:i:s');
                 $sendEmail->save();
             }
-            if($consume / $total >= 0.85){
+            if($consume / $total >= 0.80){
                 $warning_price = '85%';
                 $ret = [
                     'price'=>$warning_price,
@@ -826,5 +826,13 @@ class Order extends BackendActiveRecord {
                 return true;
             }
         }
+    }
+    /**
+     * get need cancel order
+     * @return [type] [description]
+     */
+    public static function getNeedCancel(){
+        $begin_time = date('Y-m-d H:i:s',strtotime("-2 day"));
+        return static::find()->where(['status'=>self::ORDER_STATUS_IS_PRE])->andWhere(['status'=>self::ORDER_STATUS_IS_NEED_APPROVAL])->andWhere('created <= :begin_time',[':begin_time'=>$begin_time])->one();
     }
 }

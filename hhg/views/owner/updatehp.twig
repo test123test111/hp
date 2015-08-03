@@ -39,16 +39,16 @@
                     </li>
                     <li class="clearfix">
                         <label>组别:</label>
-                        {{ form.field(model,'category',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList({'':"请选择组别"},{'id':'level_two', 'onchange':"car_type_search(this,'level_three','level_four','','3')"}).label(false)|raw}}
+                        {{ form.field(model,'category',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList(model.getDefaultCategory(),{'id':'level_two', 'onchange':"car_type_search(this,'level_three','level_four','','3')"}).label(false)|raw}}
                     </li>
-                    {# <li class="clearfix">
+                    <li class="clearfix">
                         <label>一级产品线:</label>
-                        {{ form.field(model,'product_line',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList({'':"请选择一级产品线"},{'id':'level_three', 'onchange':"car_type_search(this,'level_four','','','4')"}).label(false)|raw}}
+                        {{ form.field(model,'product_line',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList(model.getDefaultProductLine(),{'id':'level_three', 'onchange':"car_type_search(this,'level_four','','','4')"}).label(false)|raw}}
                     </li>
                     <li class="clearfix">
                         <label>二级产品线:</label>
-                        {{ form.field(model,'product_two_line',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList({'':"请选择二级产品线"},{'id':'level_four'}).label(false)|raw}}
-                    </li> #}
+                        {{ form.field(model,'product_two_line',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList(model.getDefaultProductTwoLine(),{'id':'level_four'}).label(false)|raw}}
+                    </li>
                     <li class="clearfix">
                         <label>是否管理员:</label>
                         {{ form.field(model,'big_owner',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList({'0':'否','1':'是'}).label(false)|raw}}
@@ -77,15 +77,16 @@
   }
   if ($base_select.val() != ""){
     $.getJSON('/owner/category?id='+ $base_select.val() +'&level='+level,function(data){
-        var option_html = "";
+        var option_html = "<option value=''>请选择</option>";
         $.each(data,function(entryIndex,entry){
           if(level == 2){
+
             option_html += "<option value='"+entry.id+"'>" + entry.name+"</option>";
           }else if(level == 3 || level == 4){
             option_html += "<option value='"+entry.id+"'>"+entry.name+"</option>";
           }
         });
-      $select1.append(option_html);
+      $select1.html(option_html);
     });
   }
 }

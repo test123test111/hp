@@ -139,7 +139,7 @@ class Owner extends ActiveRecord implements IdentityInterface
 
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
-            ['storeroom_id', 'required'],
+            [['storeroom_id','department','category','product_line','product_two_line'], 'required'],
             ['email', 'unique'],
             ['email', 'email'],
             [['department','category','phone','tell','product_line','product_two_line','big_owner','is_budget','budget'],'safe'],
@@ -317,7 +317,7 @@ class Owner extends ActiveRecord implements IdentityInterface
      */
     public function getCanChoseDepartment(){
         $province = Department::find()->all();
-        $ret = ['0'=>'请选择...'];
+        $ret = [''=>'请选择...'];
         foreach($province as $pro){
             $ret[$pro->id] = $pro->name;
         }

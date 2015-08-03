@@ -217,20 +217,23 @@
                             btn: ['确定', '取消'],
                             border: [5, 0.2, '#000'],
                             yes: function(){
-                                var userIds = [];
-                                $.each($(".share_list dd input:checked"),function(){
-                                    userIds.push($(this).val());
-                                });
-                                $.ajax({
-                                    url : "/material/updateshare",
-                                    type : "POST",
-                                    dataType : "json",
-                                    data : {"material_id":mid,"storeroom_id":rid,"user_ids":userIds,"_csrf":safeCode.attr('content')},
-                                    success : function(json){
-                                        $("#succShare").show();
-                                        window.setTimeout("$('#succShare').fadeOut()",2000)
-                                    }
-                                });
+                                layer.confirm("确定操作吗？",function(index){
+                                    layer.close(index);
+                                    var userIds = [];
+                                    $.each($(".share_list dd input:checked"),function(){
+                                        userIds.push($(this).val());
+                                    });
+                                    $.ajax({
+                                        url : "/material/updateshare",
+                                        type : "POST",
+                                        dataType : "json",
+                                        data : {"material_id":mid,"storeroom_id":rid,"user_ids":userIds,"_csrf":safeCode.attr('content')},
+                                        success : function(json){
+                                            $("#succShare").show();
+                                            window.setTimeout("$('#succShare').fadeOut()",2000)
+                                        }
+                                    });
+                                })
                             },
                             page: {html:json}
                         });
