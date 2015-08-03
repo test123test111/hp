@@ -268,4 +268,10 @@ class Material extends BackendActiveRecord {
         }
         return false;
     }
+    public static function getRecordCountToday(){
+        $date = date('Y-m-d');
+        $begin_time = $date." 00:00:00";
+        $end_time = $date." 23:59:59";
+        return static::find()->where('created >=:begin_time AND created <=:end_time',[':begin_time'=>$begin_time,':end_time'=>$end_time])->count();
+    }
 }

@@ -66,11 +66,11 @@ class MaterialController extends BackendController {
                 $model->expire = 0;
             }
             if ($model->validate()) {
-                $model->save();
                 $owner = Owner::findOne($model->owner_id);
                 $product_line = ProductLine::findOne($owner->product_line);
-                $model->code = $product_line->name.'-'.date('Ymd').'-'.$model->id;
-                $model->update();
+                $num = Material::getRecordCountToday();
+                $model->code = $product_line->name.'-'.date('Ymd').'-'.($num+1);
+                $model->save();
                 Yii::$app->session->setFlash('success', '新建成功！');
                 $this->redirect("/material/list");
             }
