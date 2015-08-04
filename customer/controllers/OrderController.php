@@ -258,9 +258,9 @@ class OrderController extends CustomerController {
                         $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
                     }
                 }
+                $count = Order::getTodayOrderCount();
+                $model->viewid = "MESS".date('Ymd')."-".($count + 1 );
                 $model->save();
-                $model->viewid = date('Ymd')."-".$model->id;
-                $model->update();
                 //create order detail 
                 $model->createOrderDetail($_POST['Carts'],$model->budget_uid);
                 $transaction->commit();
