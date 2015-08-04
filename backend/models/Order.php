@@ -835,4 +835,10 @@ class Order extends BackendActiveRecord {
         $begin_time = date('Y-m-d H:i:s',strtotime("-2 day"));
         return static::find()->where(['status'=>self::ORDER_STATUS_IS_PRE])->andWhere(['status'=>self::ORDER_STATUS_IS_NEED_APPROVAL])->andWhere('created <= :begin_time',[':begin_time'=>$begin_time])->one();
     }
+    public static function getTodayOrderCount(){
+        $time = date('Y-m-d');
+        $begin_time = $time." 00:00:00";
+        $end_time = $time." 23:59:59";
+        return static::find()->where('created>=:begin_time AND created <=:end_time',[":begin_time"=>$begin_time,":end_time"=>$end_time])->count();
+    }
 }

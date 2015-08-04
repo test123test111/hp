@@ -14,6 +14,12 @@ use backend\models\search\OrderSearch;
 use backend\models\search\OrderStockSearch;
 use backend\components\BackendController;
 use common\models\ShippmentCost;
+use backend\models\Storeroom;
+use backend\models\Owner;
+use backend\models\Material;
+use backend\models\StockTotal;
+use backend\models\Stock;
+
 class OrderController extends BackendController {
     public $enableCsrfValidation;
     /**
@@ -59,6 +65,218 @@ class OrderController extends BackendController {
             $dataProvider = $searchModel->searchByPost($_POST['orderid'],Yii::$app->user->identity->storeroom_id);
         }
         return $this->render("search",['model'=>$model,'dataProvider'=>$dataProvider]);
+    }
+    public function actionImport(){
+        $model = new Order;
+        $error = [];
+        $right = false;
+        if(isset($_POST['Order']) && $_POST['Order'] != ""){
+            $objPHPExcel = new \PHPExcel();
+            $objPHPExcel = \PHPExcel_IOFactory::load($_FILES["Order"]["tmp_name"]['file']);
+            $datas = $objPHPExcel->getSheet(0)->toArray();
+            $ret = [];
+            // $datas = [
+            //     ['序号','订单类型','下单人','计划日期','发货仓库','运输时效','到达日期','是否保险','保险金额','收件类型','用途','收件单位','收件人','省份','城市','区县','地址','电话','备注','物料编码','数量'],
+            //     [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-8',10],
+            //     // [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-8',1000000],
+            //     // [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-2131238',1000000],
+            // ];
+            foreach($datas as $key=>$data){
+                if($key == 0){
+                    continue;
+                }else{
+                    if($data[1] != null){
+                        $ret[$data[0]]['type'] = 1;
+                        $ret[$data[0]]['owner_id'] = trim($data[1]);
+                        $ret[$data[0]]['send_date'] = trim($data[2]) == "" ? date('Y-m-d H:i:s') : date('Y-m-d H:i:s',strtotime(trim($data[2])));
+                        $ret[$data[0]]['storeroom_id'] = trim($data[3]);  
+                        $ret[$data[0]]['transport_type'] = trim($data[4]);
+                        $ret[$data[0]]['arrive_date'] = !empty($data[5]) ? $data[5] : 0;
+                        $ret[$data[0]]['insurance'] = trim($data[6]) > 1 ? 0 : $data[6];
+                        $ret[$data[0]]['insurance_price'] = trim($data[7]);
+                        if(trim($data[9]) == "" || trim($data[8]) > 1){
+                            $ret[$data[0]]['to_type'] = 0;
+                        }else{
+                            $ret[$data[0]]['to_type'] = trim($data[8]);
+                        }
+                        
+                        $ret[$data[0]]['purpose'] = trim($data[9]);
+                        $ret[$data[0]]['to_company'] = trim($data[10]);
+                        $ret[$data[0]]['recipients'] = trim($data[11]);
+                        $ret[$data[0]]['to_province'] = trim($data[12]);
+                        $ret[$data[0]]['to_city'] = trim($data[13]);
+                        $ret[$data[0]]['to_district'] = trim($data[14]);
+                        $ret[$data[0]]['contact'] = trim($data[15]);
+                        $ret[$data[0]]['phone'] = trim($data[16]);
+                        $ret[$data[0]]['info'] = trim($data[17]);
+                        $ret[$data[0]]['goods'][trim($data[18])] = trim($data[19]);
+                    }
+                }
+            }
+            $error = $this->checkOrderRight($ret);
+            if(!empty($error)){
+                if(!isset($error['owner_error'])){
+                    $error['owner_error'] = [];
+                }
+                if(!isset($error['material_error'])){
+                    $error['material_error'] = [];
+                }
+                if(!isset($error['storeroom_error'])){
+                    $error['storeroom_error'] = [];
+                }
+                if(!isset($error['total_error'])){
+                    $error['total_error'] = [];
+                }
+                if(!isset($error['transport_error'])){
+                    $error['transport_error'] = [];
+                }
+                if(!isset($error['transport_cost'])){
+                    $error['transport_cost'] = [];
+                }
+            }else{
+                if($this->createBatchOrder($ret)){
+                    $right = true;
+                }else{
+                    $right = false;
+                }
+                
+            }
+        }
+        return $this->render('import',['model'=>$model,'error'=>$error,'right'=>$right]);
+    }
+    /**
+     * [checkOrderRight description]
+     * @param  [type] $result [description]
+     * @return [type]         [description]
+     */
+    public function checkOrderRight($orderArray){
+        $error = [];
+        $count = [];
+        $num = 0;
+        foreach($orderArray as $value){
+            $storeroom_id = $value['storeroom_id'];
+            $storeroom = Storeroom::find()->where(['name'=>trim($value['storeroom_id'])])->one();
+            $owner = Owner::find()->where(['english_name'=>$value['owner_id']])->one();
+            $oModel = new \backend\models\Order;
+            $transport_type = $oModel->checkTransportType($value['transport_type']);
+            $templete = ShippmentCost::find()->where(['storeroom_id'=>$storeroom->id,'transport_type'=>$transport_type,'to_type'=>$value['to_type'],'to_city'=>$value['to_district']])->one();
+
+            if(empty($transport_type)){
+                $error['transport_error'][$value['to_district']] = $value['transport_type'];
+            }elseif(empty($storeroom)){
+                $error['storeroom_error'][$value['storeroom_id']] = $value['storeroom_id'];
+            }elseif(empty($owner)){
+                $error['owner_error'][$value['owner_id']] = $value['owner_id'];
+            }elseif($templete == false){
+                $error['transport_cost'][$value['to_district']] = $value['transport_type'];
+            }else{
+                foreach($value['goods'] as $key=>$v){
+                    $material = Material::find()->where(['code'=>$key])->one();
+                    if(empty($material)){
+                        $error['material_error'][$key] = $key; 
+                    }else{
+                        if(isset($count[$key])){
+                            $count[$key] += $v;
+                        }else{
+                            $count[$key] = $v;
+                        }
+                    }
+                }
+                foreach($count as $k=>$v1){
+                    $material = Material::find()->where(['code'=>$k])->one();
+                    $stock_total = StockTotal::find()->where(['storeroom_id'=>$storeroom->id,'material_id'=>$material->id])->one();
+                    if(($stock_total->total - $stock_total->lock_num) < $v1){
+                        $error['total_error'][$k] = $k;
+                    }
+                }
+            }
+        }
+        return $error;
+    }
+    /**
+     * [createOrder description]
+     * @param  [type] $orderArray [description]
+     * @return [type]             [description]
+     */
+    protected function createBatchOrder($orderArray){
+        $db = Owner::getDb();
+        $transaction = $db->beginTransaction();
+        try {
+            foreach($orderArray as $value){
+                $storeroom = Storeroom::find()->where(['name'=>trim($value['storeroom_id'])])->one();
+                $owner = Owner::find()->where(['english_name'=>$value['owner_id']])->one();
+                //create order
+                $model = new Order;
+                $model->send_date = $value['send_date'];
+                $model->transport_type = $model->checkTransportType($value['transport_type']);
+                $model->arrive_date = $value['arrive_date'];
+                $model->insurance = $value['insurance'];
+                $model->insurance_price = $value['insurance_price'];
+                $model->purpose = $value['purpose'];
+                $model->info = $value['info'];
+                $model->recipients = $value['recipients'];
+                $model->storeroom_id = $storeroom->id;
+                $model->created_uid = $owner->id;
+                $model->to_city = $value['to_city'];
+                $model->recipients = $value['recipients'];
+                $model->to_province = $value['to_province'];
+                $model->to_city = $value['to_city'];
+                $model->to_district = $value['to_district'];
+                $model->contact = $value['contact'];
+                $model->phone = $value['phone'];
+                $model->status = Order::ORDER_STATUS_IS_APPROVALED;
+                $model->to_company = $value['to_company'];
+                $model->owner_approval = Order::PASS_OWNER_APPROVAL;
+                $model->detachBehavior('attributeStamp');
+                $model->type = $value['type'];
+                $model->modified_uid = $owner->id;
+                $model->hhg_uid = Yii::$app->user->id;
+                $model->budget_uid = $owner->id;
+                $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
+                $model->category_id = $owner->category;
+                //D20150804-001
+                $count = Order::getTodayOrderCount();
+                $model->viewid = "D".date('Ymd')."-".($count + 1 );
+                $model->save(false);
+
+                foreach($value['goods'] as $key=>$v){
+                    $material = Material::find()->where(['code'=>$key])->one();
+                    $detail = new OrderDetail;
+                    $detail->order_id = $model->id;
+                    $detail->material_id = $material->id;
+                    $detail->storeroom_id = $model->storeroom_id;
+                    $detail->owner_id = $material->owner_id;
+                    $detail->quantity = $v;
+                    $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
+                    $detail->approval_uid = $material->owner_id;
+                    $detail->approval_date = time();
+                    $detail->save();
+
+                    $stock = new Stock;
+                    $stock->material_id = $material->id;
+                    $stock->storeroom_id = $detail->storeroom_id;
+                    $stock->owner_id = $detail->owner_id;
+                    $stock->actual_quantity = 0 - $v;
+                    $stock->stock_time = date('Y-m-d H:i:s');
+                    $stock->created = date('Y-m-d H:i:s');
+                    $stock->increase = Stock::IS_NOT_INCREASE;
+                    $stock->order_id = $detail->order_id;
+                    $stock->save(false);
+
+                    //subtract stock total
+                    // StockTotal::updateTotal($model->storeroom_id,$material->id,(0 - $v));
+                    $stockTotal = StockTotal::find()->where(['material_id'=>$material->id,"storeroom_id"=>$detail->storeroom_id])->one();
+                    $stockTotal->total = $stockTotal->total + (0 - $v);
+                    $stockTotal->update();
+                }
+            }
+            //create order detail
+            $transaction->commit();
+            return true;
+        } catch (Exception $e) {
+            $transaction->rollBack();
+            return false;
+        }
     }
     /**
      * Displays the create page
@@ -438,217 +656,5 @@ EOF;
             }
         }
         echo json_encode(['output'=>'', 'selected'=>'']);
-    }
-    public function actionImport(){
-        $model = new Order;
-        $error = [];
-        $right = false;
-        if(isset($_POST['Order']) && $_POST['Order'] != ""){
-            $objPHPExcel = new \PHPExcel();
-            // $objPHPExcel = \PHPExcel_IOFactory::load($_FILES["Order"]["tmp_name"]['file']);
-            // $datas = $objPHPExcel->getSheet(0)->toArray();
-            // $ret = [];
-            // $datas = [
-            //     ['序号','收件人','收件地址','收件人电话','收件城市','活动','发货仓库','物料编码','物料属主','数量','到货需求','备注'],
-            //     ['1','','','','','','北京中央库','JIHFSN899011','alisa','20','4小时','must be'],
-            //     ['1','wanglei','beijing office','13800138000','beijing','2014 word cup','北京中央库','GSDGSG99990SGA','alisa','5','4小时','must be'],
-            //     ['2','lisi','beijing office','13800138000','beijing','2014 word cup','北京中央库','JIHFSN899011','alisa','40','4小时','must be'],
-            // ];
-            $datas = [
-                ['序号','订单类型','下单人','计划日期','发货仓库','运输时效','到达日期','是否保险','保险金额','收件类型','用途','收件单位','收件人','省份','城市','区县','地址','电话','备注','物料编码','数量'],
-                [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-8',10],
-                [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-8',1000000],
-                [1,1,'jnjn.km','2015-06-18','中央库','24小时','2015-06-19','0','0','0','暑假专用','北京市宠物乐园文化公司','王二麻子','北京市','北京市','北京市辖区','北京市南三环东路','13810595355','包装好','SM-20150617-2131238',1000000],
-            ];
-            foreach($datas as $key=>$data){
-                if($key == 0){
-                    continue;
-                }else{
-                    $ret[$data[0]]['type'] = trim($data[1]) > 1 ? 0 : $data[1];
-                    $ret[$data[0]]['owner_id'] = trim($data[2]);
-                    $ret[$data[0]]['send_date'] = trim($data[3]) == "" ? date('Y-m-d H:i:s') : date('Y-m-d H:i:s',strtotime(trim($data[2])));
-                    $ret[$data[0]]['storeroom_id'] = trim($data[4]);  
-                    $ret[$data[0]]['transport_type'] = trim($data[5]);
-                    $ret[$data[0]]['arrive_date'] = !empty($data[6]) ? $data[6] : 0;
-                    $ret[$data[0]]['insurance'] = trim($data[7]) > 1 ? 0 : $data[7];
-                    $ret[$data[0]]['insurance_price'] = trim($data[8]);
-                    if(trim($data[9]) == "" || trim($data[9]) > 1){
-                        $ret[$data[0]]['to_type'] = 0;
-                    }else{
-                        $ret[$data[0]]['to_type'] = trim($data[9]);
-                    }
-                    
-                    $ret[$data[0]]['purpose'] = trim($data[10]);
-                    $ret[$data[0]]['to_company'] = trim($data[11]);
-                    $ret[$data[0]]['recipients'] = trim($data[12]);
-                    $ret[$data[0]]['to_province'] = trim($data[13]);
-                    $ret[$data[0]]['to_city'] = trim($data[14]);
-                    $ret[$data[0]]['to_district'] = trim($data[15]);
-                    $ret[$data[0]]['contact'] = trim($data[16]);
-                    $ret[$data[0]]['phone'] = trim($data[17]);
-                    $ret[$data[0]]['info'] = trim($data[18]);
-                    $ret[$data[0]]['goods'][trim($data[19])] = trim($data[20]);
-                }
-            }
-            $error = $this->checkOrderRight($ret);
-            if(!empty($error)){
-                if(!isset($error['owner_error'])){
-                    $error['owner_error'] = [];
-                }
-                if(!isset($error['material_error'])){
-                    $error['material_error'] = [];
-                }
-                if(!isset($error['storeroom_error'])){
-                    $error['storeroom_error'] = [];
-                }
-                if(!isset($error['total_error'])){
-                    $error['total_error'] = [];
-                }
-                if(!isset($error['transport_error'])){
-                    $error['transport_error'] = [];
-                }
-                if(!isset($error['transport_cost'])){
-                    $error['transport_cost'] = [];
-                }
-            }else{
-                if($this->createBatchOrder($ret)){
-                    $right = true;
-                }else{
-                    $right = false;
-                }
-                
-            }
-        }
-        return $this->render('import',['model'=>$model,'error'=>$error,'right'=>$right]);
-    }
-    /**
-     * [checkOrderRight description]
-     * @param  [type] $result [description]
-     * @return [type]         [description]
-     */
-    public function checkOrderRight($orderArray){
-        $error = [];
-        $count = [];
-        $num = 0;
-        foreach($orderArray as $value){
-            $storeroom_id = $value['storeroom_id'];
-            $storeroom = Storeroom::find()->where(['name'=>trim($value['storeroom_id'])])->one();
-            $owner = Owner::find()->where(['english_name'=>$value['owner_id']])->one();
-            $oModel = new \backend\models\Order;
-            $transport_type = $oModel->checkTransportType($value['transport_type']);
-            $templete = ShippmentCost::find()->where(['storeroom_id'=>$storeroom->id,'transport_type'=>$transport_type,'to_type'=>$value['to_type'],'to_city'=>$value['to_district']])->one();
-
-            if(empty($transport_type)){
-                $error['transport_error'][$value['to_district']] = $value['transport_type'];
-            }elseif(empty($storeroom)){
-                $error['storeroom_error'][$value['storeroom_id']] = $value['storeroom_id'];
-            }elseif(empty($owner)){
-                $error['owner_error'][$value['owner_id']] = $value['owner_id'];
-            }elseif($templete == false){
-                $error['transport_cost'][$value['to_district']] = $value['transport_type'];
-            }else{
-                foreach($value['goods'] as $key=>$v){
-                    $material = Material::find()->where(['code'=>$key])->one();
-                    if(empty($material)){
-                        $error['material_error'][$key] = $key; 
-                    }else{
-                        if(isset($count[$key])){
-                            $count[$key] += $v;
-                        }else{
-                            $count[$key] = $v;
-                        }
-                    }
-                }
-                foreach($count as $k=>$v1){
-                    $material = Material::find()->where(['code'=>$k])->one();
-                    $stock_total = StockTotal::find()->where(['storeroom_id'=>$storeroom->id,'material_id'=>$material->id])->one();
-                    if(($stock_total->total - $stock_total->lock_num) < $v1){
-                        $error['total_error'][$k] = $k;
-                    }
-                }
-            }
-        }
-        return $error;
-    }
-    /**
-     * [createOrder description]
-     * @param  [type] $orderArray [description]
-     * @return [type]             [description]
-     */
-    protected function createBatchOrder($orderArray){
-        $db = Owner::getDb();
-        $transaction = $db->beginTransaction();
-        try {
-            foreach($orderArray as $value){
-                $storeroom = Storeroom::find()->where(['name'=>trim($value['storeroom_id'])])->one();
-                $owner = Owner::find()->where(['english_name'=>$value['owner_id']])->one();
-                //create order
-                $model = new Order;
-                $model->send_date = $value['send_date'];
-                $model->transport_type = $model->checkTransportType($value['transport_type']);
-                $model->arrive_date = $value['arrive_date'];
-                $model->insurance = $value['insurance'];
-                $model->insurance_price = $value['insurance_price'];
-                $model->purpose = $value['purpose'];
-                $model->info = $value['info'];
-                $model->recipients = $value['recipients'];
-                $model->storeroom_id = $storeroom->id;
-                $model->created_uid = $owner->id;
-                $model->to_city = $value['to_city'];
-                $model->recipients = $value['recipients'];
-                $model->to_province = $value['to_province'];
-                $model->to_city = $value['to_city'];
-                $model->to_district = $value['to_district'];
-                $model->contact = $value['contact'];
-                $model->phone = $value['phone'];
-                $model->status = Order::ORDER_STATUS_IS_APPROVALED;
-                $model->to_company = $value['to_company'];
-                $model->owner_approval = Order::PASS_OWNER_APPROVAL;
-                $model->detachBehavior('attributeStamp');
-                $model->type = $value['type'];
-                $model->modified_uid = $owner->id;
-                $model->hhg_uid = Yii::$app->user->id;
-                $model->save(false);
-
-                $model->viewid = date('Ymd')."-".$model->id;
-                $model->update();
-                foreach($value['goods'] as $key=>$v){
-                    $material = Material::find()->where(['code'=>$key])->one();
-                    $detail = new OrderDetail;
-                    $detail->order_id = $model->id;
-                    $detail->material_id = $material->id;
-                    $detail->storeroom_id = $model->storeroom_id;
-                    $detail->owner_id = $material->owner_id;
-                    $detail->quantity = $v;
-                    $detail->is_owner_approval = OrderDetail::IS_OWNER_APPROVAL;
-                    $detail->approval_uid = $material->owner_id;
-                    $detail->approval_date = time();
-                    $detail->save();
-
-                    $stock = new Stock;
-                    $stock->material_id = $material->id;
-                    $stock->storeroom_id = $detail->storeroom_id;
-                    $stock->owner_id = $detail->owner_id;
-                    $stock->actual_quantity = 0 - $v;
-                    $stock->stock_time = date('Y-m-d H:i:s');
-                    $stock->created = date('Y-m-d H:i:s');
-                    $stock->increase = Stock::IS_NOT_INCREASE;
-                    $stock->order_id = $detail->order_id;
-                    $stock->save(false);
-
-                    //subtract stock total
-                    // StockTotal::updateTotal($model->storeroom_id,$material->id,(0 - $v));
-                    $stockTotal = StockTotal::find()->where(['material_id'=>$material->id,"storeroom_id"=>$detail->storeroom_id])->one();
-                    $stockTotal->total = $stockTotal->total + (0 - $v);
-                    $stockTotal->update();
-                }
-            }
-            //create order detail
-            $transaction->commit();
-            return true;
-        } catch (Exception $e) {
-            $transaction->rollBack();
-            return false;
-        }
     }
 }

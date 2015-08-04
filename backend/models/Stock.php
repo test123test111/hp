@@ -253,7 +253,7 @@ class Stock extends BackendActiveRecord {
     {
         $date = date('Y-m-d');
         $begin_time = $date." 00:00:00";
-        $end_time = $date." 11:59:59";
+        $end_time = $date." 15:59:59";
 
         $results = static::find()->where(['increase'=>self::IS_INCREASE])->andWhere('stock_time >=:begin_time AND stock_time <= :end_time',[':begin_time'=>$begin_time,':end_time'=>$end_time])->all();
         $ret = [];
@@ -270,8 +270,8 @@ class Stock extends BackendActiveRecord {
     public static function getTomorrowNeedSendEmail()
     {
         $date = date('Y-m-d',strtotime("-1 day"));
-        $begin_time = $date." 12:00:00";
-        $end_time = $date." 23:59:59";
+        $begin_time = $date." 16:00:00";
+        $end_time = date('Y-m-d')." 10:00:00";
 
 
         $results = static::find()->with(['owners','material'])->where(['increase'=>self::IS_INCREASE])->andWhere('stock_time >=:begin_time AND stock_time <= :end_time',[':begin_time'=>$begin_time,':end_time'=>$end_time])->all();

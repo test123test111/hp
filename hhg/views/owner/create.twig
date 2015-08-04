@@ -4,7 +4,7 @@
 {% block content %}
 {% include '@app/views/layouts/base_with_sidebar.twig' %}
 <div class="main">
-    <div class="form_view">
+    <div class="form_view clearfix">
         <div class="mc" style="float:left;">
             {% set form = activeform.begin({'id':'create-form'}) %}  
                 <ul class="form_list">
@@ -41,14 +41,14 @@
                         <label>组别:</label>
                         {{ form.field(model,'category',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList({'':"请选择组别"},{'id':'level_two', 'onchange':"car_type_search(this,'level_three','level_four','','3')"}).label(false)|raw}}
                     </li>
-                    {# <li class="clearfix">
+                    <li class="clearfix">
                         <label>一级产品线:</label>
                         {{ form.field(model,'product_line',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList({'':"请选择一级产品线"},{'id':'level_three', 'onchange':"car_type_search(this,'level_four','','','4')"}).label(false)|raw}}
                     </li>
                     <li class="clearfix">
                         <label>二级产品线:</label>
                         {{ form.field(model,'product_two_line',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList({'':"请选择二级产品线"},{'id':'level_four'}).label(false)|raw}}
-                    </li> #}
+                    </li>
                     <li class="clearfix">
                         <label>是否管理员:</label>
                         {{ form.field(model,'big_owner',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList({'0':'否','1':'是'}).label(false)|raw}}

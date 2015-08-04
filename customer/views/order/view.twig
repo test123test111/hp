@@ -209,7 +209,6 @@
                 <p>收货单位：{{ order.to_company }}</p>
                 <p>收 货 人：{{ order.recipients}}</p>
                 <p>地    址：{{ order.to_province }} {{ order.to_city }} {{ order.to_district }} {{ order.address }}</p>
-                <p>包装要求：{{ order.addr_info }}</p>
                 <p>手机号码：{{ order.phone }}</p>
                 <p>运输时效：{{ order.getMyTransportType() }}</p>
                 <p>保险：{% if order.insurance == 1 %}有{% else %}无{% endif %}</p>

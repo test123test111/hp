@@ -400,30 +400,30 @@ class OrderController extends \yii\web\Controller {
                     continue;
                 }else{
                     if($data[1] != null){
-                        $ret[$data[0]]['type'] = trim($data[1]) > 1 ? 0 : $data[1];
-                        $ret[$data[0]]['owner_id'] = trim($data[2]);
-                        $ret[$data[0]]['send_date'] = trim($data[3]) == "" ? date('Y-m-d H:i:s') : date('Y-m-d H:i:s',strtotime(trim($data[3])));
-                        $ret[$data[0]]['storeroom_id'] = trim($data[4]);  
-                        $ret[$data[0]]['transport_type'] = trim($data[5]);
-                        $ret[$data[0]]['arrive_date'] = !empty($data[6]) ? $data[6] : 0;
-                        $ret[$data[0]]['insurance'] = trim($data[7]) > 1 ? 0 : $data[7];
-                        $ret[$data[0]]['insurance_price'] = trim($data[8]);
-                        if(trim($data[9]) == "" || trim($data[9]) > 1){
+                        $ret[$data[0]]['type'] = 1;
+                        $ret[$data[0]]['owner_id'] = trim($data[1]);
+                        $ret[$data[0]]['send_date'] = trim($data[2]) == "" ? date('Y-m-d H:i:s') : date('Y-m-d H:i:s',strtotime(trim($data[2])));
+                        $ret[$data[0]]['storeroom_id'] = trim($data[3]);  
+                        $ret[$data[0]]['transport_type'] = trim($data[4]);
+                        $ret[$data[0]]['arrive_date'] = !empty($data[5]) ? $data[5] : 0;
+                        $ret[$data[0]]['insurance'] = trim($data[6]) > 1 ? 0 : $data[6];
+                        $ret[$data[0]]['insurance_price'] = trim($data[7]);
+                        if(trim($data[9]) == "" || trim($data[8]) > 1){
                             $ret[$data[0]]['to_type'] = 0;
                         }else{
-                            $ret[$data[0]]['to_type'] = trim($data[9]);
+                            $ret[$data[0]]['to_type'] = trim($data[8]);
                         }
                         
-                        $ret[$data[0]]['purpose'] = trim($data[10]);
-                        $ret[$data[0]]['to_company'] = trim($data[11]);
-                        $ret[$data[0]]['recipients'] = trim($data[12]);
-                        $ret[$data[0]]['to_province'] = trim($data[13]);
-                        $ret[$data[0]]['to_city'] = trim($data[14]);
-                        $ret[$data[0]]['to_district'] = trim($data[15]);
-                        $ret[$data[0]]['contact'] = trim($data[16]);
-                        $ret[$data[0]]['phone'] = trim($data[17]);
-                        $ret[$data[0]]['info'] = trim($data[18]);
-                        $ret[$data[0]]['goods'][trim($data[19])] = trim($data[20]);
+                        $ret[$data[0]]['purpose'] = trim($data[9]);
+                        $ret[$data[0]]['to_company'] = trim($data[10]);
+                        $ret[$data[0]]['recipients'] = trim($data[11]);
+                        $ret[$data[0]]['to_province'] = trim($data[12]);
+                        $ret[$data[0]]['to_city'] = trim($data[13]);
+                        $ret[$data[0]]['to_district'] = trim($data[14]);
+                        $ret[$data[0]]['contact'] = trim($data[15]);
+                        $ret[$data[0]]['phone'] = trim($data[16]);
+                        $ret[$data[0]]['info'] = trim($data[17]);
+                        $ret[$data[0]]['goods'][trim($data[18])] = trim($data[19]);
                     }
                 }
             }
@@ -545,11 +545,13 @@ class OrderController extends \yii\web\Controller {
                 $model->type = $value['type'];
                 $model->modified_uid = $owner->id;
                 $model->hhg_uid = Yii::$app->user->id;
+                $model->budget_uid = $owner->id;
+                $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
                 $model->category_id = $owner->category;
+                $count = Order::getTodayOrderCount();
+                $model->viewid = "D".date('Ymd')."-".($count + 1 );
                 $model->save(false);
 
-                $model->viewid = date('Ymd')."-".$model->id;
-                $model->update();
                 foreach($value['goods'] as $key=>$v){
                     $material = Material::find()->where(['code'=>$key])->one();
                     $detail = new OrderDetail;

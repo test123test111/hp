@@ -196,6 +196,10 @@ return [
                     'name' => '异常订单',
                     'route' => 'order/list?OrderSearch[status]=6',
                 ],
+                [
+                    'name' => '大发放',
+                    'route' => 'order/import',
+                ],
             ],
         ],
         'package'=>[
