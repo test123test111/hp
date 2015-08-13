@@ -101,6 +101,10 @@ class Share extends ActiveRecord
             $department = Department::findOne($owner->department);
             $dep_id = $department->id;
             $to_customer_ids = Owner::find()->select('id')->where(['department'=>$dep_id,'storeroom_id'=>$storeroom_id])->column();
+            $big_owner = Owner::find()->where(['department'=>$dep_id,'big_owner'=>1])->one();
+            if (!empty($big_owner) && !in_array($big_owner->id, $to_customer_ids)) {
+                array_push($to_customer_ids, $big_owner->id);
+            }
         }
         $material = Material::findOne($material_id);
         //only insert herself
