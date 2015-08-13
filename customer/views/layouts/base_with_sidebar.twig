@@ -6,6 +6,10 @@
     			<dd {% if sidebar_name == '专属物料' %}class="cur"{% endif %} {% if menu_name != 'material'%} style="display:none;"{% endif %}><a href="/material/exclusive">专属物料</a></dd>
                 <dd {% if sidebar_name == '分享物料' %}class="cur"{% endif %} {% if menu_name != 'material'%} style="display:none;"{% endif %}><a href="/material/myshare">分享物料</a></dd>
             </dl>
+            <dl>    
+                <dt class="havesub" data-index="0">hp用户</dt>
+                <dd {% if sidebar_name == '查看用户' %}class="cur"{% endif %} {% if menu_name !="owner" %} style="display:none;"{% endif %}><a href="/owner/list">查看用户</a></dd>
+            </dl>
             <dl>
     			{# <dd><a href="#">其他可订物料</a></dd> #}
     			<dt class="havesub">我的订单</dt>

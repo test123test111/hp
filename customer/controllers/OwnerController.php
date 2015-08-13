@@ -35,11 +35,13 @@ class OwnerController extends BackendController {
      */
     public function actionList() {
         $searchModel = new OwnerSearch;
-        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        list($data,$pages,$count) = $searchModel->searchDepartmentUser(Yii::$app->request->getQueryParams(),Yii::$app->user->id);
 
         return $this->render('list', [
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
+             'results' => $data,
+             'pages' => $pages,
+             'count'=>$count,
+             'params'=>Yii::$app->request->getQueryParams(),
         ]);
     }
     /**
