@@ -739,15 +739,15 @@ class OrderController extends \yii\web\Controller {
             //     $orderInfo->consume();
             // }
             $flag = 0;
-            $approval = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL])->one();
-            if($approval->status == Approval::STATUS_IS_PASS){
-                if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
-                    echo 0;
-                }else{
-                    echo 1;
-                }
-                Yii::$app->end();
-            }
+            // $approvals = Approval::find()->where(['order_id'=>$order_id,'type'=>Approval::TYPE_IS_MATERIAL])->all();
+            // if($approval->status == Approval::STATUS_IS_PASS){
+            //     if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
+            //         echo 0;
+            //     }else{
+            //         echo 1;
+            //     }
+            //     Yii::$app->end();
+            // }
             $details = OrderDetail::find()->where(['order_id'=>$order_id])->all();
             if(!empty($details)){
                 foreach($details as $detail){
@@ -757,12 +757,14 @@ class OrderController extends \yii\web\Controller {
                         $detail->approval_uid_type = OrderDetail::APPROVAL_USER_TYPE_IS_HHG;
                         $detail->approval_date = time();
                         $detail->update();
+
+                        Approval::updateAll(['status'=>Approval::STATUS_IS_PASS,'modified'=>date('Y-m-d H:i:s')],['order_id'=>$order_id,'owner_id'=>$detail->owner_id,'type'=>Approval::TYPE_IS_MATERIAL]);
                     }
                 }
             }
-            $approval->status = Approval::STATUS_IS_PASS;
-            $approval->modified = date('Y-m-d H:i:s');
-            $approval->update();
+            // $approval->status = Approval::STATUS_IS_PASS;
+            // $approval->modified = date('Y-m-d H:i:s');
+            // $approval->update();
             $not_approval = OrderDetail::find()->where(['order_id'=>$order_id,'is_owner_approval'=>OrderDetail::IS_NOT_OWNER_APPROVAL])->count();
             
             if($not_approval == 0){

@@ -510,7 +510,7 @@ class Stock extends CustomerActiveRecord {
                                     'order'=>function($query){
                                             return $query->with('createuser');
                                      }]);
-        $materials_ids = Share::find()->select('material_id')->where(['to_customer_id'=>Yii::$app->user->id])->column();
+        $materials_ids = Share::find()->select('material_id')->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->column();
         $query->andWhere(['material_id'=>$materials_ids]);
         if(isset($params['begin_time']) && $params['begin_time'] != ""){
             if(isset($params['end_time']) && $params['end_time'] != ""){
@@ -598,7 +598,7 @@ class Stock extends CustomerActiveRecord {
                                     'order'=>function($query){
                                             return $query->with('createuser');
                                      }]);
-        $materials_ids = Share::find()->select('material_id')->where(['to_customer_id'=>Yii::$app->user->id])->column();
+        $materials_ids = Share::find()->select('material_id')->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])->column();
         $query->andWhere(['material_id'=>$materials_ids]);
         if(isset($params['begin_time']) && $params['begin_time'] != ""){
             if(isset($params['end_time']) && $params['end_time'] != ""){

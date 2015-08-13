@@ -753,15 +753,20 @@ class OrderController extends CustomerController {
             //     $orderInfo->consume();
             // }
             $flag = 0;
-            $approval = Approval::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id,'type'=>Approval::TYPE_IS_MATERIAL])->one();
-            if($approval->status == Approval::STATUS_IS_PASS){
-                if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
-                    echo 1;
-                }else{
-                    echo 0;
-                }
-                Yii::$app->end();
-            }
+            $approvals = Approval::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id,'type'=>Approval::TYPE_IS_MATERIAL])->all();
+            // foreach ($approvals as $approval) {
+            //     if ($approval->status != Approval::STATUS_IS_PASS) {
+            //         $flag = 1;
+            //     }
+            // }
+            // if($approval->status == Approval::STATUS_IS_PASS){
+            //     if($orderInfo->status == Order::ORDER_STATUS_IS_APPROVALED){
+            //         echo 1;
+            //     }else{
+            //         echo 0;
+            //     }
+            //     Yii::$app->end();
+            // }
             $details = OrderDetail::find()->where(['order_id'=>$order_id,'owner_id'=>Yii::$app->user->id])->all();
             if(!empty($details)){
                 foreach($details as $detail){
@@ -773,10 +778,11 @@ class OrderController extends CustomerController {
                     }
                 }
             }
-            
-            $approval->status = Approval::STATUS_IS_PASS;
-            $approval->modified = date('Y-m-d H:i:s');
-            $approval->update();
+            foreach($approvals as $approval){
+                $approval->status = Approval::STATUS_IS_PASS;
+                $approval->modified = date('Y-m-d H:i:s');
+                $approval->update();
+            }
             // foreach($details as $detail){
             //     if($detail->is_owner_approval == OrderDetail::IS_OWNER_APPROVAL){
                     
