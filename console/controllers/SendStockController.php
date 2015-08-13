@@ -47,7 +47,7 @@ class SendStockController extends Controller{
                                         'record'=>$record,
                                 ])
                      ->setFrom('service@yt-logistics.cn')
-                     ->setTo('liuwanglei2001@163.com')
+                     ->setTo($record[0]['email'])
                      ->setSubject($subject)
                      ->send();
             }
