@@ -423,17 +423,16 @@ class OrderSearch extends Order
      */
     public static function getSettlementData($params,$uid){
         $owner = Owner::findOne($uid);
+        $category = Department::findOne($owner->department);
         if($owner){
             if($owner->storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                $category = Category::findOne($owner->category);
-                $category_ids = Category::find()->select('id')->where(['department_id'=>$category->department_id])->column();
                 if($owner->big_owner == Owner::IS_BIG_OWNER){
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                                   ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                                   ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                                   ->andWhere(['storeroom_id'=>$owner->storeroom_id])
                                   ->andWhere(['budget_uid'=>$uid])
-                                  ->andWhere(['category_id'=>$category_ids])
+                                  ->andWhere(['category_id'=>$category->id])
                                   ->orderBy(['id'=>SORT_DESC]);
                 }else{
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
@@ -444,12 +443,22 @@ class OrderSearch extends Order
                                   ->orderBy(['id'=>SORT_DESC]);
                 }
             }else{
-                $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+                if($owner->big_owner == Owner::IS_BIG_OWNER){
+                    $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
+                              ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                              ->andWhere(['category_id'=>$category->id])
+                              ->orderBy(['id'=>SORT_DESC]);
+                } else {
+                    $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                               ->andWhere(['storeroom_id'=>$owner->storeroom_id])
                               ->andWhere(['budget_uid'=>$uid])
                               ->orderBy(['id'=>SORT_DESC]);
+                }
+                
             }
             
 
@@ -483,17 +492,16 @@ class OrderSearch extends Order
      */
     public static function getExportSettlementData($params,$uid){
         $owner = Owner::findOne($uid);
+        $category = Department::findOne($owner->department);
         if($owner){
             if($owner->storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                $category = Category::findOne($owner->category);
-                $category_ids = Category::find()->select('id')->where(['department_id'=>$category->department_id])->column();
                 if($owner->big_owner == Owner::IS_BIG_OWNER){
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                                   ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                                   ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                                   ->andWhere(['storeroom_id'=>$owner->storeroom_id])
                                   ->andWhere(['budget_uid'=>$uid])
-                                  ->andWhere(['category_id'=>$category_ids])
+                                  ->andWhere(['category_id'=>$category->id])
                                   ->orderBy(['id'=>SORT_DESC]);
                 }else{
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
@@ -504,12 +512,21 @@ class OrderSearch extends Order
                                   ->orderBy(['id'=>SORT_DESC]);
                 }
             }else{
-                $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+                if($owner->big_owner == Owner::IS_BIG_OWNER){
+                    $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
+                              ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                              ->andWhere(['category_id'=>$category->id])
+                              ->orderBy(['id'=>SORT_DESC]);
+                } else {
+                    $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                               ->andWhere(['storeroom_id'=>$owner->storeroom_id])
                               ->andWhere(['budget_uid'=>$uid])
                               ->orderBy(['id'=>SORT_DESC]);
+                }
             }
             
             if(isset($params['order_id']) && $params['order_id'] != ""){
