@@ -255,7 +255,7 @@ class Stock extends BackendActiveRecord {
         $begin_time = $date." 00:00:00";
         $end_time = $date." 15:59:59";
 
-        $results = static::find()->where(['increase'=>self::IS_INCREASE])->andWhere('stock_time >=:begin_time AND stock_time <= :end_time',[':begin_time'=>$begin_time,':end_time'=>$end_time])->all();
+        $results = static::find()->where(['increase'=>self::IS_INCREASE])->andWhere('created >=:begin_time AND created <= :end_time',[':begin_time'=>$begin_time,':end_time'=>$end_time])->all();
         $ret = [];
         foreach($results as $result){
             $ret[$result->owner_id][] = $result;
@@ -274,7 +274,7 @@ class Stock extends BackendActiveRecord {
         $end_time = date('Y-m-d')." 10:00:00";
 
 
-        $results = static::find()->with(['owners','material'])->where(['increase'=>self::IS_INCREASE])->andWhere('stock_time >=:begin_time AND stock_time <= :end_time',[':begin_time'=>$begin_time,':end_time'=>$end_time])->all();
+        $results = static::find()->with(['owners','material'])->where(['increase'=>self::IS_INCREASE])->andWhere('created >=:begin_time AND created <= :end_time',[':begin_time'=>$begin_time,':end_time'=>$end_time])->all();
         $ret = [];
         foreach($results as $result){
             $ret[$result->owner_id][] = $result;
