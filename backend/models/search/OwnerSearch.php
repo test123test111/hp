@@ -55,6 +55,23 @@ class OwnerSearch extends Owner
 
         return $dataProvider;
     }
+    public function searchDepartmentUser($params,$uid)
+    {
+        $owner = static::findOne($uid);
+        if($owner->big_owner == self::IS_BIG_OWNER) {
+            $query = static::find()->with(['departments','categorys','productlines','producttwolines','budgets'])->orderBy(['id'=>SORT_DESC]);
+            $query->andWhere(['department' => $owner->department]);
+        } else {
+            $query = static::find()->where(['id' => $uid]);
+        }
+        $count = $query->count();
+        $pages = new \yii\data\Pagination(['totalCount' => $count,'defaultPageSize'=>20]);
+        $ret = [];
+        $query->offset($pages->offset)->limit(20);
+
+        $data = $query->all();
+        return [$data,$pages,$count];
+    }
     /**
      * [getDataByHhg description]
      * @param  [type] $params [description]
