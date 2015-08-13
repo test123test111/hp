@@ -245,7 +245,7 @@ class OrderController extends \yii\web\Controller {
                 }
 
                 $count = Order::getTodayOrderCount();
-                $model->viewid = "MESS".date('Ymd')."-".($count + 1 );
+                $model->viewid = "D".date('Ymd')."-".($count + 1 );
                 $model->hhg_uid = Yii::$app->user->id;
                 $model->save();
                 //create order detail 
@@ -549,7 +549,7 @@ class OrderController extends \yii\web\Controller {
                 $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
                 $model->category_id = $owner->category;
                 $count = Order::getTodayOrderCount();
-                $model->viewid = "D".date('Ymd')."-".($count + 1 );
+                $model->viewid = "MESS".date('Ymd')."-".($count + 1 );
                 $model->save(false);
 
                 foreach($value['goods'] as $key=>$v){

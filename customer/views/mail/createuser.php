@@ -1,5 +1,5 @@
 <?php
-$url = "http://customer.yltd.com";
+$url = "http://hp.yt-logistics.cn";
 ?>
 <html>
 	<body>

@@ -259,7 +259,7 @@ class OrderController extends CustomerController {
                     }
                 }
                 $count = Order::getTodayOrderCount();
-                $model->viewid = "MESS".date('Ymd')."-".($count + 1 );
+                $model->viewid = "D".date('Ymd')."-".($count + 1 );
                 $model->save();
                 //create order detail 
                 $model->createOrderDetail($_POST['Carts'],$model->budget_uid);

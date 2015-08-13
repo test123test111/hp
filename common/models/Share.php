@@ -50,17 +50,61 @@ class Share extends ActiveRecord
     public function getStorerooms(){
         return $this->hasOne(Storeroom::className(),['id'=>'storeroom_id']);
     }
+    // public static function updateShare($owner_id,$to_customer_id,$material_id,$storeroom_id){
+    //     $owner = Owner::findOne($owner_id);
+    //     $cat_id = 0;
+    //     if($owner->category != 0){
+    //         $category = Category::findOne($owner->category);
+    //         $cat_id = $category->id;
+    //         $to_customer_ids = Owner::find()->select('id')->where(['category'=>$cat_id,'storeroom_id'=>$storeroom_id])->column();
+    //     }
+    //     $material = Material::findOne($material_id);
+    //     //only insert herself
+    //     if($cat_id == 0){
+    //         $big_result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$owner_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
+    //         if(empty($big_result)){
+    //             $model = new Static;
+    //             $model->owner_id = $owner_id;
+    //             $model->to_customer_id = $owner_id;
+    //             $model->material_id = $material_id;
+    //             $model->storeroom_id = $storeroom_id;
+    //             $model->status = self::STATUS_IS_NORMAL;
+    //             $model->created_uid = Yii::$app->user->id;
+    //             $model->category = $cat_id;
+    //             $model->property = $material->property;
+    //             $model->save(false);
+    //         }
+    //     }else{
+    //         if(!empty($to_customer_ids)){
+    //             foreach($to_customer_ids as $to_customer_id){
+    //                 $big_result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$to_customer_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
+    //                 if(empty($big_result)){
+    //                     $model = new Static;
+    //                     $model->owner_id = $owner_id;
+    //                     $model->to_customer_id = $to_customer_id;
+    //                     $model->material_id = $material_id;
+    //                     $model->storeroom_id = $storeroom_id;
+    //                     $model->status = self::STATUS_IS_NORMAL;
+    //                     $model->created_uid = Yii::$app->user->id;
+    //                     $model->category = $cat_id;
+    //                     $model->property = $material->property;
+    //                     $model->save(false);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
     public static function updateShare($owner_id,$to_customer_id,$material_id,$storeroom_id){
         $owner = Owner::findOne($owner_id);
         $cat_id = 0;
         if($owner->category != 0){
-            $category = Category::findOne($owner->category);
-            $cat_id = $category->id;
-            $to_customer_ids = Owner::find()->select('id')->where(['category'=>$cat_id,'storeroom_id'=>$storeroom_id])->column();
+            $department = Department::findOne($owner->department);
+            $dep_id = $department->id;
+            $to_customer_ids = Owner::find()->select('id')->where(['department'=>$dep_id,'storeroom_id'=>$storeroom_id])->column();
         }
         $material = Material::findOne($material_id);
         //only insert herself
-        if($cat_id == 0){
+        if($dep_id == 0){
             $big_result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$owner_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
             if(empty($big_result)){
                 $model = new Static;
@@ -70,7 +114,7 @@ class Share extends ActiveRecord
                 $model->storeroom_id = $storeroom_id;
                 $model->status = self::STATUS_IS_NORMAL;
                 $model->created_uid = Yii::$app->user->id;
-                $model->category = $cat_id;
+                $model->category = $dep_id;
                 $model->property = $material->property;
                 $model->save(false);
             }
@@ -86,47 +130,13 @@ class Share extends ActiveRecord
                         $model->storeroom_id = $storeroom_id;
                         $model->status = self::STATUS_IS_NORMAL;
                         $model->created_uid = Yii::$app->user->id;
-                        $model->category = $cat_id;
+                        $model->category = $dep_id;
                         $model->property = $material->property;
                         $model->save(false);
                     }
                 }
             }
         }
-       
-
-        // $bigOwner = Owner::getBigOwnerByUid($owner_id);
-        // if($bigOwner){
-        //     $big_uid = $bigOwner->id;
-        //     $big_result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$big_uid,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
-        //     if(empty($big_result)){
-        //         $model = new Static;
-        //         $model->owner_id = $owner_id;
-        //         $model->to_customer_id = $big_uid;
-        //         $model->material_id = $material_id;
-        //         $model->storeroom_id = $storeroom_id;
-        //         $model->status = self::STATUS_IS_NORMAL;
-        //         $model->created_uid = Yii::$app->user->id;
-        //         $model->category = $cat_id;
-        //         $model->property = $material->property;
-        //         $model->save(false);
-        //     }
-        // }
-        // $result = static::find()->where(['owner_id'=>$owner_id,'to_customer_id'=>$to_customer_id,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id,'status'=>self::STATUS_IS_NORMAL])->one();
-        // if(empty($result)){
-        //     $model = new Static;
-        //     $model->owner_id = $owner_id;
-        //     $model->to_customer_id = $to_customer_id;
-        //     $model->material_id = $material_id;
-        //     $model->storeroom_id = $storeroom_id;
-        //     $model->status = self::STATUS_IS_NORMAL;
-        //     $model->created_uid = Yii::$app->user->id;
-        //     $model->category = $cat_id;
-        //     $model->property = $material->property;
-        //     if($model->save(false)){
-        //         return true;
-        //     }
-        // }
     }
     public static function updateMaterial($uid,$category){
         $owner_ids = Owner::find()->select('id')->where(['category'=>$category])->column();

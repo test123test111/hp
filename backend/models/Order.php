@@ -728,7 +728,7 @@ class Order extends BackendActiveRecord {
                 $sendEmail->save();
             }
             if($consume / $total >= 0.80){
-                $warning_price = '85%';
+                $warning_price = '80%';
                 $ret = [
                     'price'=>$warning_price,
                     'email'=>$owner->email,

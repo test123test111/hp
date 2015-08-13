@@ -236,7 +236,7 @@ class OrderController extends BackendController {
                 $model->category_id = $owner->category;
                 //D20150804-001
                 $count = Order::getTodayOrderCount();
-                $model->viewid = "D".date('Ymd')."-".($count + 1 );
+                $model->viewid = "MESS".date('Ymd')."-".($count + 1 );
                 $model->save(false);
 
                 foreach($value['goods'] as $key=>$v){

@@ -1,6 +1,6 @@
 <?php
 $id = $record->order_id;
-$url = "http://customer.yltd.com/order/viewapproval/{$id}";
+$url = "http://hp.yt-logistics.cn/order/viewapproval/{$id}";
 if($record->type == 0){
 	$type = '物料';
 }else{

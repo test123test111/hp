@@ -82,8 +82,8 @@ class MaterialController extends \yii\web\Controller {
             $material_id = Yii::$app->request->post('material_id');
             $storeroom_id = Yii::$app->request->post('storeroom_id');
             if(!empty($user)){
-                $category_id = $user->category;
-                $users = Owner::find()->where(['category'=>$category_id])->andWhere(['<>','id',$uid])->all();
+                $category_id = $user->department;
+                $users = Owner::find()->where(['department'=>$category_id])->andWhere(['<>','id',$uid])->all();
                 $shares = Share::find()->select('to_customer_id')->where(['material_id'=>$material_id,'owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'status'=>Share::STATUS_IS_NORMAL])->andWhere(['<>','to_customer_id',$uid])->column();
                 echo $this->renderPartial('share',['users'=>$users,'shares'=>$shares,'material_id'=>$material_id,'storeroom_id'=>$storeroom_id]);
             }
