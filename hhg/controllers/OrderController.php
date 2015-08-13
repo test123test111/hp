@@ -182,10 +182,10 @@ class OrderController extends \yii\web\Controller {
             $transaction = $db->beginTransaction();
             try{
                 $owner = Owner::findOne($model->created_uid);
-                if(empty($owner) || $owner->category == 0){
+                if(empty($owner) || $owner->department == 0){
                     throw new \Exception("下单人不属于任何部门，不具备下订单权限", 1);
                 }
-                $model->category_id = $owner->category;
+                $model->category_id = $owner->department;
                 if($model->to_type == Order::TO_TYPE_USER){
                     $address_id = Yii::$app->request->post('address');
                     $address = Address::findOne($address_id);
@@ -547,7 +547,7 @@ class OrderController extends \yii\web\Controller {
                 $model->hhg_uid = Yii::$app->user->id;
                 $model->budget_uid = $owner->id;
                 $model->budget_approval = Order::BUDGET_APPROVAL_PASS;
-                $model->category_id = $owner->category;
+                $model->category_id = $owner->department;
                 $count = Order::getTodayOrderCount();
                 $model->viewid = "MESS".date('Ymd')."-".($count + 1 );
                 $model->save(false);

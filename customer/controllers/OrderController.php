@@ -204,10 +204,10 @@ class OrderController extends CustomerController {
             $transaction = $db->beginTransaction();
             try{
                 $owner = Owner::findOne(Yii::$app->user->id);
-                if(empty($owner) || $owner->category == 0){
+                if(empty($owner) || $owner->department == 0){
                     throw new \Exception("下单人不属于任何部门，不具备下订单权限", 1);
                 }
-                $model->category_id = $owner->category;
+                $model->category_id = $owner->department;
                 if($model->to_type == Order::TO_TYPE_USER){
                     $address_id = Yii::$app->request->post('address');
                     $address = Address::findOne($address_id);
@@ -552,6 +552,7 @@ class OrderController extends CustomerController {
                 $model->recipients = $value['recipients'];
                 $model->storeroom_id = $storeroom->id;
                 $model->owner_id = $owner->id;
+                $model->category_id = $owner->department;
                 $model->to_city = $value['to_city'];
                 $model->recipients = $value['recipients'];
                 $model->to_province = $value['to_province'];
