@@ -85,7 +85,7 @@ class Address extends CustomerActiveRecord {
      * @return [type]      [description]
      */
     public static function getAddressByUid($uid){
-        $query = static::find()->orderBy(['id'=>SORT_DESC]);
+        $query = static::find()->where(['uid'=>$uid])->orderBy(['id'=>SORT_DESC]);
         
         $count = $query->count();
         $pages = new \yii\data\Pagination(['totalCount' => $count]);
@@ -110,7 +110,7 @@ class Address extends CustomerActiveRecord {
         $rs = [];
         $i = 1;
         while(true){
-            $results = self::find()->orderBy(['id'=>SORT_DESC])->limit($limit)->offset($offset)->all();
+            $results = self::find()->where(['uid'=>$owner_id])->orderBy(['id'=>SORT_DESC])->limit($limit)->offset($offset)->all();
             if(empty($results)){
                 break;
             }
