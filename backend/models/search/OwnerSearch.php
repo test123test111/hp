@@ -59,7 +59,7 @@ class OwnerSearch extends Owner
     {
         $owner = static::findOne($uid);
         if($owner->big_owner == self::IS_BIG_OWNER) {
-            $query = static::find()->with(['departments','categorys','productlines','producttwolines','budgets'])->orderBy(['id'=>SORT_DESC]);
+            $query = static::find()->with(['departments','categorys','productlines','producttwolines','budgets','storeroom'])->orderBy(['id'=>SORT_DESC]);
             $query->andWhere(['department' => $owner->department]);
         } else {
             $query = static::find()->where(['id' => $uid]);

@@ -430,8 +430,8 @@ class OrderSearch extends Order
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                                   ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                                   ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
-                                  ->andWhere(['storeroom_id'=>$owner->storeroom_id])
-                                  ->andWhere(['budget_uid'=>$uid])
+                                  // ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                                  //->andWhere(['budget_uid'=>$uid])
                                   ->andWhere(['category_id'=>$category->id])
                                   ->orderBy(['id'=>SORT_DESC]);
                 }else{
@@ -447,7 +447,7 @@ class OrderSearch extends Order
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
-                              ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                              // ->andWhere(['storeroom_id'=>$owner->storeroom_id])
                               ->andWhere(['category_id'=>$category->id])
                               ->orderBy(['id'=>SORT_DESC]);
                 } else {
@@ -455,7 +455,8 @@ class OrderSearch extends Order
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                               ->andWhere(['storeroom_id'=>$owner->storeroom_id])
-                              ->andWhere(['budget_uid'=>$uid])
+                              // ->andWhere(['budget_uid'=>$uid])
+                              ->andWhere(['created_uid'=>$uid])
                               ->orderBy(['id'=>SORT_DESC]);
                 }
                 
@@ -499,8 +500,8 @@ class OrderSearch extends Order
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                                   ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                                   ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
-                                  ->andWhere(['storeroom_id'=>$owner->storeroom_id])
-                                  ->andWhere(['budget_uid'=>$uid])
+                                  // ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                                 // ->andWhere(['budget_uid'=>$uid])
                                   ->andWhere(['category_id'=>$category->id])
                                   ->orderBy(['id'=>SORT_DESC]);
                 }else{
@@ -516,7 +517,7 @@ class OrderSearch extends Order
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
-                              ->andWhere(['storeroom_id'=>$owner->storeroom_id])
+                              // ->andWhere(['storeroom_id'=>$owner->storeroom_id])
                               ->andWhere(['category_id'=>$category->id])
                               ->orderBy(['id'=>SORT_DESC]);
                 } else {
@@ -524,7 +525,8 @@ class OrderSearch extends Order
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                               ->andWhere(['storeroom_id'=>$owner->storeroom_id])
-                              ->andWhere(['budget_uid'=>$uid])
+                              // ->andWhere(['budget_uid'=>$uid])
+                              ->andWhere(['created_uid'=>$uid])
                               ->orderBy(['id'=>SORT_DESC]);
                 }
             }
