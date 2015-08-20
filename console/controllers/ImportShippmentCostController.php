@@ -6,7 +6,7 @@ use common\models\ShippmentCost;
 class ImportShippmentCostController extends Controller{
 
 	public function actionRun(){
-		$file_name = '/tmp/cost_templete.csv';
+		$file_name = '/tmp/new_shipp.csv';
         $results = $this->readfile($file_name);
         foreach($results as $result){
             $storeroom_id = trim($result[0]);
