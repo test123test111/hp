@@ -15,17 +15,22 @@
                         {{ form.field(model,'owner',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':'','id':'autocompleteCreate','name':'','value':''}}).label(false)|raw}}
                     </li>
                     <input type="hidden" name="NewBudget[owner_id]" id="createUsert" />
-                    <li class="clearfix">
+                    {# <li class="clearfix">
                         <label>库房:</label>
                         {{ form.field(model,'storeroom_id',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).dropDownList(model.getCanUseStorerooms()).label(false)|raw}}
-                    </li>
+                    </li> #}
                     <li class="clearfix">
                         <label>预算金额:</label>
                         {{ form.field(model,'price',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).label(false)|raw}}
                     </li>
                     <li class="clearfix">
-                        <label>时间:</label>
-                        {{ form.field(model,'year',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':'date_input','name':'date','value':''}}).label(false)|raw}}
+                        <label>开始时间:</label>
+                        {{ form.field(model,'begin_time',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':'date_input'}}).label(false)|raw}}
+
+                    </li>
+                    <li class="clearfix">
+                        <label>结束时间:</label>
+                        {{ form.field(model,'end_time',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':'date_input'}}).label(false)|raw}}
 
                     </li>
                 </ul>

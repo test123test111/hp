@@ -54,6 +54,7 @@
                             <td>总计</td>
                             <td width="100">订单号</td>
                             <td>发货日期</td>
+                            <td>备注信息</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,6 +92,7 @@
                             </td>
                             <td>{{ result.viewid }}</td>
                             <td>{% if result.st_send_date !=0 %}{{ result.st_send_date|date('Y-m-d H:i')}}{% endif %}</td>
+                            <td>{{ result.info }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

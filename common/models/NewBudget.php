@@ -39,8 +39,8 @@ class NewBudget extends ActiveRecord
      */
     public function rules() {
         return [
-            [['owner_id','storeroom_id','price','owner_id','year','time'],'required'],
-            ['year','checkOwnerYear'],
+            [['owner_id','storeroom_id','price','owner_id','begin_time','end_time'],'required'],
+            ['end_time','checkOwnerTime'],
         ];
     }
     /**
@@ -75,11 +75,22 @@ class NewBudget extends ActiveRecord
      * validate owner one year one time can only have a record 
      * @return [type] [description]
      */
-    public function checkOwnerYear(){
+    public function checkOwnerTime(){
         if($this->isNewRecord){
-            $result = static::find()->where(['owner_id'=>$this->owner_id,'storeroom_id'=>$this->storeroom_id,'year'=>$this->year,'time'=>$this->time])->one();
-            if($result){
-                  $this->addError('year', '本季度/月份该所有人已经存在预算,请勿重复添加');
+            $begin_time = $this->begin_time." 00:00:00";
+            $end_time = $this->end_time." 23:59:59";
+            $results = static::find()->andWhere(['owner_id' => $this->owner_id])
+                                     ->all();
+            $flag = 1;
+            if (!empty($results)) {
+                foreach ($results as $result) {
+                    if (strtotime($result->end_time) >= strtotime($begin_time)) {
+                        $flag ++;
+                    }
+                }
+            }
+            if ($flag > 1) {
+                $this->addError('end_time', '本季度/月份该所有人已经存在预算,请勿重复添加');
             }
         }
     }
@@ -304,14 +315,18 @@ class NewBudget extends ActiveRecord
         $storeroom = Storeroom::findOne($storeroom_id);
         $year = date('Y');
         if(!empty($storeroom)){
-            if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                // $time = ceil((date('n')/3));
-                $time = date('m');
-            }else{
-                $time = ceil((date('n')/3));
-            }
+            // if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+            //     // $time = ceil((date('n')/3));
+            //     $time = date('m');
+            // }else{
+            //     $time = ceil((date('n')/3));
+            // }
 
-            $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
+            // $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
+            $date = date('Y-m-d');
+            $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id])
+                                    ->andWhere('begin_time<=:begin_time AND end_time >= :end_time', [':begin_time'=>$date,':end_time'=>$date])
+                                    ->one();
             if(!empty($budget)){
                 $adjust = NewBudgetAdjust::find()->select('price')->where(['budget_id'=>$budget->id])->sum('price');
                 if(!empty($budget)){
@@ -330,14 +345,18 @@ class NewBudget extends ActiveRecord
      */
     public static function getCurrentIdByUid($uid,$storeroom_id){
         $storeroom = Storeroom::findOne($storeroom_id);
-        $year = date('Y');
+        // $year = date('Y');
         if(!empty($storeroom)){
-            if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                $time = date('m');
-            }else{
-                $time = ceil((date('n'))/3);
-            }
-            $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
+            // if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+            //     $time = date('m');
+            // }else{
+            //     $time = ceil((date('n'))/3);
+            // }
+            // $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
+            $date = date('Y-m-d');
+            $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id])
+                                    ->andWhere('begin_time<=:begin_time AND end_time >= :end_time', [':begin_time'=>$date,':end_time'=>$date])
+                                    ->one();
             if(!empty($budget)){
                 return $budget->id;
             }
@@ -364,6 +383,8 @@ class NewBudget extends ActiveRecord
         return [
             'owner_id'=>'所属人',
             'price'=>'预算金额',
+            'begin_time' => '开始时间',
+            'end_time' => '结束时间',
         ];
     }
     /**
@@ -373,14 +394,18 @@ class NewBudget extends ActiveRecord
      */
     public function checkUserBudget($uid,$storeroom_id){
         $storeroom = Storeroom::findOne($storeroom_id);
-        $year = date('Y');
+        // $year = date('Y');
         if(!empty($storeroom)){
-            if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                $time = date('m');
-            }else{
-                $time = ceil((date('n'))/3);
-            }
-            $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
+            // if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+            //     $time = date('m');
+            // }else{
+            //     $time = ceil((date('n'))/3);
+            // }
+            // $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id,'year'=>$year,'time'=>$time])->one();
+            $date = date('Y-m-d');
+            $budget = static::find()->where(['owner_id'=>$uid,'storeroom_id'=>$storeroom_id])
+                                    ->andWhere('begin_time<=:begin_time AND end_time >= :end_time', [':begin_time'=>$date,':end_time'=>$date])
+                                    ->one();
             if(!empty($budget)){
                 return $budget->id;
             }

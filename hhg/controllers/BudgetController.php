@@ -52,14 +52,16 @@ class BudgetController extends \yii\web\Controller {
         $model = new NewBudget;
         if(Yii::$app->request->isPost){
             $model->load(Yii::$app->request->post());
-            $storeroom = Storeroom::findOne(Yii::$app->request->post('NewBudget')['storeroom_id']);
-            $date = Yii::$app->request->post('date');
-            $model->year = date('Y',strtotime($date));
-            if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
-                $model->time = date('n',strtotime($date));
-            }else{
-                $model->time = ceil((date('n',strtotime($date)))/3);
-            }
+            // $storeroom = Storeroom::findOne(Yii::$app->request->post('NewBudget')['storeroom_id']);
+            // $date = Yii::$app->request->post('date');
+            // $model->year = date('Y',strtotime($date));
+            // if($storeroom->level == Storeroom::STOREROOM_LEVEL_IS_CENTER){
+            //     $model->time = date('n',strtotime($date));
+            // }else{
+            //     $model->time = ceil((date('n',strtotime($date)))/3);
+            // }
+            $owner = Owner::findOne($model->owner_id);
+            $model->storeroom_id = $owner->storeroom_id;
             $model->created_uid = Yii::$app->user->id;
             if($model->validate() && $model->save()){
                 $model->createBudgetTotal();
