@@ -39,7 +39,7 @@ class NewBudget extends ActiveRecord
      */
     public function rules() {
         return [
-            [['owner_id','storeroom_id','price','owner_id','begin_time','end_time'],'required'],
+            [['owner_id','storeroom_id','price','begin_time','end_time'],'required'],
             ['end_time','checkOwnerTime'],
         ];
     }

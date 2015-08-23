@@ -61,7 +61,9 @@ class BudgetController extends \yii\web\Controller {
             //     $model->time = ceil((date('n',strtotime($date)))/3);
             // }
             $owner = Owner::findOne($model->owner_id);
-            $model->storeroom_id = $owner->storeroom_id;
+            if (!empty($owner)) {
+                $model->storeroom_id = $owner->storeroom_id;
+            }
             $model->created_uid = Yii::$app->user->id;
             if($model->validate() && $model->save()){
                 $model->createBudgetTotal();
