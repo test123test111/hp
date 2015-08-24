@@ -49,9 +49,9 @@
                         <tr>
                             <td>客户名</td>
                             <td>库房名称</td>
-                            <td>年</td>
+                            <td>开始时间</td>
                             {# <td>分享</td> #}
-                            <td>月份/季度</td>
+                            <td>结束时间</td>
                             <td>预算费用</td>
                             <td>可用费用</td>
                             <td>剩余百分比</td>
@@ -64,8 +64,8 @@
                         <tr>
                             <td>{{ result.owner.english_name }}</td>
                             <td>{{ result.storeroom.name }}</td>
-                            <td>{{ result.year }}</td>
-                            <td>{{ result.time }}</td>
+                            <td>{{ result.begin_time|date('Y-m-d') }}</td>
+                            <td>{{ result.end_time|date('Y-m-d') }}</td>
                             <td>
                                 {% set price = result.price %}
                                 {% if result.adjusts is defined %}

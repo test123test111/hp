@@ -249,7 +249,7 @@ class NewBudget extends ActiveRecord
                 $consume = NewBudgetConsume::find()->select('price')->where(['budget_id'=>$result->id])->sum('price');
                 $data[$i]['name'] = $result->owner->english_name;
                 $data[$i]['storeroom'] = $result->storeroom->name;
-                $data[$i]['time'] = $result->time;
+                $data[$i]['time'] = date('Y-m-d',strtotime($result->begin_time)).'-'.date('Y-m-d',strtotime($result->end_time));
                 $data[$i]['price'] = $result->price;
                 $data[$i]['change'] = $adjust;
                 $data[$i]['used'] = $consume;
