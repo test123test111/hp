@@ -336,6 +336,49 @@ class OrderSearch extends Order
         return $dataProvider;
     }
     /**
+     * [getDisplayConsumeData description]
+     * @param  [type] $params [description]
+     * @return [type]         [description]
+     */
+    public static function getDisplayConsumeData($params)
+    {
+        $query = Order::find()->with(['details','consume','storeroom'=>function($query){
+                                    return $query->with('citydata');
+                                },'createduser','package'])
+                              ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
+                              //->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_PACKAGE,":c_status"=>self::ORDER_STATUS_IS_UNSIGN])
+                              ->andWhere(['status'=>Order::ORDER_STATUS_IS_SIGN])
+                              ->orderBy(['id'=>SORT_DESC]);
+
+        if(isset($params['created_uid']) && $params['created_uid'] != ""){
+            $owner = Owner::find()->where(['english_name'=>$params['created_uid']])->one();
+            if(!empty($owner)){
+                $query->andWhere(['created_uid'=>$owner->id]);
+            }else{
+                $query->andWhere(['created_uid'=> -1]);
+            }
+            
+        }
+        if(isset($params['begin_time']) && $params['begin_time'] != ""){
+            if(isset($params['end_time']) && $params['end_time'] != ""){
+                $begin_time = $params['begin_time']." 00:00:00";
+                $end_time = $params['end_time']." 23:59:59";
+                $query->andWhere('created >= :begin_time AND created <= :end_time',[':begin_time'=>$begin_time,":end_time"=>$end_time]);
+            }
+        }
+        if(isset($params['category']) && $params['category'] !=""){
+            $query->andWhere(['category_id'=>$params['category']]);
+        }
+        $count = $query->count();
+        $pages = new \yii\data\Pagination(['totalCount' => $count]);
+        $ret = [];
+        $query->offset($pages->offset)->limit(20);
+
+        $data = $query->all();
+        return [$data,$pages,$count];
+        
+    }
+    /**
      * get refund data
      * @return [type] [description]
      */

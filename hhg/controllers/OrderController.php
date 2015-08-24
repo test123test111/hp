@@ -1285,9 +1285,13 @@ class OrderController extends \yii\web\Controller {
     public function actionSettlement(){
         $params = Yii::$app->request->getQueryParams();
         $sidebar_name = '结算报告';
+        list($data,$pages,$count) = OrderSearch::getDisplayConsumeData($params);
         return $this->render('settlement', [
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
+             'results' => $data,
+             'pages' => $pages,
+             'count' => $count,
         ]);
     }
     /**

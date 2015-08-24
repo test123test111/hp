@@ -11,7 +11,7 @@
             <input type="text" name="created_uid" value="{% if params.created_uid is defined %}{{ params.created_uid }}{% endif %}" class="search_ipt" placeholder="" />
         </li>
         <li>
-            <label>组 别：</label>
+            <label>部 门：</label>
             <input type="text" name="category" value="{% if params.category is defined %}{{ params.category }}{% endif %}" class="search_ipt" placeholder="" />
         </li>
         <li class="clearfix">
@@ -27,6 +27,79 @@
     <input type="submit" value="导出结算报表" class="search_btn" />
   </form>
 </div>
+        <div class="materiel_box">
+                <table id="material_list" class="materiel_table">
+                    <thead>
+                        <tr>
+                            <td>序号</td>
+                            <td>订单类型</td>
+                            <td>库房位置</td>
+                            <td>申请人</td>
+                            <td width="100">申请订单日期</td>
+                            <td>预算所有人</td>
+                            <td>起运城市</td>
+                            <td>收货城市</td>
+                            <td>运输时效</td>
+                            <td>运输类别</td>
+                            <td>重量(KG)</td>
+                            <td>包装数量</td>
+                            <td>分拣费</td>
+                            <td>运费</td>
+                            <td>保险费</td>
+                            <td>包装材料费</td>
+                            <td>其他费用</td>
+                            <td>总计</td>
+                            <td width="100">订单号</td>
+                            <td>发货日期</td>
+                            <td>备注信息</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key,result in results %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{% if result.type == 0 %}日常订单{% else %}大发放{% endif %}</td>
+                            <td>{{ result.storeroom.name }}</td>
+                            <td>{{ result.createduser.english_name }}</td>
+                            <td>{{ result.created|date('Y-m-d H:i')}}</td>
+                            <td>{{ result.tbudgetuser.english_name }}</td>
+                            <td>{{ result.storeroom.city }}</td>
+                            <td>{{ result.to_city }}</td>
+                            <td>{{ result.getMyTransportType() }}</td>
+                            <td></td>
+                            {# <td>{{ result.getDetailWeight() / 1000}}</td> #}
+                            <td>
+                            {% if result.package is defined %}
+                                {% if result.package.actual_weight > result.package.throw_weight %}
+                                    {{ result.package.actual_weight }}
+                                {% else %}
+                                    {{ result.package.throw_weight }}
+                                {% endif %}
+                            {% endif %}</td>
+                            <td>{% if result.package is defined %}{{ result.package.num }}{% endif %}</td>
+                            <td>{{ result.fenjian_fee }}</td>
+                            <td>{{ result.real_ship_fee }}</td>
+                            <td>{{ result.insurance_price }}</td>
+                            <td>{% if result.package is defined %}{{ result.package.package_fee }}{% endif %}</td>
+                            <td>{% if result.package is defined %}{{ result.package.other_fee }}{% endif %}</td>
+                            <td>
+                                {% if result.package is defined %}
+                                {{ result.fenjian_fee + result.real_ship_fee + result.insurance_price + result.package.package_fee + result.package.other_fee }}
+                                {% endif %}
+                            </td>
+                            <td>{{ result.viewid }}</td>
+                            <td>{% if result.st_send_date !=0 %}{{ result.st_send_date|date('Y-m-d H:i')}}{% endif %}</td>
+                            <td>{{ result.info }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>      
+            </div>
+            <div class="pages clearfix">
+                <div class="fr">
+                    {{ widget('\\yii\\widgets\\LinkPager',{'pagination':pages}) }}
+                </div>
+            </div>
 <script type='text/javascript' src='/js/date_input.js'></script>
     <script type="text/javascript">
         $(function(){
