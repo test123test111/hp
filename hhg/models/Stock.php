@@ -204,6 +204,7 @@ class Stock extends CustomerActiveRecord {
         $query = StockTotal::find()->with(['material','storeroom','owner'=>function($query){
                                             return $query->with('productlines');
                                         }])
+                                   ->where('(total - lock_num) > 0')
                                    ->orderBy(['modified'=>SORT_DESC]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
             $material = Material::find()->select('id')->where(['like','code',$params['material_id']])->column();
@@ -261,7 +262,7 @@ class Stock extends CustomerActiveRecord {
      * @return [type]         [description]
      */
     public static function getImportData($params){
-        $query = StockTotal::find()->with(['material','storeroom','owner'=>function($query){
+        $query = StockTotal::find()->where('(total - lock_num) > 0')->with(['material','storeroom','owner'=>function($query){
                                             return $query->with(['departments','categorys','productlines','producttwolines']);
                                         }]);
         if(isset($params['material_id']) && $params['material_id'] != ""){

@@ -200,9 +200,17 @@ class Stock extends CustomerActiveRecord {
         // $data = $query->all();
         // return [$data,$pages,$count];
         // 
-        $query = Share::find()->with(['materials','storerooms','stocks','owners'=>function($query){
+        $query = Share::find()->joinWith(['stockTotals'=>function($query){
+                                    return $query->where('(total - lock_num) > 0');
+                                }])
+                              ->with(['materials',
+                                      'storerooms',
+                                      'stocks',
+                                      'owners'=>function($query){
                                             return $query->with('productlines');
-                                        },'stockTotals'])->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL]);
+                                      },
+                                      // 'stockTotals'
+                                      ])->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
             $material = Material::find()->select('id')->where(['like','code',$params['material_id']])->column();
             // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
@@ -261,11 +269,13 @@ class Stock extends CustomerActiveRecord {
      * @return [type] [description]
      */
     public static function getShareToMeData($params){
-        $query = Share::find()->with(['materials','storerooms','stocks','owners'=>function($query){
+        $query = Share::find()->joinWith(['stockTotals'=>function($query){
+                                    return $query->where('(total - lock_num) > 0');
+                                }])->with(['materials','storerooms','stocks','owners'=>function($query){
                                             return $query->with('productlines');
-                                        },'stockTotals'])
+                                        }])
                               ->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])
-                              ->andWhere(['<>','owner_id',Yii::$app->user->id]);
+                              ->andWhere(['<>','share.owner_id',Yii::$app->user->id]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
             $material = Material::find()->select('id')->where(['like','code',$params['material_id']])->column();
             // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
@@ -321,11 +331,13 @@ class Stock extends CustomerActiveRecord {
      * @return [type] [description]
      */
     public static function getExclusiveData($params){
-        $query = Share::find()->with(['materials','storerooms','stocks','owners'=>function($query){
+        $query = Share::find()->joinWith(['stockTotals'=>function($query){
+                                    return $query->where('(total - lock_num) > 0');
+                                }])->with(['materials','storerooms','stocks','owners'=>function($query){
                                             return $query->with('productlines');
-                                        },'stockTotals'])
+                                        }])
                               ->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL])
-                              ->andWhere(['owner_id'=>Yii::$app->user->id]);
+                              ->andWhere(['share.owner_id'=>Yii::$app->user->id]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
             $material = Material::find()->select('id')->where(['like','code',$params['material_id']])->column();
             // if(!empty($material) && $material->owner_id == Yii::$app->user->id){
@@ -382,9 +394,11 @@ class Stock extends CustomerActiveRecord {
      * @return [type]         [description]
      */
     public static function getImportData($params){
-        $query = Share::find()->with(['materials','storerooms','stocks','owners'=>function($query){
+        $query = Share::find()->joinWith(['stockTotals'=>function($query){
+                                    return $query->where('(total - lock_num) > 0');
+                                }])->with(['materials','storerooms','stocks','owners'=>function($query){
                                             return $query->with(['departments','categorys','productlines','producttwolines']);
-                                        },'stockTotals'])->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL]);
+                                        }])->where(['to_customer_id'=>Yii::$app->user->id,'status'=>Share::STATUS_IS_NORMAL]);
         if(isset($params['material_id']) && $params['material_id'] != ""){
             $material = Material::find()->select('id')->where(['like','code',$params['material_id']])->column();
             // if(!empty($material) && $material->owner_id == Yii::$app->user->id){

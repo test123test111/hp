@@ -14,6 +14,7 @@ return [
 	'vendorPath' => $rootDir . '/vendor',
 	'controllerNamespace' => 'hhg\controllers',
   'language'=>'zh-CN',
+  'bootstrap' => ['log'],
 	'modules'=>[
 		'gii' => 'yii\gii\Module',
     'gridview'=>[
@@ -81,21 +82,13 @@ return [
             'class'=>'backend\components\RoleMenu',
         ],
         'log' => [
-              'targets' => [
-                  'file' => [
-                      'class' => 'yii\log\FileTarget',
-                      'levels' => ['trace', 'info'],
-                      'categories' => ['yii\*'],
-                  ],
-                  'email' => [
-                      'class' => 'yii\log\EmailTarget',
-                      'levels' => ['error', 'warning'],
-                      'message' => [
-                          'to' => 'admin@example.com',
-                      ],
-                  ],
-              ],
-          ],
+            'targets' => [
+                [
+                  'class' => 'yii\log\FileTarget',
+                  'levels' => ['error', 'warning'],
+                ],
+            ],
+        ],
 		'errorHandler' => [
 			'errorAction' => 'site/error',
 		],

@@ -19,6 +19,7 @@ amapi/runtime/*
 amapi/web/assets/*
 amapi/web/index.php
 backend/runtime/*
+customer/runtime/*
 finance/runtime/*
 operate/runtime/*
 backend/web/index.php
