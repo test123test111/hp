@@ -32,7 +32,8 @@ class SecondKillController extends Controller
 
 		while (true) {
 			$date = date('Y-m-d H:i:s');
-			if ($date >= '2015-08-24 23:59:58') {
+			echo $date;echo "\r\n";
+			if ($date >= '2015-08-25 23:59:58') {
 				$result = $this->kill2();
 		        $result = json_decode($result,true);
 		        if ($result['errno'] == 0) {
@@ -74,12 +75,11 @@ class SecondKillController extends Controller
 	{
 		while (true) {
 			$date = date('Y-m-d H:i:s');
-			if ($date >= '2015-08-24 11:59:58') {
+			if ($date >= '2015-08-25 11:59:58') {
 				$result = $this->killbao();
 		        $result = json_decode($result,true);
 		        if ($result['errno'] == 0) {
-		        	file_put_contents('/tmp/secondkill.txt', $result);
-		        	// break;
+		        	break;
 		        } else {
 		        	echo $result['errno']."\r\n";
 		        }
@@ -130,7 +130,7 @@ class SecondKillController extends Controller
 	{
 
 		//zhangying
-		$sku_info = '{"sku_info":[{"sku_source":24,"num":1,"stock_amount_id":549903,"sku_source_arg":"276179"}]}';
+		$sku_info = '{"sku_info":[{"sku_source":24,"num":1,"stock_amount_id":558276,"sku_source_arg":"280737"}]}';
 		$session = 'PHPSESSID=72jm3bktgm782d56r1fpu6aok0';
 		$dvid = '333B77E1-BF95-44D3-A200-D90F8FF86BF6';
 		$this->preAdd($sku_info,$session,$dvid);
