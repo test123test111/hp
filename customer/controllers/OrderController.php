@@ -260,6 +260,9 @@ class OrderController extends CustomerController {
                 }
                 $count = Order::getTodayOrderCount();
                 $model->viewid = "D".date('Ymd')."-".($count + 1 );
+                if ($model->is_borrow == 1 && $model->return_time != "") {
+                    $model->return_time = strtotime($model->return_time);
+                }
                 $model->save();
                 //create order detail 
                 $model->createOrderDetail($_POST['Carts'],$model->budget_uid);
@@ -1421,12 +1424,19 @@ class OrderController extends CustomerController {
         $params = Yii::$app->request->getQueryParams();
         list($data,$pages,$count) = OrderSearch::getSettlementData(Yii::$app->request->getQueryParams(),Yii::$app->user->id);
         $sidebar_name = '结算报告';
+        $categorys = Owner::getAllCategorysByOwnerId(Yii::$app->user->id);
+        $owners = Owner::getAllDepartmentOwners(Yii::$app->user->id);
+        $material = new Material;
+        $material_property = $material->getCanUseProperty();
         return $this->render('settlement', [
              'results' => $data,
              'pages' => $pages,
              'count'=>$count,
              'params'=>Yii::$app->request->getQueryParams(),
              'sidebar_name'=>$sidebar_name,
+             'categorys' => $categorys,
+             'owners' => $owners,
+             'property' => $material_property,
              'menu_name'=>'report',
         ]);
     }

@@ -3,15 +3,25 @@
 {% include '@app/views/layouts/base_with_sidebar.twig' %}
   <div class="main">
         <div class="order_search">
-                <form>
+                {# <form>
                     <ul>
-                        {# <li class="clearfix">
+                        <li class="clearfix">
                             <label>订单编号：</label>
                             <input type="text" name="order_id" value="{% if params.order_id is defined %}{{ params.order_id }}{% endif %}" class="search_ipt" placeholder="" />
                         </li>
                         <li class="clearfix">
                             
-                        </li> #}
+                        </li>
+                        
+                        <li class="clearfix">
+                            <label>&nbsp;</label>
+                            <input type="submit" name="" class="search_btn" value="搜索" />
+                        </li>
+                    </ul>
+                </form> #}
+
+                <form>
+                    <ul class="clearfix">
                         <li class="clearfix">
                             <label>开始日期：</label>
                             <input type="text" name="begin_time" class="search_ipt date_input" value="{% if params.begin_time is defined %}{{ params.begin_time }}{% endif %}" placeholder="点击选择开始日期" />
@@ -20,12 +30,49 @@
                             <label>结束日期：</label>
                             <input type="text" name="end_time" class="search_ipt date_input" value="{% if params.end_time is defined %}{{ params.end_time }}{% endif %}" placeholder="点击选择结束日期" />
                         </li>
-                        <li class="clearfix">
-                            <label>&nbsp;</label>
-                            <input type="submit" name="" class="search_btn" value="搜索" />
+                        <li>
+                            <label>选择组别：</label>
+                            <select name="category_id">
+                                <option value="">请选择组别</option>
+                                {% for category in categorys %}
+                                <option {% if params.category_id is defined and params.category_id == category.id %}selected="selected"{% endif %} value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
                         </li>
+                        <li>
+                            <label>选所属人：</label>
+                            <select name="owner_id">
+                                <option value="">请选择所属人</option>
+                                {% for owner in owners %}
+                                <option {% if params.owner_id is defined and params.owner_id == owner.id %}selected="selected"{% endif %} value="{{ owner.id }}">{{ owner.english_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </li>
+                        <li>
+                            <label>物料类别：</label>
+                            <select name="property">
+                                <option value="">请选择物料类别</option>
+                                {% for k,p in property %}
+                                <option {% if params.property is defined and params.property == k %}selected="selected"{% endif %} value="{{ k }}">{{ p }}</option>
+                                {% endfor %}
+                            </select>
+                        </li>
+                        {# <li>
+                            <label>所&nbsp;属&nbsp;人&nbsp;：</label>
+                            <select name="owner_id">
+                                <option value="">请选择所属人</option>
+                                {% for owner in owners %}
+                                <option {% if params.owner_id is defined and params.owner_id == owner.id %}selected="selected"{% endif %} value="{{ owner.id }}">{{ owner.english_name }}</option>
+                                {% endfor %}
+                                {# <option value="1">周星星</option>
+                                <option value="1">张学友</option> 
+                            </select>
+                        </li> #}
                     </ul>
-                </form>
+                    
+                    <input type="submit" value="搜索" class="search_btn" />
+                  </form>
+
             </div>
         <div class="material_cart clearfix">
             <a href="javascript:;" class="export_btn">导出结算报表</a>

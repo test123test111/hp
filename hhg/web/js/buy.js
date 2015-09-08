@@ -34,6 +34,18 @@ $(function(){
             $("#safe_price").hide();
         }
     });
+
+    $("#borrow_label li").click(function(){
+        var data_show = $(this).attr("data-show");
+        $("#borrow_label li").removeClass("selected");
+        $(this).addClass("selected");
+        if(data_show == 1){
+            $("#returnTime").show();
+        }else{
+            $("#returnTime").hide();
+        }
+    });
+    
     // select time
     $("#delivery_style li").click(function(){
         $("#delivery_style li").removeClass("selected");

@@ -44,6 +44,8 @@ a.blue:hover,a.blue:active{color:#0072FF;text-decoration:underline;}
 .header .mtop .user .sub a{display:block;line-height:24px;}
 .header .mban{background:url(../images/ban.jpg) no-repeat center bottom;height:128px;padding-top:68px;}
 .header .mban .title{text-align:left;padding-top:42px;padding-left:60px;}
+.tip-top{position: fixed;top:68px;left: 0;width: 100%;height: 36px;line-height: 36px;color: #f00;background: #FFEFD5;text-align: center;}
+.tip-top span{position: absolute;top:2px;right: 30px;}
 .footer{position:fixed;width:100%;bottom:0;left:0;background:#f2f2f2;padding:20px 0;z-index:20}
 .footer p{text-align:left;padding:0px 30px;color:#898989;}
 /*.header .mtop .notice{color:#fff;font-size:14px;float:left;line-height:68px;background:url(../images/mail_ico.gif) no-repeat left center;padding-left:20px;}*/

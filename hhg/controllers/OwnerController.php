@@ -93,6 +93,10 @@ class OwnerController extends \yii\web\Controller {
             $model = Hhg::findOne(Yii::$app->user->id);
             $model->load(Yii::$app->request->post());
             if ($model->save()) {
+                if ($model->is_reset_password == 0 ) {
+                    $model->is_reset_password = 1;
+                    $model->save(false);
+                }
                 echo 0;
             }else{
                 echo 1;

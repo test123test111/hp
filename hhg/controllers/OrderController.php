@@ -246,6 +246,9 @@ class OrderController extends \yii\web\Controller {
 
                 $count = Order::getTodayOrderCount();
                 $model->viewid = "D".date('Ymd')."-".($count + 1 );
+                if ($model->is_borrow == 1 && $model->return_time != "") {
+                    $model->return_time = strtotime($model->return_time);
+                }
                 $model->hhg_uid = Yii::$app->user->id;
                 $model->save();
                 //create order detail 

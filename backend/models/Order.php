@@ -136,7 +136,7 @@ class Order extends BackendActiveRecord {
     public function rules() {
         return [
             [['storeroom_id','transport_type','to_type','budget_uid','is_borrow'],'required'],
-            [['info','purpose','insurance','insurance_price','send_date','arrive_date','created_uid','modified_uid','addr_info'],'safe'],
+            [['info','purpose','insurance','insurance_price','send_date','arrive_date','created_uid','modified_uid','addr_info','return_time'],'safe'],
             // ['goods_quantity',]/
         ];
     }
@@ -421,13 +421,13 @@ class Order extends BackendActiveRecord {
         // }
         $this->checkOrderNeedApproval();
         if($this->can_formal != self::IS_NOT_FORMAL){
-            foreach($postData as $key=>$value){
-                $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
-                if(!empty($cart)){
-                    Cart::deleteAll(['id'=>$cart->id]);
-                }
+            // foreach($postData as $key=>$value){
+            //     $cart = Cart::find()->with(['storeroom','material'])->where(['id'=>$value['id']])->one();
+            //     if(!empty($cart)){
+            //         Cart::deleteAll(['id'=>$cart->id]);
+            //     }
                 
-            }
+            // }
         }
         return true;
     }

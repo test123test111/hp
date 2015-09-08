@@ -36,6 +36,9 @@
             <dt>下单人：{{ order.createduser.english_name }}</dt>
              <dt>库房：{{ order.storeroom.name }}</dt>
              <dt>是否借用：{% if order.is_borrow == 0 %}否{% else %}是{% endif %}</dt>
+             {% if order.is_borrow == 1 %}
+                <dt>归还时间：{{ order.return_time|date('Y-m-d') }}</dt>
+             {% endif %}
             <dt>预算费用所属人：{{ budget_user }}</dt>
             {# <dt>订单运费：{{ order.ship_fee }}RMB</dt>
             <dt>订单分拣费：{{ order.fenjian_fee }}RMB</dt> #}

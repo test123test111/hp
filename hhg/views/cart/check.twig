@@ -84,7 +84,7 @@
 
                     <div class="dt">6 是否借用</div>
                     <div class="dd">
-                        <ul class="delivery_time clearfix">
+                        <ul id="borrow_label" class="delivery_time clearfix">
                             <li data-show="1">
                                 <label><input type="radio" class="hookbox" value="1" name="Order[is_borrow]">是</label>
                             </li>
@@ -92,7 +92,7 @@
                                 <label><input type="radio" class="hookbox" checked="checked" value="0" name="Order[is_borrow]">否</label>
                             </li>
                         </ul>
-                        <input type="text" placeholder="输入保险金额" name="Order[insurance_price]" class="memo_input none" id="safe_price" />
+                        <input type="text" placeholder="输入归还时间" name="Order[return_time]" class="date_input memo_input none" id="returnTime" />
                     </div>
 
                     <div class="dt">7 物料信息</div>

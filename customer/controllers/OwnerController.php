@@ -71,6 +71,10 @@ class OwnerController extends BackendController {
         if(Yii::$app->request->isPost){
             $model = $this->loadModel(Yii::$app->user->id);
             if ($model->updateAttrs($_POST['Owner'])) {
+                if ($model->is_reset_password == 0 ) {
+                    $model->is_reset_password = 1;
+                    $model->save(false);
+                }
                 echo 0;
             }else{
                 echo 1;
@@ -86,6 +90,7 @@ class OwnerController extends BackendController {
         if(Yii::$app->request->isPost){
             $model->setScenario('resetPassword');
             $model->password = Yii::$app->request->post('password');
+
             if($model->save()){
                 echo 0;
             }else{

@@ -29,10 +29,23 @@
 
         <!-- banner -->
         <div class="mban">
+            {% if App.user.identity.is_reset_password == 0 %}
+            <div class="tip-top">
+                为了您的账号安全请点击<a href="javascript:;" class="updatePw">重置您的密码</a>
+                <span>
+                    <a href="javascript:;">关闭</a>
+                </span>
+            </div>
+            {% endif %}
             <h2 class="title"><img src="/images/title.png"></h2>
         </div>
         <!-- banner end -->
     </div>
+    <script type="text/javascript">
+        $('.tip-top span a').click(function(){
+            $(this).parent().parent().remove();
+        })
+    </script>
     {% block content %}
     
     {% endblock %}

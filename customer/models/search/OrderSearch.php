@@ -10,6 +10,8 @@ use backend\models\Owner;
 use backend\models\Storeroom;
 use common\models\Category;
 use common\models\Department;
+use customer\models\Material;
+use customer\models\OrderDetail;
 /**
  * PostSearch represents the model behind the search form about `backend\models\Post`.
  */
@@ -434,6 +436,24 @@ class OrderSearch extends Order
                                   //->andWhere(['budget_uid'=>$uid])
                                   ->andWhere(['category_id'=>$category->id])
                                   ->orderBy(['id'=>SORT_DESC]);
+                    if (isset($params['category_id']) && $params['category_id'] != "") {
+                        $uids = Owner::find()->select('id')->where(['category'=>$params['category_id']])->column();
+                        $query->andWhere(['created_uid' => $uids]);
+                    }
+
+                    if (isset($params['owner_id']) && $params['owner_id'] != "") {
+                        $material_ids = Material::find()->select('id')->where(['owner_id' => $params['owner_id']])->column();
+                        $order_ids = OrderDetail::find()->select('distinct(order_id)')->where(['material_id' => $material_ids])->column();
+                        $query->andWhere(['id' => $order_ids]);
+                    }
+
+                    if (isset($params['property']) && $params['property'] != "") {
+                        $uids = Owner::find()->select('id')->where(['department' => $owner->department])->column();
+                        $material_ids = Material::find()->select('id')->where(['owner_id' => $uids,'property' => $params['property']])->column();
+                        $order_ids = OrderDetail::find()->select('distinct(order_id)')->where(['material_id' => $material_ids])->column();
+                        $query->andWhere(['id' => $order_ids]);
+                    } 
+
                 }else{
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                                   ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
@@ -450,6 +470,22 @@ class OrderSearch extends Order
                               // ->andWhere(['storeroom_id'=>$owner->storeroom_id])
                               ->andWhere(['category_id'=>$category->id])
                               ->orderBy(['id'=>SORT_DESC]);
+                    if (isset($params['category_id']) && $params['category_id'] != "") {
+                        $uids = Owner::find()->select('id')->where(['category'=>$params['category_id']])->column();
+                        $query->andWhere(['created_uid' => $uids]);
+                    }
+                    if (isset($params['owner_id']) && $params['owner_id'] != "") {
+                        $material_ids = Material::find()->select('id')->where(['owner_id' => $params['owner_id']])->column();
+                        $order_ids = OrderDetail::find()->select('distinct(order_id)')->where(['material_id' => $material_ids])->column();
+                        $query->andWhere(['id' => $order_ids]);
+                    }
+
+                    if (isset($params['property']) && $params['property'] != "") {
+                        $uids = Owner::find()->select('id')->where(['department' => $owner->department])->column();
+                        $material_ids = Material::find()->select('id')->where(['owner_id' => $uids,'property' => $params['property']])->column();
+                        $order_ids = OrderDetail::find()->select('distinct(order_id)')->where(['material_id' => $material_ids])->column();
+                        $query->andWhere(['id' => $order_ids]);
+                    } 
                 } else {
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
@@ -504,6 +540,21 @@ class OrderSearch extends Order
                                  // ->andWhere(['budget_uid'=>$uid])
                                   ->andWhere(['category_id'=>$category->id])
                                   ->orderBy(['id'=>SORT_DESC]);
+                    if (isset($params['category_id']) && $params['category_id'] != "") {
+                        $uids = Owner::find()->select('id')->where(['category'=>$params['category_id']])->column();
+                        $query->andWhere(['created_uid' => $uids]);
+                    }
+                    if (isset($params['owner_id']) && $params['owner_id'] != "") {
+                        $material_ids = Material::find()->select('id')->where(['owner_id' => $params['owner_id']])->column();
+                        $order_ids = OrderDetail::find()->select('distinct(order_id)')->where(['material_id' => $material_ids])->column();
+                        $query->andWhere(['id' => $order_ids]);
+                    }
+                    if (isset($params['property']) && $params['property'] != "") {
+                        $uids = Owner::find()->select('id')->where(['department' => $owner->department])->column();
+                        $material_ids = Material::find()->select('id')->where(['owner_id' => $uids,'property' => $params['property']])->column();
+                        $order_ids = OrderDetail::find()->select('distinct(order_id)')->where(['material_id' => $material_ids])->column();
+                        $query->andWhere(['id' => $order_ids]);
+                    } 
                 }else{
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                                   ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
@@ -520,6 +571,21 @@ class OrderSearch extends Order
                               // ->andWhere(['storeroom_id'=>$owner->storeroom_id])
                               ->andWhere(['category_id'=>$category->id])
                               ->orderBy(['id'=>SORT_DESC]);
+                    if (isset($params['category_id']) && $params['category_id'] != "") {
+                        $uids = Owner::find()->select('id')->where(['category'=>$params['category_id']])->column();
+                        $query->andWhere(['created_uid' => $uids]);
+                    }
+                    if (isset($params['owner_id']) && $params['owner_id'] != "") {
+                        $material_ids = Material::find()->select('id')->where(['owner_id' => $params['owner_id']])->column();
+                        $order_ids = OrderDetail::find()->select('distinct(order_id)')->where(['material_id' => $material_ids])->column();
+                        $query->andWhere(['id' => $order_ids]);
+                    }
+                    if (isset($params['property']) && $params['property'] != "") {
+                        $uids = Owner::find()->select('id')->where(['department' => $owner->department])->column();
+                        $material_ids = Material::find()->select('id')->where(['owner_id' => $uids,'property' => $params['property']])->column();
+                        $order_ids = OrderDetail::find()->select('distinct(order_id)')->where(['material_id' => $material_ids])->column();
+                        $query->andWhere(['id' => $order_ids]);
+                    } 
                 } else {
                     $query = Order::find()->with(['details','storeroom','createduser','tbudgetuser','package'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])

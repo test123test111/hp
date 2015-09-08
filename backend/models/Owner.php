@@ -263,6 +263,7 @@ class Owner extends ActiveRecord implements IdentityInterface
         }
         // $this->setScenario('resetPassword');
         if ($this->validate($attrs)) {
+            
             return $this->update(false);
         } else {
             return false;
@@ -399,5 +400,28 @@ class Owner extends ActiveRecord implements IdentityInterface
             },$owner);
         }
         
+    }
+
+    /**
+     * [getAllCategorysByOwnerId description]
+     * @param  [type] $uid [description]
+     * @return [type]      [description]
+     */
+    public static function getAllCategorysByOwnerId($uid)
+    {
+        $owner = static::findOne($uid);
+        if ($owner->big_owner == Owner::IS_BIG_OWNER) {
+            return Category::find()->where(['department_id' => $owner->department])->all();
+        }
+        return Category::find()->where(['id' => $owner->category])->all();
+    }
+
+    public static function getAllDepartmentOwners($uid)
+    {
+        $owner = static::findOne($uid);
+        if ($owner->big_owner == Owner::IS_BIG_OWNER) {
+            return static::find()->where(['department' => $owner->department])->all();
+        }
+        return static::find()->where(['id'=>$uid])->all();
     }
 }
