@@ -87,9 +87,11 @@ class Address extends CustomerActiveRecord {
     public static function getAddressByUid($uid){
         $owner = Owner::findOne($uid);
         if ($owner->big_owner == 1) {
-            $query = static::find()->orderBy(['id'=>SORT_DESC]);
+            $query = static::find()->joinWith(['user'=>function($query) use ($owner){
+                    return $query->where(['department'=>$owner->department]);
+                }])->orderBy(['address.id'=>SORT_DESC]);
         } else {
-            $query = static::find()->where(['uid'=>$uid])->orderBy(['id'=>SORT_DESC]);
+            $query = static::find()->where(['uid'=>$uid])->orderBy(['address.id'=>SORT_DESC]);
         }
         $count = $query->count();
         $pages = new \yii\data\Pagination(['totalCount' => $count]);
@@ -109,16 +111,19 @@ class Address extends CustomerActiveRecord {
         $str = "序号,创建人,收货单位名称,收货联系人,收货人联系电话,收货人地址,所在城市,创建日期,备注\n";
         $offset = 0;
         $limit = 100;
-        $num = self::find()->count();
         $data = [];
         $rs = [];
         $i = 1;
         $owner = Owner::findOne($uid);
         if ($owner->big_owner == 1) {
-            $query = static::find()->orderBy(['id'=>SORT_DESC]);
+            $query = static::find()->joinWith(['user'=>function($query) use ($owner){
+                    return $query->where(['department'=>$owner->department]);
+                }])->orderBy(['address.id'=>SORT_DESC]);
         } else {
-            $query = static::find()->where(['uid'=>$uid])->orderBy(['id'=>SORT_DESC]);
+            $query = static::find()->where(['uid'=>$uid])->orderBy(['address.id'=>SORT_DESC]);
         }
+        $num = $query->count();
+
         while(true){
             $results = $query->limit($limit)->offset($offset)->all();
             if(empty($results)){

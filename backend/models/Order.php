@@ -286,7 +286,7 @@ class Order extends BackendActiveRecord {
             }elseif($model->status == 4){
                 return \yii\helpers\Html::a("标记签收<br />","#",["onclick"=>"marksign($model->id)"]).\yii\helpers\Html::a("标记未签收","#",["onclick"=>"markunsign($model->id)"]);
             }elseif($model->status == 6){
-                return "状态：未签收</br>原因：".$model->unsign->info;
+                return "状态：未签收<br />原因：".$model->unsign->info."<br />客户处理意见：".$model->unsign->reply;
             }
             else{
                 return "";

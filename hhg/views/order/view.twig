@@ -42,6 +42,10 @@
             <dt>订单实际价格：{{ order.real_ship_fee + order.fenjian_fee + order.insurance_price + order.package.package_fee + order.package.other_fee }}RMB</dt>
             {% endif %}
             <dt>订单状态：{% if order.can_formal == constant("\\backend\\models\\Order::IS_FORMAL") %}{{ order.getOrderStatus()|raw }}{% else %}由于超出费用未能生成正式订单{% endif %}</dt>
+            {% if order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_UNSIGN") %}
+            <dt>未签收原因：{{ order.unsign.info }}</dt>
+            <dt>处理意见：{{ order.unsign.reply }}&nbsp;&nbsp;<a href="#" class="blue" onclick="handleOrder({{ order.id }});">点击处理</a></dt>
+            {% endif %}
         </dl>
         <dl>
             <dt>物料审批/费用审批</dt>
@@ -190,6 +194,43 @@
   </div>
 <script type='text/javascript' src='/js/layer.min.js'></script>
 <script type='text/javascript' src='/js/order-view.js'></script>
+<script type="text/javascript">
+    function handleOrder(order_id){
+        var safeCode = $('meta[name=csrf-token]');
+        $.ajax({
+            url : "/order/handle",
+            type : "POST",
+            dataType : "html",
+            data : {"order_id":order_id,"_csrf":safeCode.attr('content')},
+            success : function(json){
+                $.layer({
+                    type: 1,
+                    shade: [0.5, '#000'],
+                    area: ['400', '170'],
+                    title: '异常订单处理意见',
+                    btns: 2,
+                    btn: ['确定', '取消'],
+                    border: [5, 0.2, '#000'],
+                    yes: function(){
+                        var reply = $("#reply").val();
+                        $.ajax({
+                            url : "/order/handleorder",
+                            type : "POST",
+                            dataType : "json",
+                            data : {"order_id":order_id,'reply':reply,"_csrf":safeCode.attr('content')},
+                            success : function(json){
+                                $("#succShare").show();
+                                window.setTimeout("$('#succShare').fadeOut()",2000)
+                                window.location.reload();
+                            }
+                        });
+                    },
+                    page: {html:json}
+                });
+            }
+        });
+    }
+</script>
 {% endblock %}
 
 

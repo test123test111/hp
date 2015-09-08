@@ -118,12 +118,12 @@ class OrderSearch extends Order
         $uid = Yii::$app->user->id;
         $owner = Owner::findOne($uid);
         if($owner->big_owner == Owner::IS_BIG_OWNER){
-            $category = Category::findOne($owner->category);
-            $department = Department::findOne($category->department_id);
-            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            // $category = Category::findOne($owner->category);
+            // $department = Department::findOne($owner->department);
+            // $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
             $query = Order::find()->with(['details'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
-                              ->andWhere(['category_id'=>$category_ids])
+                              ->andWhere(['category_id'=>$owner->department])
                               ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_APPROVALED,':c_status'=>self::ORDER_STATUS_IS_TRUCK])
                               ->orderBy(['id'=>SORT_DESC]);
         }else{
@@ -163,12 +163,12 @@ class OrderSearch extends Order
         $uid = Yii::$app->user->id;
         $owner = Owner::findOne($uid);
         if($owner->big_owner == Owner::IS_BIG_OWNER){
-            $category = Category::findOne($owner->category);
-            $department = Department::findOne($category->department_id);
-            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            // $category = Category::findOne($owner->category);
+            $department = Department::findOne($owner->department);
+            // $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
             $query = Order::find()->with(['details'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
-                              ->andWhere(['category_id'=>$category_ids])
+                              ->andWhere(['category_id'=>$owner->department])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
                               ->orderBy(['id'=>SORT_DESC]);
         }else{
@@ -208,12 +208,12 @@ class OrderSearch extends Order
         $uid = Yii::$app->user->id;
         $owner = Owner::findOne($uid);
         if($owner->big_owner == Owner::IS_BIG_OWNER){
-            $category = Category::findOne($owner->category);
-            $department = Department::findOne($category->department_id);
-            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            // $category = Category::findOne($owner->category);
+            $department = Department::findOne($owner->department);
+            // $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
             $query = Order::find()->with(['details'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
-                              ->andWhere(['category_id'=>$category_ids])
+                              ->andWhere(['category_id'=>$owner->department])
                               ->andWhere('status >= :b_status AND status <= :c_status',[':b_status'=>self::ORDER_STATUS_IS_UNSIGN,':c_status'=>self::ORDER_STATUS_IS_APPROVAL_FAIL])
                               ->orderBy(['id'=>SORT_DESC]);
         }else{
@@ -253,12 +253,12 @@ class OrderSearch extends Order
         $uid = Yii::$app->user->id;
         $owner = Owner::findOne($uid);
         if($owner->big_owner == Owner::IS_BIG_OWNER){
-            $category = Category::findOne($owner->category);
-            $department = Department::findOne($category->department_id);
-            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            // $category = Category::findOne($owner->category);
+            // $department = Department::findOne($owner->department);
+            // $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
             $query = Order::find()->with(['details'])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL,'status'=>self::ORDER_STATUS_IS_NEED_APPROVAL])
-                              ->andWhere(['category_id'=>$category_ids])
+                              ->andWhere(['category_id'=>$owner->department])
                               ->orderBy(['id'=>SORT_DESC]);
         }else{
             $query = Order::find()->with(['details'])
@@ -304,9 +304,9 @@ class OrderSearch extends Order
         $uid = Yii::$app->user->id;
         $owner = Owner::findOne($uid);
         if($owner->big_owner == Owner::IS_BIG_OWNER){
-            $category = Category::findOne($owner->category);
-            $department = Department::findOne($category->department_id);
-            $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
+            // $category = Category::findOne($owner->category);
+            // $department = Department::findOne($owner->department);
+            // $category_ids = Category::find()->where(['department_id'=>$department->id])->select('id')->column();
             $query = Order::find()->with([
                               'details'=>function($query){
                                   return $query->with(['owner'=>function($query){
@@ -319,7 +319,7 @@ class OrderSearch extends Order
                               }])
                               ->where(['is_del'=>Order::ORDER_IS_NOT_DEL,'can_formal'=>self::IS_FORMAL])
                               ->andWhere(['status'=>self::ORDER_STATUS_IS_SIGN])
-                              ->andWhere(['category_id'=>$category_ids])
+                              ->andWhere(['category_id'=>$owner->department])
                               ->orderBy(['id'=>SORT_DESC]);
         }else{
             $query = Order::find()->with([

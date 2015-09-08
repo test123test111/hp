@@ -57,6 +57,7 @@
                             <td>出库时间</td>
                             <td>出库数量</td>
                             <td>出库至</td>
+                            <td>是否借用</td>
                             <td>申请人</td>
                         </tr>
                     </thead>
@@ -82,6 +83,17 @@
                                     收件人 {{ result.order.to_city }} {{ result.order.contact }}
                                     {% else %}
                                     平台库 {{ result.order.to_city }} {{ result.order.contact }}
+                                    {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if result.increase == 1 %}
+                                    {% if result.order is defined %}
+                                    {% if result.order.is_borrow == 0 %}
+                                    否
+                                    {% else %}
+                                    是
                                     {% endif %}
                                     {% endif %}
                                 {% endif %}

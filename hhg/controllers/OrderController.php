@@ -35,7 +35,7 @@ class OrderController extends \yii\web\Controller {
                 'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','settlement','exportsettlement'],
+                        'actions' => ['list', 'buy','update','view','viewapproval','getgoods','import','success','city','address','addressdisplay','approvalmaterial','approvalfee','sendapprovalfee','sendapproval','deleteaddress','pre','doing','done','exportdone','except','needapproval','approval','checkshipmethod','disagreefee','disagreeapproval','cancel','report','settlement','exportsettlement','handle','handleorder'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -1309,5 +1309,33 @@ class OrderController extends \yii\web\Controller {
         header('Pragma:public');
         print(chr(0xEF).chr(0xBB).chr(0xBF));
         echo $result;
+    }
+    /**
+     * handle except order
+     * @return [type] [description]
+     */
+    public function actionHandle()
+    {
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('order_id');
+            $unsign = OrderSign::find()->where(['order_id' => $order_id])->one();
+            echo $this->renderPartial('handle',['unsign'=>$unsign]);
+        }
+    }
+    /**
+     * handle order
+     * @return [type] [description]
+     */
+    public function actionHandleorder()
+    {
+        if(Yii::$app->request->isPost){
+            $order_id = Yii::$app->request->post('order_id');
+            $reply = Yii::$app->request->post('reply');
+            $unsign = OrderSign::find()->where(['order_id' => $order_id])->one();
+            $unsign->reply = $reply;
+            $unsign->update();
+            echo 1;
+            
+        }
     }
 }

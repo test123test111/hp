@@ -82,9 +82,15 @@
                                 <td class="qty">数量：{{ d.quantity }}</td>
                                 {% if loop.index == 1 %}<td rowspan="{{ result.details|count }}" class="status">订单状态<br/>{{ result.getOrderStatus()|raw }}{% if result.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_UNSIGN") %}
                                         <br />(原因：{{ result.unsign.info }})
+                                        <br />(处理意见：{{ result.unsign.reply }})
                                         {% endif %}</td>{% endif %}
                                 {% if loop.index == 1 %}
-                                <td rowspan="{{ result.details|count }}" class="edit"><br/><a class="blue" href="/order/view/{{ d.order_id }}">订单详情</a></td>
+                                <td rowspan="{{ result.details|count }}" class="edit"><br/>
+                                    <a class="blue" href="/order/view/{{ d.order_id }}">订单详情</a>
+                                    {% if result.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_UNSIGN") %}
+                                    <a href="#" onclick="handleOrder({{ d.order_id }});">点击处理</a>
+                                    {% endif %}
+                                </td>
                                 {% endif %}
                             </tr>
                           {% endfor %}
@@ -103,5 +109,41 @@
             var url = window.location.search;
             $(".export_btn").attr("href","/order/exportdone"+url);
         });
+
+        function handleOrder(order_id){
+            var safeCode = $('meta[name=csrf-token]');
+            $.ajax({
+                url : "/order/handle",
+                type : "POST",
+                dataType : "html",
+                data : {"order_id":order_id,"_csrf":safeCode.attr('content')},
+                success : function(json){
+                    $.layer({
+                        type: 1,
+                        shade: [0.5, '#000'],
+                        area: ['400', '170'],
+                        title: '异常订单处理意见',
+                        btns: 2,
+                        btn: ['确定', '取消'],
+                        border: [5, 0.2, '#000'],
+                        yes: function(){
+                            var reply = $("#reply").val();
+                            $.ajax({
+                                url : "/order/handleorder",
+                                type : "POST",
+                                dataType : "json",
+                                data : {"order_id":order_id,'reply':reply,"_csrf":safeCode.attr('content')},
+                                success : function(json){
+                                    $("#succShare").show();
+                                    window.setTimeout("$('#succShare').fadeOut()",2000)
+                                    window.location.reload();
+                                }
+                            });
+                        },
+                        page: {html:json}
+                    });
+                }
+            });
+        }
     </script>
 {% endblock %}

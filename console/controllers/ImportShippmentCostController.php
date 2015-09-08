@@ -6,6 +6,18 @@ use common\models\ShippmentCost;
 class ImportShippmentCostController extends Controller{
 
 	public function actionRun(){
+
+        $file_name = '/tmp/ignoreorder.csv';
+        $results = $this->readfile($file_name);
+        $str = '';
+
+        foreach($results as $result){
+            $order_id = trim($result[0]);
+            $str.= $order_id.',';
+        }
+        echo rtrim($str,',');exit;
+
+
 		$file_name = '/tmp/new_shipp.csv';
         $results = $this->readfile($file_name);
         foreach($results as $result){

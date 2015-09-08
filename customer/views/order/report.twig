@@ -51,6 +51,7 @@
                                     <span class="user">下单人：
                                         {{ result.createduser.english_name }}
                                     </span>
+                                    <span>是否借用：{% if result.is_borrow == 1 %}是{% else %}否{% endif %}</span>
                                     {# <span class="del"></span> #}
                                 </td>
                             </tr>
