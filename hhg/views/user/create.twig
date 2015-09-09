@@ -1,0 +1,41 @@
+{% set sidebar_name = "创建hhg" %}
+{% set menu_name = "user" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+<div class="main">
+    <div class="form_view clearfix">
+        <div class="mc" style="float:left;">
+            {% include '@app/views/layouts/notice.twig' %}
+            {% set form = activeform.begin({'id':'create-form'}) %}  
+                <ul class="form_list">
+                    <li class="clearfix">
+                        <label>名字:</label>
+                        {{ form.field(model,'name',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':'','id':'autocompleteCreate'}}).label(false)|raw}}
+                    </li>
+                    <li class="clearfix">
+                        <label>邮箱:</label>
+                        {{ form.field(model,'email',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).label(false)|raw}}
+                    </li>
+                     <li class="clearfix">
+                        <label>密码:</label>
+                        {{ form.field(model,'password',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).passwordInput().label(false)|raw}}
+                    </li>
+                    <li class="clearfix">
+                        <label>手机:</label>
+                        {{ form.field(model,'phone',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':'date_input'}}).label(false)|raw}}
+
+                    </li>
+                    <li class="clearfix">
+                        <label>联系电话:</label>
+                        {{ form.field(model,'tell',{'template':"{label}\n{input}\n{hint}\n{error}",'options':{'class':'item'},inputOptions:{'class':''}}).label(false)|raw}}
+                    </li>
+                </ul>
+                 <div class="form_submit">
+                    <input type="submit" value="确定" class="form_btn" name="">
+                    </div>
+            {{ void(form.end) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

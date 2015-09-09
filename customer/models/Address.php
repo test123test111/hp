@@ -91,7 +91,7 @@ class Address extends CustomerActiveRecord {
                     return $query->where(['department'=>$owner->department]);
                 }])->orderBy(['address.id'=>SORT_DESC]);
         } else {
-            $query = static::find()->where(['uid'=>$uid])->orderBy(['address.id'=>SORT_DESC]);
+            $query = static::find()->with(['user'])->where(['uid'=>$uid])->orderBy(['address.id'=>SORT_DESC]);
         }
         $count = $query->count();
         $pages = new \yii\data\Pagination(['totalCount' => $count]);
@@ -108,7 +108,7 @@ class Address extends CustomerActiveRecord {
      * @return [type]             [description]
      */
     public static function getDatas($owner_id){
-        $str = "序号,创建人,收货单位名称,收货联系人,收货人联系电话,收货人地址,所在城市,创建日期,备注\n";
+        $str = "序号,创建人,收货单位名称,收货联系人,收货人联系电话,收货人地址,所在城市,创建人,创建日期,备注\n";
         $offset = 0;
         $limit = 100;
         $data = [];
@@ -120,7 +120,7 @@ class Address extends CustomerActiveRecord {
                     return $query->where(['department'=>$owner->department]);
                 }])->orderBy(['address.id'=>SORT_DESC]);
         } else {
-            $query = static::find()->where(['uid'=>$uid])->orderBy(['address.id'=>SORT_DESC]);
+            $query = static::find()->with(['user'])->where(['uid'=>$uid])->orderBy(['address.id'=>SORT_DESC]);
         }
         $num = $query->count();
 
@@ -137,9 +137,10 @@ class Address extends CustomerActiveRecord {
                 $data[$i]['phone'] = $result->phone;
                 $data[$i]['address'] = $result->province.$result->city.$result->area.$result->address;
                 $data[$i]['city'] = $result->city;
+                $data[$i]['created_user'] = isset($result->user) ? $result->user->english_name : '';
                 $data[$i]['created'] = $result->created;
                 $data[$i]['info'] = $result->info;
-                $str .= $data[$i]['id'].",".$data[$i]['uid'].",".$data[$i]['company'].",".$data[$i]['name'].",".$data[$i]['phone'].",".$data[$i]['address'].",".$data[$i]['city'].",".$data[$i]['created'].",".$data[$i]['info']."\r\n"; //用引文逗号分开
+                $str .= $data[$i]['id'].",".$data[$i]['uid'].",".$data[$i]['company'].",".$data[$i]['name'].",".$data[$i]['phone'].",".$data[$i]['address'].",".$data[$i]['city'].",". $data[$i]['created_user'] .',' . $data[$i]['created'].",".$data[$i]['info']."\r\n"; //用引文逗号分开
                 $i++;
             }
            

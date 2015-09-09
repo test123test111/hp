@@ -18,7 +18,7 @@
   {% endif %}
   {% if App.session.hasFlash('info') %}
   <div class="alert alert-info message">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <strong>Heads up! {{ App.session.getFlash('info')|raw }}</strong>
+    {# <button type="button" class="close" data-dismiss="alert">&times;</button> #}
+    <strong><font color="green">恭喜! {{ App.session.getFlash('info')|raw }}</font></strong>
   </div>
   {% endif %}

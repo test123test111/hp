@@ -112,8 +112,21 @@ $(function(){
                     return false;
                 }
             });
+
+            $.each($(".cart_list li"),function(i){
+                if($(this).find(".check").hasClass("selected")){
+                    var stock = $(".cart_list li").eq(i).attr("data-stock");
+                    var quantity = $(".amount_input").eq(i).val();
+                    if (stock < quantity ) {
+                        isstock = false;
+                    }
+                }
+            });
+            
             if(!issame){
                 alert("库房必须一致！");
+            }else if (!isstock){
+                alert("您选择的物料库存不足，请重新调整！");
             }else{
                 cartSubmit();
             }

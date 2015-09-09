@@ -5,10 +5,19 @@
     			<dd {% if sidebar_name == '全部物料' %}class="cur"{% endif %} {% if menu_name !="material" %} style="display:none;"{% endif %}><a href="/material/list">全部物料</a></dd>
     			{# <dd><a href="#">其他可订物料</a></dd> #}
     		</dl>
+            <dl>    
+                <dt class="havesub" data-index="0">hp部门</dt>
+                <dd {% if sidebar_name == '部门列表' %}class="cur"{% endif %} {% if menu_name !="department" %} style="display:none;"{% endif %}><a href="/department/list">部门列表</a></dd>
+            </dl>
             <dl>	
                 <dt class="havesub" data-index="0">hp用户</dt>
                 <dd {% if sidebar_name == '全部用户' %}class="cur"{% endif %} {% if menu_name !="hhg" %} style="display:none;"{% endif %}><a href="/owner/list">全部用户</a></dd>
                 <dd {% if sidebar_name == '创建用户' %}class="cur"{% endif %} {% if menu_name !="hhg" %} style="display:none;"{% endif %}><a href="/owner/create">创建用户</a></dd>
+            </dl>
+            <dl>    
+                <dt class="havesub" data-index="0">hhg用户</dt>
+                <dd {% if sidebar_name == '用户列表' %}class="cur"{% endif %} {% if menu_name !="user" %} style="display:none;"{% endif %}><a href="/user/list">用户列表</a></dd>
+                <dd {% if sidebar_name == '创建hhg' %}class="cur"{% endif %} {% if menu_name !="user" %} style="display:none;"{% endif %}><a href="/user/create">创建hhg</a></dd>
             </dl>
             <dl>
                 {# <dd><a href="#">其他可订物料</a></dd> #}

@@ -60,5 +60,22 @@ class DepartmentSearch extends Department
         
         return $dataProvider;
     }
+
+    public function searchByHhg($params)
+    {
+        $query = Department::find();
+
+        if(isset($params['name']) && $params['name'] != ""){
+            $query->where(['name' => $params['name']]);
+        }
+        $count = $query->count();
+        $pages = new \yii\data\Pagination(['totalCount' => $count,'defaultPageSize'=>20]);
+        $ret = [];
+        $query->offset($pages->offset)->limit(20);
+
+        $data = $query->all();
+        return [$data,$pages,$count];
+        
+    }
     
 }

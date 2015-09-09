@@ -1,0 +1,53 @@
+{% set sidebar_name = "部门列表" %}
+{% set menu_name = "department" %}
+{% extends "@app/views/layouts/main.twig" %}
+{% block content %}
+{% include '@app/views/layouts/base_with_sidebar.twig' %}
+<div class="main">
+<ul class="order_search clearfix">
+{% set form = activeform.begin() %}    
+    <li>
+        <label>部 门：</label>
+        {{ form.field(model,'name',{inputOptions:{'class':'search_input'}}).label(false)|raw}} 
+    </li>
+
+</ul>
+<div>
+    <input type="submit" value="保存" class="search_btn" />
+</div>
+{{ void(form.end()) }}
+{# <div class="material_cart clearfix">
+    <a href="javascript:void(0);" class="export_btn">导出用户信息</a>
+</div> #}
+<div class="materiel_box">
+        <table id="material_list" class="materiel_table">
+            <thead>
+                <tr>
+                    <td>序号</td>
+                    <td>部门名称</td>
+                    <td width="200">创建时间</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key,result in dataProvider.getModels() %}
+                <tr>
+                    <td>{{ result.id }}</td>
+                    <td>{{ result.name }}</td>
+                    <td>{{ result.created }}</td>
+                    <td>
+                      <a href="/department/update/{{ result.id }}">编辑</a>
+                      <a href="/department/setting?CategorySearch[department_id]={{ result.id }}">设置分组</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>      
+    </div>
+    <div class="pages clearfix">
+        <div class="fr">
+            {{ widget('\\yii\\widgets\\LinkPager',{'pagination':dataProvider.Pagination}) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

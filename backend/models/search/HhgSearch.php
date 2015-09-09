@@ -50,4 +50,24 @@ class HhgSearch extends Hhg
 
         return $dataProvider;
     }
+
+    /**
+     * [getDataByHhg description]
+     * @param  [type] $params [description]
+     * @return [type]         [description]
+     */
+    public function getDataByHhg($params){
+        $query = static::find()->orderBy(['id'=>SORT_DESC]);
+        if(isset($params['name']) && $params['name'] != ""){
+            $query->andWhere(['like','name',$params['name']]);
+            $query->orWhere(['like','email',$params['name']]);
+        }
+        $count = $query->count();
+        $pages = new \yii\data\Pagination(['totalCount' => $count,'defaultPageSize'=>20]);
+        $ret = [];
+        $query->offset($pages->offset)->limit(20);
+
+        $data = $query->all();
+        return [$data,$pages,$count];
+    }
 }

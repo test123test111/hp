@@ -106,14 +106,28 @@ $(function(){
         if($(".cart_list li span.selected").length > 0){
             var first_cart = $(".cart_list li span.selected").eq(0).attr("data-storeroom-id");
             var issame = true;
+            var isstock = true;
             $.each($(".cart_list li span.selected"),function(){
                 if($(this).attr("data-storeroom-id") != first_cart){
                     issame = false;
                     return false;
                 }
             });
+
+            $.each($(".cart_list li"),function(i){
+                if($(this).find(".check").hasClass("selected")){
+                    var stock = $(".cart_list li").eq(i).attr("data-stock");
+                    var quantity = $(".amount_input").eq(i).val();
+                    if (stock < quantity ) {
+                        isstock = false;
+                    }
+                }
+            });
+
             if(!issame){
                 alert("库房必须一致！");
+            }else if (!isstock){
+                alert("您选择的物料库存不足，请重新调整！");
             }else{
                 cartSubmit();
             }

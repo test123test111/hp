@@ -22,6 +22,9 @@ class Department extends Dp
              return \yii\helpers\Html::a("编辑","/department/update/$model->id")."|".\yii\helpers\Html::a("设置分组","/department/setting?CategorySearch[department_id]=$model->id");
         ';
     }
+    public function getHhgOptLink(){
+         return \yii\helpers\Html::a("编辑","/department/update/$model->id")."|".\yii\helpers\Html::a("设置分组","/department/setting?CategorySearch[department_id]=$model->id");
+    }
     /**
      * save catefory for department 
      * @param  [type] $category [description]
