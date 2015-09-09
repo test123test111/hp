@@ -4,6 +4,7 @@
 {% block content %}
 {% include '@app/views/layouts/base_with_sidebar.twig' %}
 <div class="main">
+<h2 class="pull-left"><i class="fa fa-table"></i> 为<font color="red">{{ model.name }}</font>设置分组</h2><br />
 <ul class="order_search clearfix">
 {% set form = activeform.begin() %}    
     <li>
