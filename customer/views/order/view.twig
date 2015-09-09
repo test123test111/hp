@@ -85,7 +85,7 @@
                         {% if order.status == constant("\\backend\\models\\Order::ORDER_STATUS_IS_PRE") %}
                             {% if order.owner_approval == constant("\\backend\\models\\Order::NOT_PASS_OWNER_APPROVAL") %}
                             <li class="clearfix">
-                                <p>订单发放物料中含有分享预料，需要物料审批方可发货</p>
+                                <p>订单发放物料中含有分享物料，需要物料审批方可发货</p>
                                 <span id="spprovalStatus">
                                     <a href="javascript:void(0);" data-id="{{ order.id }}"  class="blue send-approval">发送审批</a>
                                     {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}
@@ -112,14 +112,14 @@
                             {% if order.owner_approval == constant("\\backend\\models\\Order::NOT_PASS_OWNER_APPROVAL") %}
                                 {% if order.checkSendMaterialApproval() %}
                                 <li class="clearfix">
-                                    <p>订单发放物料中含有分享预料，需要物料审批方可发货</p>
+                                    <p>订单发放物料中含有分享物料，需要物料审批方可发货</p>
                                     <span id="spprovalStatus">
                                         <p>审批申请已发送,请等待审批人审批</p>
                                     </span>
                                 </li>
                                 {% else %}
                                 <li class="clearfix">
-                                    <p>订单发放物料中含有分享预料，需要物料审批方可发货</p>
+                                    <p>订单发放物料中含有分享物料，需要物料审批方可发货</p>
                                     <span id="spprovalStatus">
                                         <a href="javascript:void(0);" data-id="{{ order.id }}"  class="blue send-approval">发送审批</a>
                                         {# <a href="javascript:void(0);" class="blue">修改预订单</a> #}

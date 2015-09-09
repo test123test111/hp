@@ -237,18 +237,33 @@ class Owner extends ActiveRecord implements IdentityInterface
     public static function getBudgetUsers($uid,$except = false){
         $owner = static::findOne($uid);
         $results = static::find()
-                ->where(['category'=>$owner->category,'storeroom_id'=>$owner->storeroom_id])
+                ->where(['department'=>$owner->department,'storeroom_id'=>$owner->storeroom_id])
                 ->all();
         $ret = [];
-        foreach($results as $result){
-            if($except){
+        if ($except) {
+            foreach ($results as $result) {
                 if($result->id != $uid){
                     $ret[] = ['label'=>$result->english_name,'vsa'=>$result->id];
+                } else {
+                    continue;
                 }
-            }else{
+                
+            }
+        } else {
+            foreach ($results as $result) {
                 $ret[] = ['label'=>$result->english_name,'vsa'=>$result->id];
             }
+            
         }
+        // foreach($results as $result){
+        //     if($except){
+        //         if($result->id != $uid){
+        //             $ret[] = ['label'=>$result->english_name,'vsa'=>$result->id];
+        //         }
+        //     }else{
+        //         $ret[] = ['label'=>$result->english_name,'vsa'=>$result->id];
+        //     }
+        // }
         return json_encode($ret);
     }
 }
